@@ -1,4 +1,4 @@
-import { ArrowUpRight, ArrowDownRight, DollarSign, ShoppingBag, Users, TrendingUp } from 'lucide-react';
+import { ArrowUpRight, ArrowDownRight, DollarSign, ShoppingBag, Users } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 // Done pou estatistik yo (Ou ka konekte sa ak API ou pita)

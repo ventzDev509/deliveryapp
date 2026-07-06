@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 
 // ==========================================
 // TYPES & INTERFACES
@@ -161,7 +161,7 @@ export default function DeliveryDashboard() {
               if (updatedQueue.length > 0) {
                 newStatus = 'going_to_client';
               } else {
-                newStatus = 'completed' ;
+                // newStatus = 'completed' ;
               }
             }
 
@@ -319,7 +319,7 @@ export default function DeliveryDashboard() {
             {/* KLIYAN 1 PANEL */}
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '10px' }}>
               <div>
-                <label style={{ display: 'block', fontSize: '13px', gray: '#475569' }}>Non Kliyan 1:</label>
+                <label style={{ display: 'block', fontSize: '13px',  }}>Non Kliyan 1:</label>
                 <input type="text" value={clientName} onChange={(e) => setClientName(e.target.value)} style={{ width: '90%', padding: '6px', borderRadius: '4px', border: '1px solid #cbd5e1' }} />
               </div>
               <div>

@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
 import { Mail, ArrowRight, RefreshCcw, Sparkles } from 'lucide-react';
 
-const EmailVerification = ({ email = "itilizate@email.com" }) => {
+const EmailVerification = () => {
     return (
         <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-gray-100 flex items-center justify-center p-6">
             <motion.div 
