@@ -9,7 +9,7 @@ const topDishes = [
     orders: "184 fwa",
     revenue: "$2,208.00",
     image: "🍗",
-    bg: "bg-amber-50 text-amber-600"
+    bg: "bg-amber-50 text-amber-600 dark:bg-amber-500/10 dark:text-amber-400"
   },
   {
     id: 2,
@@ -18,7 +18,7 @@ const topDishes = [
     orders: "142 fwa",
     revenue: "$1,988.00",
     image: "🍛",
-    bg: "bg-orange-50 text-orange-600"
+    bg: "bg-orange-50 text-orange-600 dark:bg-orange-500/10 dark:text-orange-400"
   },
   {
     id: 3,
@@ -27,7 +27,7 @@ const topDishes = [
     orders: "95 fwa",
     revenue: "$380.00",
     image: "🍹",
-    bg: "bg-yellow-50 text-yellow-600"
+    bg: "bg-yellow-50 text-yellow-600 dark:bg-yellow-500/10 dark:text-yellow-400"
   },
 ];
 
@@ -40,7 +40,7 @@ const RightSidebarDelivery = () => {
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.4 }}
-        className="w-full bg-neutral-950 p-5 rounded-3xl text-white border border-neutral-800 shadow-sm relative overflow-hidden"
+        className="w-full bg-neutral-950 p-5 rounded-3xl text-white border border-neutral-800 shadow-sm relative overflow-hidden dark:border-zinc-900"
       >
         <div className="absolute -right-10 -top-10 w-32 h-32 bg-emerald-500/10 rounded-full blur-2xl" />
 
@@ -93,15 +93,15 @@ const RightSidebarDelivery = () => {
         initial={{ opacity: 0, y: 15 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, delay: 0.15 }}
-        className="w-full bg-white rounded-3xl p-5 border border-gray-100 shadow-sm"
+        className="w-full bg-white rounded-3xl p-5 border border-gray-100 shadow-sm dark:bg-zinc-950 dark:border-zinc-900 transition-colors duration-300"
       >
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h3 className="text-xs font-bold text-gray-900 tracking-tight flex items-center gap-1">
+            <h3 className="text-xs font-bold text-gray-900 tracking-tight flex items-center gap-1 dark:text-zinc-50">
               <Flame size={14} className="text-orange-500 fill-orange-500" /> Plat ki pi Cho yo
             </h3>
           </div>
-          <button className="text-[10px] font-bold text-orange-500 hover:text-orange-600 flex items-center gap-0.5 transition-colors">
+          <button className="text-[10px] font-bold text-orange-500 hover:text-orange-600 flex items-center gap-0.5 transition-colors dark:text-orange-400 dark:hover:text-orange-300">
             Meni <ArrowUpRight size={10} />
           </button>
         </div>
@@ -111,7 +111,7 @@ const RightSidebarDelivery = () => {
           {topDishes.map((dish) => (
             <div 
               key={dish.id} 
-              className="flex items-center justify-between p-1.5 rounded-xl hover:bg-gray-50/60 transition-colors border border-transparent hover:border-gray-50 min-w-0"
+              className="flex items-center justify-between p-1.5 rounded-xl hover:bg-gray-50/60 transition-colors border border-transparent hover:border-gray-50 min-w-0 dark:hover:bg-zinc-900/40 dark:hover:border-zinc-900"
             >
               <div className="flex items-center gap-2.5 min-w-0 flex-1">
                 {/* Emoji / Imaj */}
@@ -121,10 +121,10 @@ const RightSidebarDelivery = () => {
                 
                 {/* Tèks - Pwoteje ak min-w-0 ak truncate */}
                 <div className="flex flex-col min-w-0 flex-1">
-                  <span className="text-xs font-bold text-gray-900 truncate">
+                  <span className="text-xs font-bold text-gray-900 truncate dark:text-zinc-100">
                     {dish.name}
                   </span>
-                  <span className="text-[9px] text-gray-400 font-medium mt-0.5 truncate">
+                  <span className="text-[9px] text-gray-400 font-medium mt-0.5 truncate dark:text-zinc-500">
                     {dish.category}
                   </span>
                 </div>
@@ -132,10 +132,10 @@ const RightSidebarDelivery = () => {
 
               {/* Revni ak badj */}
               <div className="text-right flex flex-col flex-shrink-0 pl-2">
-                <span className="text-xs font-bold text-gray-900">
+                <span className="text-xs font-bold text-gray-900 dark:text-zinc-50">
                   {dish.revenue}
                 </span>
-                <span className="text-[9px] text-emerald-600 font-semibold bg-emerald-50 px-1 py-0.5 rounded mt-0.5 block text-center min-w-[45px]">
+                <span className="text-[9px] text-emerald-600 font-semibold bg-emerald-50 px-1 py-0.5 rounded mt-0.5 block text-center min-w-[45px] dark:bg-emerald-500/10 dark:text-emerald-400">
                   {dish.orders}
                 </span>
               </div>
