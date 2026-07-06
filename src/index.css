@@ -1,6 +1,17 @@
 /* ==========================================
    1. GLOBAL SYSTEM THEME (:ROOT)
    ========================================== */
+html,
+body {
+    background-color: #ffffff;
+    /* Light mòd pa defo */
+}
+
+html.dark,
+body.dark {
+    background-color: #09090b;
+    /* Dark mòd (bg-zinc-950) */
+}
 
 #root {
     margin: 0;
@@ -19,9 +30,14 @@
     bottom: 0;
     left: 0;
     right: 0;
+    z-index: 50;
 
-    /* Trick sa a ajoute yon ti padding otomatik si telefòn nan gen yon bar navigasyon natif */
+    /* 1. Nou ajoute espas sekirite a anndan nav la */
     padding-bottom: env(safe-area-inset-bottom, 12px);
+
+    /* 2. TRICK LA: Nou kreye yon gwo lonbraj solid anba ki gen menm koulè ak nav la */
+    /* Sa ap bouche ti koulè gri telefòn nan nèt */
+    box-shadow: 0 50px 0 0 inherit;
 }
 
 :root {
@@ -34,6 +50,7 @@ html.dark,
 :root.dark,
 .dark {
     color-scheme: dark;
+    background-color: #111827;
 }
 
 /* ==========================================
