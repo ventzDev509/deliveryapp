@@ -12,7 +12,40 @@ import MainMenu from './dashboard/pages/menuRestaurant/MainMenuRestaurant';
 import MainRestaurantSetting from './dashboard/pages/RestaurantSetting/MainRSettings';
 import MainDriver from './dashboard/pages/DriverPage/MainDriver';
 import BecomeSellerPage from './Auth/BecomeSellerPage';
+import { useEffect } from 'react';
 function App() {
+  useEffect(() => {
+    // 1. Nou kreye yon detektè pou n koute sistèm telefòn nan
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+
+    // 2. Fonksyon ki pral chanje koulè ba a dinamikman
+    const updateThemeColor = (e: MediaQueryListEvent | MediaQueryList) => {
+      // Si telefòn nan an dark mòd, n ap mete Zinc-950 (#09090b), si se light, n ap met blan (#ffffff)
+      const color = e.matches ? '#09090b' : '#ffffff';
+
+      // N ap chèche tag meta theme-color ki nan index.html la
+      let metaTag = document.querySelector('meta[name="theme-color"]');
+
+      if (metaTag) {
+        metaTag.setAttribute('content', color);
+      } else {
+        // Si tag la pa t egziste pou kèk rezon, nou kreye l ak JS
+        metaTag = document.createElement('meta');
+        metaTag.setAttribute('name', 'theme-color');
+        metaTag.setAttribute('content', color);
+        document.head.appendChild(metaTag);
+      }
+    };
+
+    // 3. Nou kouri fonksyon an yon premye fwa lè paj la loded
+    updateThemeColor(mediaQuery);
+
+    // 4. Nou di l rete koute si sistèm telefòn nan ta chanje pandan l sou aplikasyon an
+    mediaQuery.addEventListener('change', updateThemeColor);
+
+    // 5. Netwayaj (Cleanup) lè konpozan an unmount
+    return () => mediaQuery.removeEventListener('change', updateThemeColor);
+  }, []);
   return (
     <Router>
       <Routes>

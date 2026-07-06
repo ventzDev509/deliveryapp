@@ -1,80 +1,48 @@
 /* ==========================================
-   1. GLOBAL SYSTEM THEME & BACKGROUNDS (ZINC INIFÒM)
+   TRICK RADIKAL POU TOUYE DEZÒD GRI TELEFÒN NAN
    ========================================== */
-:root {
-    /* TRICK 1: Pa fòse tou de anmenmtan pa defo si light mòd aktif */
-    color-scheme: light; 
+
+/* 1. Nou fòse baz HTML la TOUJOURS nwa nèt. 
+   Konsa, si navigatè a ap chèche yon koulè pou l mete anba ba navigasyon telefòn nan, 
+   l ap jwenn nwa Zinc la obligatwarman. */
+html {
+    background-color: #09090b !important;
 }
 
-/* Lè klas .dark la sou HTML oswa Body, nou FÒSE navigatè a konnen sistèm nan chanje */
-html.dark,
-body.dark,
-:root.dark,
-.dark {
-    /* TRICK 2: Nou di navigatè a fòse zòn sistèm yo (menm ba anba a) pase nan nwa */
-    color-scheme: dark !important;
-    background-color: #09090b !important; 
-}
-
-html,
+/* 2. Kounye a, nou jere koulè reyèl itilizatè a ap wè a sou BODY a */
 body {
     margin: 0;
     padding: 0;
     width: 100%;
-    /* TRICK 3: Bay zòn html/body a koulè blan an lè l nan light mòd pou evite melanj */
-    background-color: #ffffff;
+    /* Pa defo, si se nan Light mòd li ye, Body a ap vin blan pa anlè HTML la */
+    background-color: #ffffff !important; 
 }
 
-#root {
-    margin: 0;
-    padding: 0;
-    width: 100%;
-
-    /* dvh ap fòse aplikasyon an pran egzakteman wotè ki disponib la */
-    min-height: 100dvh;
-    background-color: inherit;
-    overflow-x: hidden;
+/* 3. Lè telefòn nan pase nan Dark Mòd otomatikman */
+@media (prefers-color-scheme: dark) {
+    body {
+        background-color: #09090b !important;
+    }
 }
 
-/* Aplike kòd sa a sou klas Bottom Nav aplikasyon w lan */
+/* ==========================================
+   KOREKSYON BOTTOM NAV LA
+   ========================================== */
 .bottom-nav {
     position: fixed;
     bottom: 0;
     left: 0;
     right: 0;
     z-index: 50;
-
-    /* 1. Nou ajoute espas sekirite a anndan nav la */
     padding-bottom: env(safe-area-inset-bottom, 12px);
-
-    /* 2. TRICK LA: Olye nou itilize "inherit" oswa valè fiks, nou itilize "currentcolor" 
-       oswa nou fòse lonbraj la swiv background navigasyon an. */
-    box-shadow: 0 80px 0 0 #09090b !important;
+    
+    /* Light Mòd: Lonbraj la blan pou kouvri espas vid la */
+    box-shadow: 0 100px 0 0 #ffffff !important;
 }
 
-/* Si nan Light mòd ba anba telefòn nan bezwen blan pou l kouvri espas la tou: */
-html:not(.dark) .bottom-nav {
-    box-shadow: 0 80px 0 0 #ffffff !important;
-}
-
-/* ==========================================
-   2. AUTOFILL CUSTOMIZATION (LIGHT & DARK MODE)
-   ========================================== */
-
-/* Pou Light Mòd (Pa defo) */
-input:-webkit-autofill,
-input:-webkit-autofill:hover,
-input:-webkit-autofill:focus {
-    color-scheme: light;
-    -webkit-box-shadow: 0 0 0px 1000px #f9fafb inset !important; /* bg-gray-50 */
-    -webkit-text-fill-color: #111827 !important; /* text-gray-900 */
-}
-
-/* Pou Dark Mòd (Lè gen klas .dark anlè input lan) */
-.dark input:-webkit-autofill,
-.dark input:-webkit-autofill:hover,
-.dark input:-webkit-autofill:focus {
-    color-scheme: dark;
-    -webkit-box-shadow: 0 0 0px 1000px #09090b inset !important; /* Fòse kòd la pran koulè Zinc-950 a */
-    -webkit-text-fill-color: #f4f4f5 !important; /* text-zinc-100 */
+@media (prefers-color-scheme: dark) {
+    .bottom-nav {
+        /* Dark Mòd: Lonbraj la nwa */
+        box-shadow: 0 100px 0 0 #09090b !important;
+    }
 }
