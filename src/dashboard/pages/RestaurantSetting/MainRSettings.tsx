@@ -4,7 +4,7 @@ import RestaurantSettings from "./RestaurantSettings";
 
 const MainRestaurantSetting = () => {
     return (
-        <div className="min-h-screen bg-gray-50 flex">
+        <div className="min-h-screen bg-gray-50 dark:bg-zinc-950 flex transition-colors duration-300">
             {/* Sidebar Bò Gòch la */}
             <Sidebar />
             

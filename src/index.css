@@ -3,7 +3,7 @@
    ========================================== */
 :root {
     color-scheme: light dark; /* Di navigatè a app a sipòte tou de mòd yo */
-     background-color: #09090b !important; 
+     /* background-color: #09090b !important;  */
 }
 
 html,
@@ -19,7 +19,7 @@ body.dark,
 :root.dark,
 .dark {
     color-scheme: dark;
-    /* background-color: #09090b !important; Dark mòd (bg-zinc-950 parfe inifòm) */
+    background-color: #09090b !important; 
 }
 
 #root {

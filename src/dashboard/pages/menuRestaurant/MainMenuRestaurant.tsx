@@ -4,19 +4,17 @@ import MenuPage from "./menuRestaurant";
 
 const MainMenu = () => {
     return (
-        <div className="min-h-screen bg-gray-50 flex">
+        <div className="min-h-screen bg-gray-50 text-gray-900 flex dark:bg-zinc-950 dark:text-zinc-50 transition-colors duration-300">
             {/* Sidebar Bò Gòch la */}
             <Sidebar />
             
-            {/* Kontenè Prensipal la */}
-            <div className="flex-1 grid grid-cols-1 lg:grid-cols-4 gap-6 p-4 md:p-6 lg:ml-64 mb-20 md:mb-0">
+            {/* Kontenè Prensipal la - Ak sipò nèt pou dark mode */}
+            <div className="flex-1 flex flex-col gap-4 p-4 md:p-6 lg:ml-64 mb-20 md:mb-0">
+                <TopBar />
                 
-                {/* ZÒN PRENSIPAL (Nou mete l col-span-4 pou l pran tout lajè a nèt) */}
-                <main className="lg:col-span-4 flex flex-col gap-4">
-                    <TopBar />
+                <main className="w-full flex flex-col gap-4">
                     <MenuPage />
                 </main>
-                
             </div>
         </div>
     );

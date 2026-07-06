@@ -33,7 +33,8 @@ const topDishes = [
 
 const RightSidebarDelivery = () => {
   return (
-    <div className="w-full flex flex-col gap-6">
+    /* TRICK STICKY LA: Mwen ajoute "sticky top-6 h-fit max-h-[calc(100vh-48px)] overflow-y-auto pr-1 scrollbar-none" */
+    <div className="w-full flex flex-col gap-6 sticky top-6 h-fit max-h-[calc(100vh-48px)] overflow-y-auto pr-1 scrollbar-none">
       
       {/* 1. LIVE MONITOR WIDGET */}
       <motion.div

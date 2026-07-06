@@ -49,17 +49,17 @@ const DriverDrawer = ({ isOpen, onClose, selectedDriver, onChangeDriver, onSave 
             animate={{ x: 0, y: 0 }}
             exit={{ x: window.innerWidth < 768 ? 0 : "100%", y: window.innerWidth < 768 ? "100%" : 0 }}
             transition={{ type: "spring", damping: 30, stiffness: 240 }}
-            className="fixed right-0 bottom-0 w-full md:w-[420px] h-[85vh] md:h-screen bg-white shadow-2xl z-50 flex flex-col justify-between rounded-t-3xl md:rounded-t-none md:rounded-l-3xl border-l border-gray-100"
+            className="fixed right-0 bottom-0 w-full md:w-[420px] h-[85vh] md:h-screen bg-white dark:bg-zinc-900 shadow-2xl z-50 flex flex-col justify-between rounded-t-3xl md:rounded-t-none md:rounded-l-3xl border-l border-gray-100 dark:border-zinc-800/80 transition-colors duration-300"
           >
             {/* Tèt Drawer */}
-            <div className="p-6 border-b border-gray-100 flex items-center justify-between">
+            <div className="p-6 border-b border-gray-100 dark:border-zinc-800/80 flex items-center justify-between">
               <div>
-                <h2 className="text-base font-black text-gray-900">
+                <h2 className="text-base font-black text-gray-900 dark:text-zinc-50">
                   {selectedDriver.name ? 'Modifye Profile Chofè' : 'Ajoute yon Nouvo Chofè'}
                 </h2>
-                <p className="text-[11px] text-gray-400">Chanjman yo ap parèt sou tablodbò a imedyatman.</p>
+                <p className="text-[11px] text-gray-400 dark:text-zinc-500">Chanjman yo ap parèt sou tablodbò a imedyatman.</p>
               </div>
-              <button onClick={onClose} className="p-2 bg-gray-50 hover:bg-gray-100 rounded-full text-gray-500 transition-colors">
+              <button onClick={onClose} className="p-2 bg-gray-50 hover:bg-gray-100 dark:bg-zinc-800 dark:hover:bg-zinc-700/80 rounded-full text-gray-500 dark:text-zinc-400 transition-colors">
                 <X size={16} />
               </button>
             </div>
@@ -68,30 +68,30 @@ const DriverDrawer = ({ isOpen, onClose, selectedDriver, onChangeDriver, onSave 
             <form onSubmit={onSave} className="flex-1 overflow-y-auto p-6 space-y-5 scrollbar-none">
               
               {/* Seksyon Avatar ak Estati */}
-              <div className="flex items-center gap-4 bg-gray-50 p-4 rounded-2xl border border-gray-100">
-                <div className="relative w-16 h-16 rounded-xl overflow-hidden bg-gray-200 border border-gray-300">
+              <div className="flex items-center gap-4 bg-gray-50 dark:bg-zinc-950/40 p-4 rounded-2xl border border-gray-100 dark:border-zinc-800/60">
+                <div className="relative w-16 h-16 rounded-xl overflow-hidden bg-gray-200 dark:bg-zinc-800 border border-gray-300 dark:border-zinc-700">
                   <img src={selectedDriver.avatar} alt="Driver Avatar" className="w-full h-full object-cover" />
                 </div>
                 <div className="flex-1 space-y-1.5">
-                  <label className="text-[11px] font-bold text-gray-500 uppercase tracking-wider">Estati Chofè a</label>
+                  <label className="text-[11px] font-bold text-gray-500 dark:text-zinc-400 uppercase tracking-wider">Estati Chofè a</label>
                   <select 
                     value={selectedDriver.status}
                     onChange={(e) => onChangeDriver({...selectedDriver, status: e.target.value as any})}
-                    className="w-full px-3 py-2 bg-white border border-gray-200 rounded-xl text-xs font-bold text-gray-800 focus:outline-none focus:border-orange-500 transition-all appearance-none"
+                    className="w-full px-3 py-2 bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-xl text-xs font-bold text-gray-800 dark:text-zinc-200 focus:outline-none focus:border-orange-500 dark:focus:border-orange-500 transition-all appearance-none"
                   >
-                    <option value="Available">🟢 Disponib (Available)</option>
-                    <option value="Busy">🟡 Nan Livrezon (Busy)</option>
-                    <option value="Offline">⚫ Deploge (Offline)</option>
+                    <option value="Available" className="dark:bg-zinc-900">🟢 Disponib (Available)</option>
+                    <option value="Busy" className="dark:bg-zinc-900">🟡 Nan Livrezon (Busy)</option>
+                    <option value="Offline" className="dark:bg-zinc-900">⚫ Deploge (Offline)</option>
                   </select>
                 </div>
               </div>
 
               {/* ENFÒMASYON PÈSONÈL */}
               <div className="space-y-4">
-                <h3 className="text-[11px] font-black text-orange-500 uppercase tracking-wider border-b border-gray-100 pb-1">Enfòmasyon Pèsonèl</h3>
+                <h3 className="text-[11px] font-black text-orange-500 dark:text-orange-500 uppercase tracking-wider border-b border-gray-100 dark:border-zinc-800/60 pb-1">Enfòmasyon Pèsonèl</h3>
                 
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-[11px] font-bold text-gray-500 uppercase tracking-wider flex items-center gap-1">
+                  <label className="text-[11px] font-bold text-gray-500 dark:text-zinc-400 uppercase tracking-wider flex items-center gap-1">
                     <User size={12} /> Non Konplè
                   </label>
                   <input 
@@ -100,13 +100,13 @@ const DriverDrawer = ({ isOpen, onClose, selectedDriver, onChangeDriver, onSave 
                     value={selectedDriver.name}
                     onChange={(e) => onChangeDriver({...selectedDriver, name: e.target.value})}
                     placeholder="Egz: Jean-Robert Baptiste" 
-                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-xs font-bold text-gray-800 focus:outline-none focus:bg-white focus:border-orange-500 transition-all"
+                    className="w-full px-4 py-3 bg-gray-50 dark:bg-zinc-950 border border-gray-200 dark:border-zinc-800 rounded-xl text-xs font-bold text-gray-800 dark:text-zinc-200 focus:outline-none focus:bg-white dark:focus:bg-zinc-950 focus:border-orange-500 dark:focus:border-orange-500 transition-all"
                   />
                 </div>
 
                 <div className="grid grid-cols-1 gap-4">
                   <div className="flex flex-col gap-1.5">
-                    <label className="text-[11px] font-bold text-gray-500 uppercase tracking-wider flex items-center gap-1">
+                    <label className="text-[11px] font-bold text-gray-500 dark:text-zinc-400 uppercase tracking-wider flex items-center gap-1">
                       <Phone size={12} /> Nimewo Telefòn
                     </label>
                     <input 
@@ -115,12 +115,12 @@ const DriverDrawer = ({ isOpen, onClose, selectedDriver, onChangeDriver, onSave 
                       value={selectedDriver.phone}
                       onChange={(e) => onChangeDriver({...selectedDriver, phone: e.target.value})}
                       placeholder="Egz: +509 3737-1234" 
-                      className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-xs font-bold text-gray-800 focus:outline-none focus:bg-white focus:border-orange-500 transition-all"
+                      className="w-full px-4 py-3 bg-gray-50 dark:bg-zinc-950 border border-gray-200 dark:border-zinc-800 rounded-xl text-xs font-bold text-gray-800 dark:text-zinc-200 focus:outline-none focus:bg-white dark:focus:bg-zinc-950 focus:border-orange-500 dark:focus:border-orange-500 transition-all"
                     />
                   </div>
 
                   <div className="flex flex-col gap-1.5">
-                    <label className="text-[11px] font-bold text-gray-500 uppercase tracking-wider flex items-center gap-1">
+                    <label className="text-[11px] font-bold text-gray-500 dark:text-zinc-400 uppercase tracking-wider flex items-center gap-1">
                       <Mail size={12} /> Adrès Imèl
                     </label>
                     <input 
@@ -129,7 +129,7 @@ const DriverDrawer = ({ isOpen, onClose, selectedDriver, onChangeDriver, onSave 
                       value={selectedDriver.email}
                       onChange={(e) => onChangeDriver({...selectedDriver, email: e.target.value})}
                       placeholder="Egz: jr.baptiste@delivery.com" 
-                      className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-xs font-bold text-gray-800 focus:outline-none focus:bg-white focus:border-orange-500 transition-all"
+                      className="w-full px-4 py-3 bg-gray-50 dark:bg-zinc-950 border border-gray-200 dark:border-zinc-800 rounded-xl text-xs font-bold text-gray-800 dark:text-zinc-200 focus:outline-none focus:bg-white dark:focus:bg-zinc-950 focus:border-orange-500 dark:focus:border-orange-500 transition-all"
                     />
                   </div>
                 </div>
@@ -137,27 +137,27 @@ const DriverDrawer = ({ isOpen, onClose, selectedDriver, onChangeDriver, onSave 
 
               {/* DETAY SOU MACHIN NAN */}
               <div className="space-y-4 pt-2">
-                <h3 className="text-[11px] font-black text-orange-500 uppercase tracking-wider border-b border-gray-100 pb-1">Detay sou Machin</h3>
+                <h3 className="text-[11px] font-black text-orange-500 dark:text-orange-500 uppercase tracking-wider border-b border-gray-100 dark:border-zinc-800/60 pb-1">Detay sou Machin</h3>
                 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="flex flex-col gap-1.5">
-                    <label className="text-[11px] font-bold text-gray-500 uppercase tracking-wider">Kalite Machin</label>
+                    <label className="text-[11px] font-bold text-gray-500 dark:text-zinc-400 uppercase tracking-wider">Kalite Machin</label>
                     <select 
                       value={selectedDriver.vehicle.type}
                       onChange={(e) => onChangeDriver({
                         ...selectedDriver, 
                         vehicle: { ...selectedDriver.vehicle, type: e.target.value as any }
                       })}
-                      className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-xs font-bold text-gray-800 focus:outline-none focus:bg-white focus:border-orange-500 transition-all appearance-none"
+                      className="w-full px-4 py-3 bg-gray-50 dark:bg-zinc-950 border border-gray-200 dark:border-zinc-800 rounded-xl text-xs font-bold text-gray-800 dark:text-zinc-200 focus:outline-none focus:bg-white dark:focus:bg-zinc-950 focus:border-orange-500 dark:focus:border-orange-500 transition-all appearance-none"
                     >
-                      <option value="Moto">🏍️ Moto</option>
-                      <option value="Machin">🚗 Machin</option>
-                      <option value="Bisiklèt">🚲 Bisiklèt</option>
+                      <option value="Moto" className="dark:bg-zinc-900">🏍️ Moto</option>
+                      <option value="Machin" className="dark:bg-zinc-900">🚗 Machin</option>
+                      <option value="Bisiklèt" className="dark:bg-zinc-900">🚲 Bisiklèt</option>
                     </select>
                   </div>
 
                   <div className="flex flex-col gap-1.5">
-                    <label className="text-[11px] font-bold text-gray-500 uppercase tracking-wider">Nimewo Plak</label>
+                    <label className="text-[11px] font-bold text-gray-500 dark:text-zinc-400 uppercase tracking-wider">Nimewo Plak</label>
                     <input 
                       type="text" 
                       required
@@ -167,13 +167,13 @@ const DriverDrawer = ({ isOpen, onClose, selectedDriver, onChangeDriver, onSave 
                         vehicle: { ...selectedDriver.vehicle, plateNumber: e.target.value }
                       })}
                       placeholder="Egz: 1-00234" 
-                      className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-xs font-bold text-gray-800 focus:outline-none focus:bg-white focus:border-orange-500 transition-all uppercase tracking-wider"
+                      className="w-full px-4 py-3 bg-gray-50 dark:bg-zinc-950 border border-gray-200 dark:border-zinc-800 rounded-xl text-xs font-bold text-gray-800 dark:text-zinc-200 focus:outline-none focus:bg-white dark:focus:bg-zinc-950 focus:border-orange-500 dark:focus:border-orange-500 transition-all uppercase tracking-wider"
                     />
                   </div>
                 </div>
 
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-[11px] font-bold text-gray-500 uppercase tracking-wider">Modèl ak Koulè</label>
+                  <label className="text-[11px] font-bold text-gray-500 dark:text-zinc-400 uppercase tracking-wider">Modèl ak Koulè</label>
                   <input 
                     type="text" 
                     required
@@ -183,7 +183,7 @@ const DriverDrawer = ({ isOpen, onClose, selectedDriver, onChangeDriver, onSave 
                       vehicle: { ...selectedDriver.vehicle, model: e.target.value }
                     })}
                     placeholder="Egz: Dayun 150 (Nwa)" 
-                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-xs font-bold text-gray-800 focus:outline-none focus:bg-white focus:border-orange-500 transition-all"
+                    className="w-full px-4 py-3 bg-gray-50 dark:bg-zinc-950 border border-gray-200 dark:border-zinc-800 rounded-xl text-xs font-bold text-gray-800 dark:text-zinc-200 focus:outline-none focus:bg-white dark:focus:bg-zinc-950 focus:border-orange-500 dark:focus:border-orange-500 transition-all"
                   />
                 </div>
               </div>
@@ -191,11 +191,11 @@ const DriverDrawer = ({ isOpen, onClose, selectedDriver, onChangeDriver, onSave 
             </form>
 
             {/* Pye Drawer la (Aksyon yo) */}
-            <div className="p-6 border-t border-gray-100 bg-gray-50/50 flex items-center gap-3">
+            <div className="p-6 border-t border-gray-100 dark:border-zinc-800/80 bg-gray-50/50 dark:bg-zinc-950/30 flex items-center gap-3">
               <button 
                 type="button" 
                 onClick={onClose}
-                className="flex-1 py-3 border border-gray-200 bg-white hover:bg-gray-50 text-gray-500 text-xs font-bold rounded-xl transition-all active:scale-95"
+                className="flex-1 py-3 border border-gray-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-gray-500 dark:text-zinc-400 text-xs font-bold rounded-xl transition-all active:scale-95 hover:bg-gray-50 dark:hover:bg-zinc-800"
               >
                 Anile
               </button>

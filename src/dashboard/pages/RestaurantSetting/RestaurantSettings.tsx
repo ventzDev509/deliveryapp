@@ -18,18 +18,17 @@ const RestaurantSettings = () => {
 
     const handleSaveSettings = (e: React.FormEvent) => {
         e.preventDefault();
-        // Isit la ou ka konekte API ou pou sove done yo
         alert("Konfigirasyon an sove ak siksè! 🎉");
     };
 
     return (
-        <div className="w-full max-w-4xl mx-auto flex flex-col gap-6 pb-12">
+        <div className="w-full max-w-4xl mx-auto flex flex-col gap-6 pb-12 transition-colors duration-300">
 
             {/* 1. TÈT PAJ LA */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-xl md:text-2xl font-black text-gray-900 tracking-tight">Konfigirasyon Restoran</h1>
-                    <p className="text-xs text-gray-400 mt-0.5">Jere enfòmasyon piblik, orè travay, ak paramèt livrezon ou.</p>
+                    <h1 className="text-xl md:text-2xl font-black text-gray-900 dark:text-zinc-50 tracking-tight">Konfigirasyon Restoran</h1>
+                    <p className="text-xs text-gray-400 dark:text-zinc-500 mt-0.5">Jere enfòmasyon piblik, orè travay, ak paramèt livrezon ou.</p>
                 </div>
 
                 <button
@@ -42,7 +41,7 @@ const RestaurantSettings = () => {
             </div>
 
             {/* 2. DESIGN PREMIUM BANNER AK LOGO */}
-            <div className="relative rounded-3xl overflow-hidden border border-gray-200 bg-white shadow-sm">
+            <div className="relative rounded-3xl overflow-hidden border border-gray-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-sm">
                 {/* Banner */}
                 <div className="h-32 md:h-44 bg-gradient-to-r from-orange-400 to-amber-500 relative group">
                     <div className="absolute inset-0 bg-black/10 backdrop-blur-[0.5px]" />
@@ -55,7 +54,7 @@ const RestaurantSettings = () => {
                 {/* Pwofil rapid anba Banner la */}
                 <div className="px-6 pb-6 pt-12 md:pt-14 relative flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                     {/* Ti kare Logo a ki monte sou Banner la */}
-                    <div className="absolute -top-12 left-6 w-24 h-24 rounded-2xl border-4 border-white bg-gray-100 shadow-md overflow-hidden group">
+                    <div className="absolute -top-12 left-6 w-24 h-24 rounded-2xl border-4 border-white dark:border-zinc-900 bg-gray-100 dark:bg-zinc-800 shadow-md overflow-hidden group">
                         <img
                             src="https://images.unsplash.com/photo-1514933651103-005eec06c04b?auto=format&fit=crop&q=80&w=200"
                             alt="Logo"
@@ -67,17 +66,17 @@ const RestaurantSettings = () => {
                     </div>
 
                     <div>
-                        <h2 className="text-base font-black text-gray-900 flex items-center gap-1.5">
+                        <h2 className="text-base font-black text-gray-900 dark:text-zinc-100 flex items-center gap-1.5">
                             {storeName || "Non Restoran an"}
-                            <ShieldCheck size={16} className="text-emerald-500 fill-emerald-50" />
+                            <ShieldCheck size={16} className="text-emerald-500 dark:text-emerald-400 fill-emerald-50 dark:fill-emerald-950/30" />
                         </h2>
-                        <p className="text-xs text-gray-400 font-medium">{address || "Pa gen adrès fiks"}</p>
+                        <p className="text-xs text-gray-400 dark:text-zinc-500 font-medium">{address || "Pa gen adrès fiks"}</p>
                     </div>
                 </div>
             </div>
 
             {/* 3. SISTÈM TABS (NAVIGATION) */}
-            <div className="flex items-center gap-2 overflow-x-auto pb-1 border-b border-gray-200 scrollbar-none">
+            <div className="flex items-center gap-2 overflow-x-auto pb-1 border-b border-gray-200 dark:border-zinc-800 scrollbar-none">
                 {[
                     { id: 'profile', label: 'Pwofil Jeneral', icon: Store },
                     { id: 'hours', label: 'Orè Travay', icon: Clock },
@@ -90,8 +89,9 @@ const RestaurantSettings = () => {
                         <button
                             key={tab.id}
                             onClick={() => setActiveTab(tab.id as any)}
-                            className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 relative whitespace-nowrap ${isSelected ? 'text-orange-600' : 'text-gray-400 hover:text-gray-600'
-                                }`}
+                            className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 relative whitespace-nowrap ${
+                                isSelected ? 'text-orange-600 dark:text-orange-500' : 'text-gray-400 hover:text-gray-600 dark:hover:text-zinc-300'
+                            }`}
                         >
                             <Icon size={14} />
                             <span>{tab.label}</span>
@@ -108,7 +108,7 @@ const RestaurantSettings = () => {
             </div>
 
             {/* 4. KONTNI TAB YO AK ANIMASYON CONTENANT */}
-            <div className="bg-white rounded-2xl border border-gray-300 p-6  min-h-[300px]">
+            <div className="bg-white dark:bg-zinc-900 rounded-2xl border border-gray-200 dark:border-zinc-800 p-6 min-h-[300px] shadow-sm">
                 <form onSubmit={handleSaveSettings}>
                     <AnimatePresence mode="wait">
 
@@ -124,33 +124,33 @@ const RestaurantSettings = () => {
                             >
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                     <div className="flex flex-col gap-1.5">
-                                        <label className="text-[11px] font-bold text-gray-500 uppercase tracking-wider">Non Restoran an</label>
+                                        <label className="text-[11px] font-bold text-gray-500 dark:text-zinc-400 uppercase tracking-wider">Non Restoran an</label>
                                         <input
                                             type="text"
                                             value={storeName}
                                             onChange={(e) => setStoreName(e.target.value)}
-                                            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-xs font-bold text-gray-800 focus:outline-none focus:bg-white focus:border-orange-500 transition-all"
+                                            className="w-full px-4 py-3 bg-gray-50 dark:bg-zinc-950 border border-gray-200 dark:border-zinc-800 rounded-xl text-xs font-bold text-gray-800 dark:text-zinc-200 focus:outline-none focus:bg-white dark:focus:bg-zinc-950 focus:border-orange-500 dark:focus:border-orange-500 transition-all"
                                         />
                                     </div>
                                     <div className="flex flex-col gap-1.5">
-                                        <label className="text-[11px] font-bold text-gray-500 uppercase tracking-wider">Nimewo Telefòn</label>
+                                        <label className="text-[11px] font-bold text-gray-500 dark:text-zinc-400 uppercase tracking-wider">Nimewo Telefòn</label>
                                         <input
                                             type="text"
                                             value={phone}
                                             onChange={(e) => setPhone(e.target.value)}
-                                            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-xs font-bold text-gray-800 focus:outline-none focus:bg-white focus:border-orange-500 transition-all"
+                                            className="w-full px-4 py-3 bg-gray-50 dark:bg-zinc-950 border border-gray-200 dark:border-zinc-800 rounded-xl text-xs font-bold text-gray-800 dark:text-zinc-200 focus:outline-none focus:bg-white dark:focus:bg-zinc-950 focus:border-orange-500 dark:focus:border-orange-500 transition-all"
                                         />
                                     </div>
                                 </div>
 
                                 <div className="flex flex-col gap-1.5">
-                                    <label className="text-[11px] font-bold text-gray-500 uppercase tracking-wider">Adrès Restoran</label>
-                                    <input
-                                        type="text"
-                                        value={address}
-                                        onChange={(e) => setAddress(e.target.value)}
-                                        className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-xs font-bold text-gray-800 focus:outline-none focus:bg-white focus:border-orange-500 transition-all"
-                                    />
+                                        <label className="text-[11px] font-bold text-gray-500 dark:text-zinc-400 uppercase tracking-wider">Adrès Restoran</label>
+                                        <input
+                                            type="text"
+                                            value={address}
+                                            onChange={(e) => setAddress(e.target.value)}
+                                            className="w-full px-4 py-3 bg-gray-50 dark:bg-zinc-950 border border-gray-200 dark:border-zinc-800 rounded-xl text-xs font-bold text-gray-800 dark:text-zinc-200 focus:outline-none focus:bg-white dark:focus:bg-zinc-950 focus:border-orange-500 dark:focus:border-orange-500 transition-all"
+                                        />
                                 </div>
                             </motion.div>
                         )}
@@ -166,8 +166,8 @@ const RestaurantSettings = () => {
                                 className="space-y-3"
                             >
                                 <div className="mb-2">
-                                    <h3 className="text-xs font-bold text-gray-800">Orè Operasyon yo</h3>
-                                    <p className="text-[11px] text-gray-400">Aktive jou restoran an ap travay epi mete lè ouvèti/fèmti.</p>
+                                    <h3 className="text-xs font-bold text-gray-800 dark:text-zinc-200">Orè Operasyon yo</h3>
+                                    <p className="text-[11px] text-gray-400 dark:text-zinc-500">Aktive jou restoran an ap travay epi mete lè ouvèti/fèmti.</p>
                                 </div>
 
                                 <motion.div layout="position" transition={springTransition} className="space-y-2">
@@ -193,13 +193,13 @@ const RestaurantSettings = () => {
                                 className="space-y-5"
                             >
                                 {/* Reyon Livrezon an Slider */}
-                                <div className="p-4 bg-gray-50 border border-gray-200 rounded-2xl space-y-3">
+                                <div className="p-4 bg-gray-50 dark:bg-zinc-950/40 border border-gray-200 dark:border-zinc-800 rounded-2xl space-y-3">
                                     <div className="flex items-center justify-between">
                                         <div className="flex items-center gap-2">
                                             <Truck size={16} className="text-orange-500" />
-                                            <span className="text-xs font-bold text-gray-800">Reyon Livrezon Maksimòm</span>
+                                            <span className="text-xs font-bold text-gray-800 dark:text-zinc-200">Reyon Livrezon Maksimòm</span>
                                         </div>
-                                        <span className="text-xs font-black text-orange-600 bg-orange-50 px-2.5 py-0.5 rounded-lg">{deliveryRadius} KM</span>
+                                        <span className="text-xs font-black text-orange-600 dark:text-orange-400 bg-orange-50 dark:bg-orange-950/30 px-2.5 py-0.5 rounded-lg">{deliveryRadius} KM</span>
                                     </div>
                                     <input
                                         type="range"
@@ -207,37 +207,29 @@ const RestaurantSettings = () => {
                                         max="20"
                                         value={deliveryRadius}
                                         onChange={(e) => setDeliveryRadius(parseInt(e.target.value))}
-                                        className="w-full h-1.5 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-orange-500"
+                                        className="w-full h-1.5 bg-gray-200 dark:bg-zinc-800 rounded-lg appearance-none cursor-pointer accent-orange-500"
                                     />
-                                    <p className="text-[10px] text-gray-400">Kliyan ki pi lwen pase distans sa a pap kapab pase kòmand.</p>
+                                    <p className="text-[10px] text-gray-400 dark:text-zinc-500">Kliyan ki pi lwen pase distans sa a pap kapab pase kòmand.</p>
                                 </div>
 
                                 {/* Pri fiks Livrezon */}
                                 <div className="flex flex-col gap-1.5 max-w-xs">
-                                    <label className="text-[11px] font-bold text-gray-500 uppercase tracking-wider">Pri Fiks Livrezon ($ USD)</label>
+                                    <label className="text-[11px] font-bold text-gray-500 dark:text-zinc-400 uppercase tracking-wider">Pri Fiks Livrezon ($ USD)</label>
                                     <div className="relative">
-                                        <DollarSign className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" size={14} />
+                                        <DollarSign className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 dark:text-zinc-500" size={14} />
                                         <input
                                             type="number"
                                             step="0.01"
                                             value={deliveryFee || ''}
                                             onChange={(e) => setDeliveryFee(parseFloat(e.target.value) || 0)}
-                                            className="w-full pl-8 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-xs font-bold text-gray-800 focus:outline-none focus:bg-white focus:border-orange-500 transition-all"
+                                            className="w-full pl-8 pr-4 py-3 bg-gray-50 dark:bg-zinc-950 border border-gray-200 dark:border-zinc-800 rounded-xl text-xs font-bold text-gray-800 dark:text-zinc-200 focus:outline-none focus:bg-white dark:focus:bg-zinc-950 focus:border-orange-500 dark:focus:border-orange-500 transition-all"
                                         />
                                     </div>
                                 </div>
-
-
                             </motion.div>
+                        )}
 
-
-                        )
-
-                        }
-
-
-
-
+                        {/* TAB 4: ADVANCED SETTINGS */}
                         {activeTab === 'advanced' && (
                             <motion.div
                                 key="advanced-tab"
