@@ -1,143 +1,82 @@
-@import "tailwindcss";
-
 /* ==========================================
-   1. GLOBAL SYSTEM THEME & BACKGROUNDS
+   1. GLOBAL SYSTEM THEME (:ROOT)
    ========================================== */
-:root {
-  color-scheme: light;
+html,
+body {
+    background-color: #ffffff;
+    /* Light mòd pa defo */
 }
 
-html, body {
-  margin: 0;
-  padding: 0;
-  width: 100%;
-  background-color: #ffffff !important; /* Blan pou Light mòd */
-  color-scheme: light;
-}
-
-/* Lè aplikasyon an pase nan DARK MÒD */
-html.dark, body.dark, .dark {
-  color-scheme: dark;
-  background-color: #09090b !important; /* Nwa Zinc-950 pou Dark mòd parfe */
+html.dark,
+body.dark {
+    background-color: #09090b;
+    /* Dark mòd (bg-zinc-950) */
 }
 
 #root {
-  margin: 0;
-  padding: 0;
-  width: 100%;
-  min-height: 100dvh; /* Dinamik pou altitid ekran telefòn lan */
-  background-color: inherit;
-  overflow-x: hidden;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+
+    /* dvh ap fòse aplikasyon an pran egzakteman wotè ki disponib la */
+    min-height: 100dvh;
+    background-color: inherit;
+    overflow-x: hidden;
 }
 
-/* ==========================================
-   2. BOTTOM NAV FIX (BOUCH TWOU TELEFÒN NAN)
-   ========================================== */
+/* Aplike kòd sa a sou klas Bottom Nav aplikasyon w lan */
 .bottom-nav {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  z-index: 50;
-  
-  /* Ajoute espas sekirite a anba nav la */
-  padding-bottom: env(safe-area-inset-bottom, 12px);
-  
-  /* TRICK LA: Nou mete yon lonbraj solid ki pa transparan */
-  /* Si nav ou a se blan nan light ak nwa nan dark, lonbraj sa ap otomatikman bouche anba a */
-  box-shadow: 0 80px 0 0 currentColor; 
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 50;
+
+    /* 1. Nou ajoute espas sekirite a anndan nav la */
+    padding-bottom: env(safe-area-inset-bottom, 12px);
+
+    /* 2. TRICK LA: Nou kreye yon gwo lonbraj solid anba ki gen menm koulè ak nav la */
+    /* Sa ap bouche ti koulè gri telefòn nan nèt */
+    box-shadow: 0 50px 0 0 inherit;
 }
 
-/* Si w ap itilize klas "glass-nav" ou a, fòs background nan parèt byen */
-.glass-nav {
-  @apply backdrop-blur-xl bg-black/20 border-white/5;
-  color: #000000; /* Sa ap bay lonbraj la koulè blan/nwa selon sa w bezwen */
+:root {
+
+    /* color-scheme: light; */
+    background-color: #09090b;
+
+}
+
+/* Lè klas .dark la sou HTML oswa Body */
+html.dark,
+:root.dark,
+.dark {
+    color-scheme: dark;
+    background-color: #111827;
 }
 
 /* ==========================================
-   3. AUTOFILL CUSTOMIZATION (KOU LÈ INPUT AUTOMATIK)
+   2. AUTOFILL CUSTOMIZATION (LIGHT & DARK MODE)
    ========================================== */
+
+/* Pou Light Mòd (Pa defo) */
 input:-webkit-autofill,
 input:-webkit-autofill:hover,
 input:-webkit-autofill:focus {
-  color-scheme: light;
-  -webkit-box-shadow: 0 0 0px 1000px #f9fafb inset !important; /* bg-gray-50 */
-  -webkit-text-fill-color: #111827 !important; /* text-gray-900 */
+    color-scheme: light;
+    -webkit-box-shadow: 0 0 0px 1000px #f9fafb inset !important;
+    /* bg-gray-50 */
+    -webkit-text-fill-color: #111827 !important;
+    /* text-gray-900 */
 }
 
+/* Pou Dark Mòd (Lè gen klas .dark anlè input lan) */
 .dark input:-webkit-autofill,
 .dark input:-webkit-autofill:hover,
 .dark input:-webkit-autofill:focus {
-  color-scheme: dark;
-  -webkit-box-shadow: 0 0 0px 1000px #18181b inset !important; /* bg-zinc-900 */
-  -webkit-text-fill-color: #f4f4f5 !important; /* text-zinc-100 */
+    color-scheme: dark;
+    -webkit-box-shadow: 0 0 0px 1000px #18181b inset !important;
+    /* bg-zinc-900 */
+    -webkit-text-fill-color: #f4f4f5 !important;
+    /* text-zinc-100 */
 }
-
-/* ==========================================
-   4. RÈS KÒD OU ANTRÈ (ANIMASYON AK IMPLÈMANTASYON)
-   ========================================== */
-img {
-  transition: opacity 0.3s ease-in-out;
-  filter: saturate(1.1);
-  object-fit: cover;
-}
-
-img:not([src]) {
-  visibility: hidden;
-}
-
-@media (min-width: 600px) {
-  body {
-    overflow-y: hidden;
-  }
-}
-
-::-webkit-scrollbar {
-  width: 0px;
-  height: 0px;
-  display: none;
-}
-
-button, div, a, input {
-  -webkit-tap-highlight-color: transparent;
-  outline: none !important;
-}
-
-* {
-  box-sizing: border-box;
-  -webkit-tap-highlight-color: transparent;
-}
-
-button {
-  background-color: transparent;
-  border: none;
-  appearance: none;
-  -webkit-appearance: none;
-  cursor: pointer;
-  font-family: inherit;
-}
-
-button:disabled {
-  cursor: not-allowed;
-}
-
-.btn-primary {
-  @apply bg-orange-500 text-white font-black uppercase text-xs rounded-2xl flex items-center justify-center gap-2 transition-all active:scale-95 disabled:opacity-50 px-6 py-3;
-}
-
-.btn-secondary {
-  @apply bg-transparent text-zinc-500 font-bold py-4 hover:text-zinc-300 transition-colors;
-}
-
-.dkd { background-color: #3a1707; }
-
-@keyframes eq-1 { 0%, 100% { height: 4px; } 50% { height: 12px; } }
-@keyframes eq-2 { 0%, 100% { height: 10px; } 50% { height: 4px; } }
-@keyframes eq-3 { 0%, 100% { height: 6px; } 50% { height: 14px; } }
-
-.animate-eq-1 { animation: eq-1 0.6s infinite ease-in-out; }
-.animate-eq-2 { animation: eq-2 0.8s infinite ease-in-out; }
-.animate-eq-3 { animation: eq-3 0.7s infinite ease-in-out; }
-
-@keyframes bounce-slow { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
-.animate-bounce-slow { animation: bounce-slow 4s infinite ease-in-out; }
