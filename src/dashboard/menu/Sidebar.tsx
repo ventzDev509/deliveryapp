@@ -53,7 +53,7 @@ const Sidebar = () => {
       </nav>
 
       {/* BOTTOM MENU POU MOBILE (telefòn) */}
-      <nav className="md:hidden fixed bottom-0 left-0 w-full bg-white border-t border-gray-100 flex justify-around items-center p-3 z-50">
+      <nav className="md:hidden bottom-nav fixed bottom-0 left-0 w-full bg-white border-t border-gray-100 flex justify-around items-center p-3 z-50">
         {menuItems.map((item) => (
           <NavLink
             key={item.name}

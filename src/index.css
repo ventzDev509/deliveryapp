@@ -1,13 +1,39 @@
 /* ==========================================
    1. GLOBAL SYSTEM THEME (:ROOT)
    ========================================== */
+
+#root {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+
+    /* dvh ap fòse aplikasyon an pran egzakteman wotè ki disponib la */
+    min-height: 100dvh;
+    background-color: inherit;
+    overflow-x: hidden;
+}
+
+/* Aplike kòd sa a sou klas Bottom Nav aplikasyon w lan */
+.bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+
+    /* Trick sa a ajoute yon ti padding otomatik si telefòn nan gen yon bar navigasyon natif */
+    padding-bottom: env(safe-area-inset-bottom, 12px);
+}
+
 :root {
-  color-scheme: light;
+    color-scheme: light;
+
 }
 
 /* Lè klas .dark la sou HTML oswa Body */
-html.dark, :root.dark, .dark {
-  color-scheme: dark;
+html.dark,
+:root.dark,
+.dark {
+    color-scheme: dark;
 }
 
 /* ==========================================
@@ -16,18 +42,22 @@ html.dark, :root.dark, .dark {
 
 /* Pou Light Mòd (Pa defo) */
 input:-webkit-autofill,
-input:-webkit-autofill:hover, 
+input:-webkit-autofill:hover,
 input:-webkit-autofill:focus {
-  color-scheme: light;
-  -webkit-box-shadow: 0 0 0px 1000px #f9fafb inset !important; /* bg-gray-50 */
-  -webkit-text-fill-color: #111827 !important; /* text-gray-900 */
+    color-scheme: light;
+    -webkit-box-shadow: 0 0 0px 1000px #f9fafb inset !important;
+    /* bg-gray-50 */
+    -webkit-text-fill-color: #111827 !important;
+    /* text-gray-900 */
 }
 
 /* Pou Dark Mòd (Lè gen klas .dark anlè input lan) */
 .dark input:-webkit-autofill,
-.dark input:-webkit-autofill:hover, 
+.dark input:-webkit-autofill:hover,
 .dark input:-webkit-autofill:focus {
-  color-scheme: dark;
-  -webkit-box-shadow: 0 0 0px 1000px #18181b inset !important; /* bg-zinc-900 */
-  -webkit-text-fill-color: #f4f4f5 !important; /* text-zinc-100 */
+    color-scheme: dark;
+    -webkit-box-shadow: 0 0 0px 1000px #18181b inset !important;
+    /* bg-zinc-900 */
+    -webkit-text-fill-color: #f4f4f5 !important;
+    /* text-zinc-100 */
 }
