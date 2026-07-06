@@ -1,16 +1,25 @@
 /* ==========================================
-   1. GLOBAL SYSTEM THEME (:ROOT)
+   1. GLOBAL SYSTEM THEME & BACKGROUNDS (ZINC INIFÒM)
    ========================================== */
-html,
-body {
-    background-color: #ffffff;
-    /* Light mòd pa defo */
+:root {
+    color-scheme: light dark; /* Di navigatè a app a sipòte tou de mòd yo */
 }
 
+html,
+body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    background-color: #ffffff !important; /* Light mòd pa defo */
+}
+
+/* Lè klas .dark la sou HTML oswa Body */
 html.dark,
-body.dark {
-    background-color: #09090b;
-    /* Dark mòd (bg-zinc-950) */
+body.dark,
+:root.dark,
+.dark {
+    color-scheme: dark;
+    background-color: #09090b !important; /* Dark mòd (bg-zinc-950 parfe inifòm) */
 }
 
 #root {
@@ -35,24 +44,9 @@ body.dark {
     /* 1. Nou ajoute espas sekirite a anndan nav la */
     padding-bottom: env(safe-area-inset-bottom, 12px);
 
-    /* 2. TRICK LA: Nou kreye yon gwo lonbraj solid anba ki gen menm koulè ak nav la */
+    /* 2. TRICK LA: Nou kreye yon gwo lonbraj solid anba ki gen menm koulè ak fon dark mòd lan */
     /* Sa ap bouche ti koulè gri telefòn nan nèt */
-    box-shadow: 0 50px 0 0 inherit;
-}
-
-:root {
-
-    /* color-scheme: light; */
-    background-color: #09090b;
-
-}
-
-/* Lè klas .dark la sou HTML oswa Body */
-html.dark,
-:root.dark,
-.dark {
-    color-scheme: dark;
-    background-color: #111827;
+    box-shadow: 0 80px 0 0 #09090b !important;
 }
 
 /* ==========================================
@@ -64,10 +58,8 @@ input:-webkit-autofill,
 input:-webkit-autofill:hover,
 input:-webkit-autofill:focus {
     color-scheme: light;
-    -webkit-box-shadow: 0 0 0px 1000px #f9fafb inset !important;
-    /* bg-gray-50 */
-    -webkit-text-fill-color: #111827 !important;
-    /* text-gray-900 */
+    -webkit-box-shadow: 0 0 0px 1000px #f9fafb inset !important; /* bg-gray-50 */
+    -webkit-text-fill-color: #111827 !important; /* text-gray-900 */
 }
 
 /* Pou Dark Mòd (Lè gen klas .dark anlè input lan) */
@@ -75,8 +67,6 @@ input:-webkit-autofill:focus {
 .dark input:-webkit-autofill:hover,
 .dark input:-webkit-autofill:focus {
     color-scheme: dark;
-    -webkit-box-shadow: 0 0 0px 1000px #18181b inset !important;
-    /* bg-zinc-900 */
-    -webkit-text-fill-color: #f4f4f5 !important;
-    /* text-zinc-100 */
+    -webkit-box-shadow: 0 0 0px 1000px #09090b inset !important; /* Fòse kòd la pran koulè Zinc-950 a */
+    -webkit-text-fill-color: #f4f4f5 !important; /* text-zinc-100 */
 }
