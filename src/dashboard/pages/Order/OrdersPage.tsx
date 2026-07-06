@@ -99,29 +99,29 @@ const OrdersPage = () => {
 
   const getStatusBadge = (status: OrderStatus) => {
     switch (status) {
-      case 'New': return 'bg-blue-50 text-blue-700 border-blue-100';
-      case 'Preparing': return 'bg-orange-50 text-orange-700 border-orange-100';
-      case 'Dispatched': return 'bg-purple-50 text-purple-700 border-purple-100';
-      case 'Delivered': return 'bg-emerald-50 text-emerald-700 border-emerald-100';
-      default: return 'bg-gray-50 text-gray-700 border-gray-100';
+      case 'New': return 'bg-blue-50 text-blue-700 border-blue-100 dark:bg-blue-950/40 dark:text-blue-400 dark:border-blue-900/50';
+      case 'Preparing': return 'bg-orange-50 text-orange-700 border-orange-100 dark:bg-orange-950/40 dark:text-orange-400 dark:border-orange-900/50';
+      case 'Dispatched': return 'bg-purple-50 text-purple-700 border-purple-100 dark:bg-purple-950/40 dark:text-purple-400 dark:border-purple-900/50';
+      case 'Delivered': return 'bg-emerald-50 text-emerald-700 border-emerald-100 dark:bg-emerald-950/40 dark:text-emerald-400 dark:border-emerald-900/50';
+      default: return 'bg-gray-50 text-gray-700 border-gray-100 dark:bg-zinc-800 dark:text-zinc-300 dark:border-zinc-700';
     }
   };
 
   const getTimeAlertStyles = (minutes: number, status: OrderStatus) => {
-    if (status === 'Delivered') return { textClass: 'text-gray-400', isCritical: false };
+    if (status === 'Delivered') return { textClass: 'text-gray-400 dark:text-zinc-500', isCritical: false };
 
     if ((status === 'New' && minutes >= 10) || (status === 'Preparing' && minutes >= 15)) {
       return { 
-        textClass: 'text-rose-600 font-bold bg-rose-50 px-1.5 py-0.5 rounded-md border border-rose-100 animate-pulse', 
+        textClass: 'text-rose-600 font-bold bg-rose-50 px-1.5 py-0.5 rounded-md border border-rose-100 animate-pulse dark:bg-rose-950/30 dark:text-rose-400 dark:border-rose-900/50', 
         isCritical: true 
       };
     }
     
     if (status === 'Preparing' && minutes >= 10) {
-      return { textClass: 'text-amber-600 font-semibold', isCritical: false };
+      return { textClass: 'text-amber-600 dark:text-amber-400 font-semibold', isCritical: false };
     }
 
-    return { textClass: 'text-gray-400 font-medium', isCritical: false };
+    return { textClass: 'text-gray-400 dark:text-zinc-400 font-medium', isCritical: false };
   };
 
   return (
@@ -135,22 +135,22 @@ const OrdersPage = () => {
         className="flex flex-col sm:flex-row sm:items-center justify-between gap-4"
       >
         <div>
-          <h1 className="text-xl md:text-2xl font-black text-gray-900 tracking-tight">Kòmand yo</h1>
-          <p className="text-xs text-gray-400 mt-0.5">Swiv, prepare, epi jere livrezon yo an tan reyèl.</p>
+          <h1 className="text-xl md:text-2xl font-black text-gray-900 dark:text-zinc-50 tracking-tight">Kòmand yo</h1>
+          <p className="text-xs text-gray-400 dark:text-zinc-400 mt-0.5">Swiv, prepare, epi jere livrezon yo an tan reyèl.</p>
         </div>
 
         <div className="flex items-center gap-2">
           <div className="relative flex-1 sm:w-64">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 dark:text-zinc-500" size={16} />
             <input 
               type="text" 
               placeholder="Chache ID, non kliyan..." 
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2.5 bg-white border border-gray-200 rounded-2xl text-xs font-medium focus:outline-none focus:border-orange-500 transition-colors shadow-sm"
+              className="w-full pl-10 pr-4 py-2.5 bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-2xl text-xs font-medium text-gray-900 dark:text-zinc-100 focus:outline-none focus:border-orange-500 dark:focus:border-orange-500 transition-colors shadow-sm"
             />
           </div>
-          <button className="p-2.5 bg-white border border-gray-200 rounded-2xl text-gray-500 hover:text-orange-500 transition-colors shadow-sm">
+          <button className="p-2.5 bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-2xl text-gray-500 dark:text-zinc-400 hover:text-orange-500 dark:hover:text-orange-500 transition-colors shadow-sm">
             <Filter size={16} />
           </button>
         </div>
@@ -161,7 +161,7 @@ const OrdersPage = () => {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.4, delay: 0.1 }}
-        className="flex items-center gap-1.5 overflow-x-auto pb-2 scrollbar-none border-b border-gray-100"
+        className="flex items-center gap-1.5 overflow-x-auto pb-2 scrollbar-none border-b border-gray-100 dark:border-zinc-800"
       >
         {[
           { id: 'All', label: 'Tout', count: orders.length },
@@ -176,11 +176,11 @@ const OrdersPage = () => {
             className={`px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap flex items-center gap-2 ${
               activeTab === tab.id 
                 ? 'bg-orange-500 text-white shadow-md shadow-orange-500/10' 
-                : 'bg-white text-gray-500 hover:bg-gray-50 border border-gray-100'
+                : 'bg-white dark:bg-zinc-900 text-gray-500 dark:text-zinc-400 hover:bg-gray-50 dark:hover:bg-zinc-800/50 border border-gray-100 dark:border-zinc-800'
             }`}
           >
             {tab.label}
-            <span className={`text-[10px] px-1.5 py-0.5 rounded-md font-black ${activeTab === tab.id ? 'bg-white/20 text-white' : 'bg-gray-100 text-gray-500'}`}>
+            <span className={`text-[10px] px-1.5 py-0.5 rounded-md font-black ${activeTab === tab.id ? 'bg-white/20 text-white' : 'bg-gray-100 dark:bg-zinc-800 text-gray-500 dark:text-zinc-400'}`}>
               {tab.count}
             </span>
           </button>
@@ -192,12 +192,12 @@ const OrdersPage = () => {
         initial={{ opacity: 0, y: 15 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, delay: 0.15 }}
-        className="w-full bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm"
+        className="w-full bg-white dark:bg-zinc-900 rounded-xl border border-gray-200 dark:border-zinc-800 overflow-hidden shadow-sm"
       >
         <div className="w-full overflow-x-auto whitespace-nowrap scrollbar-none">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="border-b border-gray-100 text-gray-400 text-[11px] font-bold uppercase tracking-wider bg-gray-50/40">
+              <tr className="border-b border-gray-100 dark:border-zinc-800 text-gray-400 dark:text-zinc-500 text-[11px] font-bold uppercase tracking-wider bg-gray-50/40 dark:bg-zinc-800/20">
                 <th className="p-4 pl-6">Kòmand</th>
                 <th className="p-4">Kliyan / Detay</th>
                 <th className="p-4">Livre Via</th>
@@ -207,7 +207,7 @@ const OrdersPage = () => {
                 <th className="p-4 text-right pr-6">Aksyon</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-50/60">
+            <tbody className="divide-y divide-gray-50/60 dark:divide-zinc-800/60">
               <AnimatePresence mode="popLayout">
                 {filteredOrders.map((order) => {
                   const timeAlert = getTimeAlertStyles(order.minutesElapsed, order.status);
@@ -220,15 +220,15 @@ const OrdersPage = () => {
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, scale: 0.98 }}
                       transition={{ type: "spring", stiffness: 500, damping: 40 }}
-                      className={`hover:bg-gray-50/30 transition-colors ${timeAlert.isCritical ? 'bg-rose-50/10' : ''}`}
+                      className={`hover:bg-gray-50/30 dark:hover:bg-zinc-800/20 transition-colors ${timeAlert.isCritical ? 'bg-rose-50/10 dark:bg-rose-950/5' : ''}`}
                     >
                       
                       {/* ID & LÈ */}
                       <td className="p-4 pl-6">
                         <div className="flex flex-col items-start">
-                          <span className="text-xs font-black text-gray-900">{order.id}</span>
+                          <span className="text-xs font-black text-gray-900 dark:text-zinc-100">{order.id}</span>
                           <span className={`text-[10px] mt-1 flex items-center gap-1 transition-all ${timeAlert.textClass}`}>
-                            {timeAlert.isCritical ? <AlertCircle size={10} className="text-rose-600" /> : <Clock size={10} />}
+                            {timeAlert.isCritical ? <AlertCircle size={10} className="text-rose-600 dark:text-rose-400" /> : <Clock size={10} />}
                             {order.time}
                           </span>
                         </div>
@@ -237,24 +237,24 @@ const OrdersPage = () => {
                       {/* KLIYAN AK MANJE A */}
                       <td className="p-4 max-w-[220px]">
                         <div className="flex flex-col min-w-0">
-                          <span className="text-xs font-bold text-gray-900 truncate">{order.customer}</span>
-                          <span className="text-[11px] text-gray-500 truncate mt-0.5 font-medium">{order.items}</span>
+                          <span className="text-xs font-bold text-gray-900 dark:text-zinc-100 truncate">{order.customer}</span>
+                          <span className="text-[11px] text-gray-500 dark:text-zinc-400 truncate mt-0.5 font-medium">{order.items}</span>
                         </div>
                       </td>
 
                       {/* CHOFÈ / TIP */}
                       <td className="p-4">
-                        <div className="flex items-center gap-1.5 text-xs text-gray-600 font-medium">
+                        <div className="flex items-center gap-1.5 text-xs text-gray-600 dark:text-zinc-300 font-medium">
                           {order.type === 'Delivery' ? <Bike size={13} className="text-orange-500" /> : <Clock size={13} className="text-blue-500" />}
                           <span>{order.driver}</span>
                         </div>
                       </td>
 
                       {/* KALITE PEMAN */}
-                      <td className="p-4 text-xs font-bold text-gray-700">{order.payment}</td>
+                      <td className="p-4 text-xs font-bold text-gray-700 dark:text-zinc-300">{order.payment}</td>
 
                       {/* MONTAN */}
-                      <td className="p-4 text-xs font-black text-gray-900">{order.amount}</td>
+                      <td className="p-4 text-xs font-black text-gray-900 dark:text-zinc-100">{order.amount}</td>
 
                       {/* BADJ ESTATI */}
                       <td className="p-4">
@@ -269,7 +269,7 @@ const OrdersPage = () => {
                       {/* AKSYON RAPID */}
                       <td className="p-4 text-right pr-6">
                         <div className="inline-flex items-center gap-1">
-                          <button className="p-2 bg-gray-50 hover:bg-gray-100 border border-gray-100 rounded-xl text-gray-500 transition-colors active:scale-95">
+                          <button className="p-2 bg-gray-50 dark:bg-zinc-800 hover:bg-gray-100 dark:hover:bg-zinc-700 border border-gray-100 dark:border-zinc-700 rounded-xl text-gray-500 dark:text-zinc-400 transition-colors active:scale-95">
                             <Eye size={13} />
                           </button>
 
@@ -306,8 +306,8 @@ const OrdersPage = () => {
                 className="p-12 text-center flex flex-col items-center justify-center"
               >
                 <span className="text-2xl">🍽️</span>
-                <h3 className="text-xs font-bold text-gray-700 mt-2">Pa gen okenn kòmand konsa</h3>
-                <p className="text-[10px] text-gray-400 mt-0.5">Eseye chanje filtre a oswa rechèch ou an.</p>
+                <h3 className="text-xs font-bold text-gray-700 dark:text-zinc-300 mt-2">Pa gen okenn kòmand konsa</h3>
+                <p className="text-[10px] text-gray-400 dark:text-zinc-500 mt-0.5">Eseye chanje filtre a oswa rechèch ou an.</p>
               </motion.div>
             )}
           </AnimatePresence>

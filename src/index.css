@@ -19,7 +19,7 @@ body.dark,
 :root.dark,
 .dark {
     color-scheme: dark;
-    background-color: #09090b !important; /* Dark mòd (bg-zinc-950 parfe inifòm) */
+    /* background-color: #09090b !important; Dark mòd (bg-zinc-950 parfe inifòm) */
 }
 
 #root {

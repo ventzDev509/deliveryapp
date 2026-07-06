@@ -4,7 +4,7 @@ import OrdersPage from "./OrdersPage";
 
 const MainOrder = () => {
     return (
-        <div className="min-h-screen bg-gray-50 flex">
+        <div className="min-h-screen bg-gray-50 flex dark:bg-zinc-950 transition-colors duration-300">
             {/* Sidebar Bò Gòch la */}
             <Sidebar />
             

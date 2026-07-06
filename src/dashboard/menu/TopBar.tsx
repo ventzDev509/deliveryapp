@@ -59,7 +59,7 @@ const TopBar = ({ storeName = "Delivery Store" }: TopBarProps) => {
           {/* 1. Bouton Loup pou Mobil sèlman (Klike pou louvri rechèch) */}
           <button 
             onClick={() => setShowMobileSearch(true)}
-            className="md:hidden w-10 h-10 bg-gray-50 border border-gray-100 rounded-xl flex items-center justify-center text-gray-600 hover:bg-orange-50 transition-all active:scale-95 dark:bg-zinc-900 dark:border-zinc-850 dark:text-zinc-400 dark:hover:bg-zinc-800"
+            className="md:hidden w-10 h-10 bg-gray-50 border border-gray-100 rounded-xl flex items-center justify-center text-gray-600 hover:bg-orange-50 transition-all active:scale-95 dark:bg-zinc-900 dark:border-zinc-800 dark:text-zinc-400 dark:hover:bg-zinc-800"
           >
             <Search size={18} />
           </button>
