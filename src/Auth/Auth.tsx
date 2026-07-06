@@ -7,7 +7,11 @@ const AuthPage = () => {
   const [isLogin, setIsLogin] = useState(true);
 
   return (
-    <div className="overflow-hidden">
+    /* 
+      Mwen ajoute min-h-screen pou asire veso a kouvri tout wotè a,
+      ak bg-transparent pou l kite background premium zinc-950 ki sou body a parèt san fay.
+    */
+    <div className="overflow-hidden min-h-screen bg-transparent">
       <AnimatePresence mode="wait">
         {isLogin ? (
           <motion.div

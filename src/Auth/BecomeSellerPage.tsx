@@ -80,7 +80,7 @@ const BecomeSeller = ({ onSuccessClose }: BecomeSellerProps) => {
                     message: 'Nou pa ka jwenn aksè ak lokasyon w. Verifye pèmisyon yo.',
                     type: 'error'
                 });
-                setLoadingLocation(false); // 🔥 Ranje: Kounye a li rele korekteman "setLoadingLocation"
+                setLoadingLocation(false);
             },
             { enableHighAccuracy: true, timeout: 10000 }
         );
@@ -142,7 +142,7 @@ const BecomeSeller = ({ onSuccessClose }: BecomeSellerProps) => {
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: 50 }}
             transition={{ duration: 0.3 }}
-            className="min-h-screen bg-white flex items-center justify-center p-6"
+            className="min-h-screen bg-white dark:bg-zinc-950 flex items-center justify-center p-6 transition-colors duration-300"
         >
             <AnimatePresence>
                 {notification && (
@@ -156,20 +156,25 @@ const BecomeSeller = ({ onSuccessClose }: BecomeSellerProps) => {
             </AnimatePresence>
 
             <div className="w-full max-w-4xl grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-                {/* Imaj bò gòch */}
-                <div className="hidden md:flex justify-center">
-                    <img src={imgAuth} alt="Become Seller" className="w-80 h-80 object-contain" />
+                {/* Imaj bò gòch ak efè glow */}
+                <div className="hidden md:flex justify-center relative group">
+                    <div className="absolute inset-0 bg-orange-500/10 dark:bg-orange-500/5 rounded-full blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                    <img src={imgAuth} alt="Become Seller" className="w-80 h-80 object-contain relative z-10" />
                 </div>
                 
                 {/* Imaj pou telefòn */}
-                <div className="flex justify-center w-36 h-36 m-auto p-4 bg-orange-400 rounded-full md:hidden mb-2">
+                <div className="flex justify-center w-36 h-36 m-auto p-4 bg-orange-400 dark:bg-orange-500/90 rounded-full md:hidden mb-2 shadow-lg shadow-orange-500/20">
                     <img src={imgAuth} alt="Logo" className="object-contain" />
                 </div>
 
                 <div className="w-full max-w-[450px] mx-auto md:mx-0 flex flex-col gap-6">
                     <div className="text-center md:text-left">
-                        <h1 className="text-3xl font-bold text-gray-900 mb-2">Devni Machann.</h1>
-                        <p className="text-gray-500">Voye enfòmasyon ak pyès ou pou admin ka valide biznis ou.</p>
+                        <h1 className="text-3xl font-extrabold text-gray-900 dark:text-zinc-50 tracking-tight mb-2">
+                            Devni Machann.
+                        </h1>
+                        <p className="text-gray-500 dark:text-zinc-400 font-medium">
+                            Voye enfòmasyon ak pyès ou pou admin ka valide biznis ou.
+                        </p>
                     </div>
 
                     <form onSubmit={handleSubmit} className="flex flex-col gap-4">
@@ -180,7 +185,7 @@ const BecomeSeller = ({ onSuccessClose }: BecomeSellerProps) => {
                             value={formData.username}
                             onChange={handleChange}
                             required
-                            className="w-full bg-gray-50 border border-gray-200 text-gray-900 p-4 rounded-lg focus:outline-none focus:border-orange-400 focus:ring-1 focus:ring-orange-400 transition-all"
+                            className="w-full bg-gray-50 border border-gray-200 text-gray-900 p-4 rounded-xl focus:outline-none focus:border-orange-400 focus:ring-1 focus:ring-orange-400 transition-all dark:bg-zinc-900 dark:border-zinc-800/80 dark:text-zinc-100 dark:placeholder-zinc-500 dark:focus:border-orange-500 dark:focus:ring-orange-500"
                         />
 
                         <textarea
@@ -189,7 +194,7 @@ const BecomeSeller = ({ onSuccessClose }: BecomeSellerProps) => {
                             value={formData.bio}
                             onChange={handleChange}
                             rows={2}
-                            className="w-full bg-gray-50 border border-gray-200 text-gray-900 p-4 rounded-lg focus:outline-none focus:border-orange-400 focus:ring-1 focus:ring-orange-400 transition-all resize-none"
+                            className="w-full bg-gray-50 border border-gray-200 text-gray-900 p-4 rounded-xl focus:outline-none focus:border-orange-400 focus:ring-1 focus:ring-orange-400 transition-all resize-none dark:bg-zinc-900 dark:border-zinc-800/80 dark:text-zinc-100 dark:placeholder-zinc-500 dark:focus:border-orange-500 dark:focus:ring-orange-500"
                         />
 
                         <div className="grid grid-cols-2 gap-4">
@@ -200,7 +205,7 @@ const BecomeSeller = ({ onSuccessClose }: BecomeSellerProps) => {
                                 value={formData.phone}
                                 onChange={handleChange}
                                 required
-                                className="w-full bg-gray-50 border border-gray-200 text-gray-900 p-4 rounded-lg focus:outline-none focus:border-orange-400 focus:ring-1 focus:ring-orange-400 transition-all"
+                                className="w-full bg-gray-50 border border-gray-200 text-gray-900 p-4 rounded-xl focus:outline-none focus:border-orange-400 focus:ring-1 focus:ring-orange-400 transition-all dark:bg-zinc-900 dark:border-zinc-800/80 dark:text-zinc-100 dark:placeholder-zinc-500 dark:focus:border-orange-500 dark:focus:ring-orange-500"
                             />
                             <input
                                 type="text"
@@ -209,13 +214,13 @@ const BecomeSeller = ({ onSuccessClose }: BecomeSellerProps) => {
                                 value={formData.location}
                                 onChange={handleChange}
                                 required
-                                className="w-full bg-gray-50 border border-gray-200 text-gray-900 p-4 rounded-lg focus:outline-none focus:border-orange-400 focus:ring-1 focus:ring-orange-400 transition-all"
+                                className="w-full bg-gray-50 border border-gray-200 text-gray-900 p-4 rounded-xl focus:outline-none focus:border-orange-400 focus:ring-1 focus:ring-orange-400 transition-all dark:bg-zinc-900 dark:border-zinc-800/80 dark:text-zinc-100 dark:placeholder-zinc-500 dark:focus:border-orange-500 dark:focus:ring-orange-500"
                             />
                         </div>
 
-                        {/* Blòk Upload Dokiman adaptè ak sijesyon yo */}
-                        <div className="p-4 bg-gray-50 rounded-xl border border-gray-100 flex flex-col gap-2">
-                            <label className="text-xs font-semibold text-gray-700 block uppercase tracking-wide">
+                        {/* Blòk Upload Dokiman Premium */}
+                        <div className="p-4 bg-gray-50 border border-gray-200 rounded-xl flex flex-col gap-2 dark:bg-zinc-900/50 dark:border-zinc-800/80">
+                            <label className="text-xs font-bold text-gray-700 dark:text-zinc-400 block uppercase tracking-wide">
                                 Pyès Idantite oswa Dokiman Biznis
                             </label>
                             
@@ -224,29 +229,28 @@ const BecomeSeller = ({ onSuccessClose }: BecomeSellerProps) => {
                                 accept="image/*,application/pdf"
                                 onChange={handleFileChange}
                                 disabled={uploadingFile || loading}
-                                className="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-orange-50 file:text-orange-700 hover:file:bg-orange-100 cursor-pointer disabled:opacity-50"
+                                className="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-orange-50 file:text-orange-600 hover:file:bg-orange-100 dark:file:bg-zinc-800 dark:file:text-zinc-200 dark:hover:file:bg-zinc-700/80 cursor-pointer disabled:opacity-50"
                             />
 
-                            {/* Ti Gid pou moun nan ka konnen kisa li ka voye */}
-                            <p className="text-[11px] text-gray-400 leading-normal mt-1">
-                                <span className="font-medium text-gray-500">Kisa ki akseptab:</span> Foto klè oswa PDF ki gen swa Patant, NIF konpayi, Kat Idantite Nasyonal (CIN / Elektoral), oswa Pasapò.
+                            <p className="text-[11px] text-gray-400 dark:text-zinc-500 leading-normal mt-1">
+                                <span className="font-semibold text-gray-500 dark:text-zinc-400">Kisa ki akseptab:</span> Foto klè oswa PDF ki gen swa Patant, NIF konpayi, Kat Idantite Nasyonal (CIN), oswa Pasapò.
                             </p>
 
                             {uploadingFile && <p className="text-xs text-orange-400 animate-pulse mt-1">N ap telechaje fichiye a...</p>}
                             {formData.documentUrl && !uploadingFile && (
-                                <p className="text-xs text-green-600 font-medium mt-1">✓ Fichiye pare pou soumèt</p>
+                                <p className="text-xs text-green-600 dark:text-green-500 font-medium mt-1">✓ Fichiye pare pou soumèt</p>
                             )}
                         </div>
 
-                        {/* Blòk Jeolokalizasyon */}
-                        <div className="p-4 bg-gray-50 rounded-xl border border-gray-100 flex flex-col gap-3">
+                        {/* Blòk Jeolokalizasyon Premium */}
+                        <div className="p-4 bg-gray-50 border border-gray-200 rounded-xl flex flex-col gap-3 dark:bg-zinc-900/50 dark:border-zinc-800/80">
                             <div className="flex justify-between items-center">
-                                <div className="text-xs font-semibold text-gray-600">KOWÒDONE GPS BOUTIK</div>
+                                <div className="text-xs font-bold text-gray-600 dark:text-zinc-400 uppercase tracking-wide">Kowòdone GPS Boutik</div>
                                 <button
                                     type="button"
                                     onClick={handleGetLocation}
                                     disabled={loadingLocation}
-                                    className="text-xs bg-orange-400 text-white font-bold py-1.5 px-3 rounded-md hover:bg-orange-500 transition-all disabled:opacity-50"
+                                    className="text-xs bg-orange-400 dark:bg-orange-500 text-white font-bold py-1.5 px-3 rounded-lg hover:bg-orange-500 dark:hover:bg-orange-600 transition-all disabled:opacity-50 shadow-sm shadow-orange-500/10"
                                 >
                                     {loadingLocation ? 'Ap chache...' : '🎯 Pran Lokasyon m'}
                                 </button>
@@ -259,7 +263,7 @@ const BecomeSeller = ({ onSuccessClose }: BecomeSellerProps) => {
                                     value={formData.lat}
                                     onChange={handleChange}
                                     required
-                                    className="w-full bg-white border border-gray-200 text-gray-900 p-3 rounded-lg text-sm focus:outline-none focus:border-orange-400 transition-all"
+                                    className="w-full bg-white border border-gray-200 text-gray-900 p-3 rounded-xl text-sm focus:outline-none focus:border-orange-400 transition-all dark:bg-zinc-900 dark:border-zinc-800 dark:text-zinc-100 dark:focus:border-orange-500"
                                 />
                                 <input
                                     type="text"
@@ -268,7 +272,7 @@ const BecomeSeller = ({ onSuccessClose }: BecomeSellerProps) => {
                                     value={formData.lng}
                                     onChange={handleChange}
                                     required
-                                    className="w-full bg-white border border-gray-200 text-gray-900 p-3 rounded-lg text-sm focus:outline-none focus:border-orange-400 transition-all"
+                                    className="w-full bg-white border border-gray-200 text-gray-900 p-3 rounded-xl text-sm focus:outline-none focus:border-orange-400 transition-all dark:bg-zinc-900 dark:border-zinc-800 dark:text-zinc-100 dark:focus:border-orange-500"
                                 />
                             </div>
                         </div>
@@ -276,7 +280,7 @@ const BecomeSeller = ({ onSuccessClose }: BecomeSellerProps) => {
                         <button
                             type="submit"
                             disabled={loading || uploadingFile}
-                            className="w-full bg-orange-400 text-white font-bold py-4 rounded-lg hover:bg-orange-500 transition-all shadow-md disabled:opacity-70 flex items-center justify-center mt-2"
+                            className="w-full bg-orange-400 dark:bg-orange-500 text-white font-bold py-4 rounded-xl hover:bg-orange-500 dark:hover:bg-orange-600 transition-all shadow-md shadow-orange-500/10 dark:shadow-orange-500/20 disabled:opacity-70 flex items-center justify-center mt-2"
                         >
                             {loading ? <WhiteLoader size={24} /> : 'Voye Demand Verifikasyon'}
                         </button>

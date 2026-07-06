@@ -4,9 +4,17 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    
+    <!-- Theme Color pou Light Mòd (Blan - bg-white) -->
+    <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
+    
+    <!-- Theme Color pou Dark Mòd (Nwa - bg-zinc-950) -->
+    <meta name="theme-color" content="#09090b" media="(prefers-color-scheme: dark)" />
+
     <title>myapp</title>
   </head>
-  <body>
+ 
+  <body class="bg-white text-gray-900 dark:bg-zinc-950 dark:text-zinc-50 min-h-screen transition-colors duration-300">
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

@@ -7,11 +7,11 @@ import { useAuth } from '../Contexts/AuthContext';
 const VerificationSuccess = () => {
     const [searchParams] = useSearchParams();
     const token = searchParams.get('token');
-    const { confirmEmail, } = useAuth();
+    const { confirmEmail } = useAuth();
     const navigate = useNavigate();
 
     const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading');
-    const [message, setMessage] = useState('Nap verifye enfòmasyon ou yo...');
+    const [message, setMessage] = useState('N ap verifye enfòmasyon ou yo...');
 
     useEffect(() => {
         const verify = async () => {
@@ -38,7 +38,7 @@ const VerificationSuccess = () => {
                     return;
                 }
 
-                // 3. SI SE KA KONFIMASYON IMÈL NÒMAL LA (Kòd orijinal ou an)
+                // SI SE KA KONFIMASYON IMÈL NÒMAL LA
                 await confirmEmail(token);
                 setStatus('success');
                 setMessage('Mèsi! Kont ou aktive avèk siksè.');
@@ -54,47 +54,59 @@ const VerificationSuccess = () => {
     }, [token, confirmEmail, searchParams, navigate]);
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-50 p-6">
+        /* Veso a transparan pou pwofite background body a, ak tranzisyon dous */
+        <div className="min-h-screen flex items-center justify-center bg-transparent p-6 transition-colors duration-300">
             <motion.div
-                initial={{ opacity: 0, scale: 0.9 }}
+                initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
-                className="max-w-md w-full bg-white rounded-3xl shadow-sm p-10 text-center"
+                transition={{ duration: 0.3 }}
+                className="max-w-md w-full bg-white dark:bg-zinc-900/40 dark:border-zinc-800/80 backdrop-blur-xl rounded-[2rem] border border-gray-100 shadow-sm p-10 text-center"
             >
+                {/* ETAP 1: LOADING STATUS */}
                 {status === 'loading' && (
-                    <div className="flex flex-col items-center">
-                        <Loader2 className="animate-spin text-orange-500 mb-6" size={40} />
-                        <h1 className="text-xl font-bold text-gray-900">Tanpri tann...</h1>
+                    <div className="flex flex-col items-center py-4">
+                        <Loader2 className="animate-spin text-orange-400 dark:text-orange-500 mb-6" size={44} strokeWidth={2} />
+                        <h1 className="text-2xl font-extrabold text-gray-900 dark:text-zinc-50 tracking-tight mb-2">Tanpri tann...</h1>
+                        <p className="text-gray-500 dark:text-zinc-400 font-medium">{message}</p>
                     </div>
                 )}
 
+                {/* ETAP 2: SUCCESS STATUS */}
                 {status === 'success' && (
-                    <>
-                        <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                            <CheckCircle className="text-green-500" size={40} />
+                    <div className="flex flex-col items-center">
+                        <div className="w-20 h-20 bg-green-50 dark:bg-green-500/10 text-green-500 dark:text-green-400 rounded-full flex items-center justify-center mb-6 shadow-sm">
+                            <CheckCircle size={40} strokeWidth={1.5} />
                         </div>
-                        <h1 className="text-2xl font-bold text-gray-900 mb-2">Siksè!</h1>
-                        <p className="text-gray-600 mb-8">{message}</p>
+                        <h1 className="text-2xl font-extrabold text-gray-900 dark:text-zinc-50 tracking-tight mb-2">Siksè!</h1>
+                        <p className="text-gray-500 dark:text-zinc-400 mb-8 font-medium leading-relaxed">{message}</p>
 
                         {/* Se sèlman si se pa Google pou bouton an parèt, paske Google ap redirije otomatik */}
                         {!localStorage.getItem('token') && (
-                            <Link to="/auth" className="block w-full bg-orange-500 text-white font-bold py-4 rounded-xl hover:bg-orange-600 transition-all">
+                            <Link 
+                                to="/auth" 
+                                className="block w-full bg-orange-400 dark:bg-orange-500 text-white font-bold py-4 rounded-xl hover:bg-orange-500 dark:hover:bg-orange-600 transition-all shadow-md shadow-orange-500/10 dark:shadow-orange-500/20"
+                            >
                                 Konekte koulye a
                             </Link>
                         )}
-                    </>
+                    </div>
                 )}
 
+                {/* ETAP 3: ERROR STATUS */}
                 {status === 'error' && (
-                    <>
-                        <div className="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                            <XCircle className="text-red-500" size={40} />
+                    <div className="flex flex-col items-center">
+                        <div className="w-20 h-20 bg-red-50 dark:bg-red-500/10 text-red-500 dark:text-red-400 rounded-full flex items-center justify-center mb-6 shadow-sm">
+                            <XCircle size={40} strokeWidth={1.5} />
                         </div>
-                        <h1 className="text-2xl font-bold text-gray-900 mb-2">Echwe</h1>
-                        <p className="text-gray-600 mb-8">{message}</p>
-                        <Link to="/auth" className="block w-full bg-gray-900 text-white font-bold py-4 rounded-xl hover:bg-gray-800 transition-all">
+                        <h1 className="text-2xl font-extrabold text-gray-900 dark:text-zinc-50 tracking-tight mb-2">Echwe</h1>
+                        <p className="text-gray-500 dark:text-zinc-400 mb-8 font-medium leading-relaxed">{message}</p>
+                        <Link 
+                            to="/auth" 
+                            className="block w-full bg-gray-900 text-white dark:bg-zinc-100 dark:text-zinc-900 font-bold py-4 rounded-xl hover:bg-gray-800 dark:hover:bg-zinc-200 transition-all shadow-md shadow-gray-900/10 dark:shadow-none"
+                        >
                             Retounen nan koneksyon
                         </Link>
-                    </>
+                    </div>
                 )}
             </motion.div>
         </div>

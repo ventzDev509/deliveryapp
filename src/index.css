@@ -1,4 +1,33 @@
+/* ==========================================
+   1. GLOBAL SYSTEM THEME (:ROOT)
+   ========================================== */
+:root {
+  color-scheme: light;
+}
 
-#root{
-    background-color: white;
+/* Lè klas .dark la sou HTML oswa Body */
+html.dark, :root.dark, .dark {
+  color-scheme: dark;
+}
+
+/* ==========================================
+   2. AUTOFILL CUSTOMIZATION (LIGHT & DARK MODE)
+   ========================================== */
+
+/* Pou Light Mòd (Pa defo) */
+input:-webkit-autofill,
+input:-webkit-autofill:hover, 
+input:-webkit-autofill:focus {
+  color-scheme: light;
+  -webkit-box-shadow: 0 0 0px 1000px #f9fafb inset !important; /* bg-gray-50 */
+  -webkit-text-fill-color: #111827 !important; /* text-gray-900 */
+}
+
+/* Pou Dark Mòd (Lè gen klas .dark anlè input lan) */
+.dark input:-webkit-autofill,
+.dark input:-webkit-autofill:hover, 
+.dark input:-webkit-autofill:focus {
+  color-scheme: dark;
+  -webkit-box-shadow: 0 0 0px 1000px #18181b inset !important; /* bg-zinc-900 */
+  -webkit-text-fill-color: #f4f4f5 !important; /* text-zinc-100 */
 }
