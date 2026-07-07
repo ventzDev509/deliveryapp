@@ -95,12 +95,45 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         }
     };
 
+    // Asire w interfaces ou yo deklare konsa oswa menm jan an:
+
+
     const becomeSeller = async (payload: BecomeSellerPayload): Promise<void> => {
         try {
-            const res = await api.patch<User>('/auth/become-seller', payload);
+            // 1. Kreye yon objè FormData pou ka jere fichye yo
+            const formData = new FormData();
+
+            // 2. Ajoute chan tèks yo ladan l
+            formData.append('username', payload.username);
+            if (payload.bio) {
+                formData.append('bio', payload.bio);
+            }
+            formData.append('location', payload.location);
+            formData.append('lat', String(payload.lat));
+            formData.append('lng', String(payload.lng));
+            formData.append('phone', payload.phone);
+
+
+            if (payload.documents && payload.documents.length > 0) {
+                payload.documents.forEach((file) => {
+                    formData.append('documents', file);
+                });
+            } else {
+                throw new Error("Ou dwe chwazi omwen yon dokiman validasyon.");
+            }
+            console.log(Object.fromEntries(formData.entries()));
+            // 4. Voye requet la bay backend la ak Headers multipart/form-data
+            const res = await api.patch<User>('/auth/become-seller', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            });
+
+            // 5. Mete eta user a ajou ak nouvo pwofil la
             setUser(res.data);
+
         } catch (error: any) {
-            throw error.response?.data || { message: "Erè ajou wòl itilizatè." };
+            throw error.response?.data || { message: error.message || "Erè ajou wòl itilizatè." };
         }
     };
 

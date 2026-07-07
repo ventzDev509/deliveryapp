@@ -29,12 +29,12 @@ export interface AuthResponse {
 
 export interface BecomeSellerPayload {
   username: string;
-  bio?: string;
+  bio?: string; 
   location: string;
   lat: number;
   lng: number;
   phone: string;
-  documentUrl: string;
+  documents: File[];
 }
 
 
@@ -45,7 +45,7 @@ export interface AuthContextType {
     login: (credentials: any) => Promise<AuthResponse>;
     register: (data: any) => Promise<AuthResponse>;
     logout: () => void;
-    becomeSeller: (payload:BecomeSellerPayload) => Promise<void>;
+    becomeSeller: (payload: BecomeSellerPayload) => Promise<void>;
     loginWithGoogle: () => void;
     confirmEmail: (token: string) => Promise<AuthResponse>;
     forgotPassword: (email: string) => Promise<AuthResponse>;

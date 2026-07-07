@@ -13,6 +13,7 @@ import MainRestaurantSetting from './dashboard/pages/RestaurantSetting/MainRSett
 import MainDriver from './dashboard/pages/DriverPage/MainDriver';
 import BecomeSellerPage from './Auth/BecomeSellerPage';
 import { useEffect } from 'react';
+import AdminValidations from './dashboard/Admin/MainAdmin';
 function App() {
   useEffect(() => {
     // 1. Nou kreye yon detektè pou n koute sistèm telefòn nan
@@ -66,6 +67,9 @@ function App() {
         <Route path="/restaurants" element={<MainMenu />} />
         <Route path="/settings" element={<MainRestaurantSetting />} />
         <Route path="/driver" element={<MainDriver />} />
+
+        {/* Admin */}
+          <Route path="/admin-validation" element={<AdminValidations />} />
 
       </Routes>
     </Router>

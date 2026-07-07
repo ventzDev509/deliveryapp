@@ -15,9 +15,11 @@ const BecomeSeller = ({ onSuccessClose }: BecomeSellerProps) => {
     
     const [loading, setLoading] = useState(false);
     const [loadingLocation, setLoadingLocation] = useState(false);
-    const [uploadingFile, setUploadingFile] = useState(false);
     const [notification, setNotification] = useState<{ message: string, type: 'error' | 'success' } | null>(null);
     
+    // 1. Kreye yon eta separe pou n kenbe lis fichye yo chwazi yo
+    const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+
     const [formData, setFormData] = useState({
         username: '',
         bio: '',
@@ -25,31 +27,20 @@ const BecomeSeller = ({ onSuccessClose }: BecomeSellerProps) => {
         lat: '',
         lng: '',
         phone: '',
-        documentUrl: '', 
     });
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
-    const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0];
-        if (!file) return;
-
-        setUploadingFile(true);
-        setNotification(null);
-
-        try {
-            // 🚨 RANPLASE BLÒK SA A AK LOGIK UPLOAD PA W LA (Cloudinary, AWS S3, etc.)
-            await new Promise((resolve) => setTimeout(resolve, 2000));
-            const mockUrl = `https://bous-ak-dokiman-ou.com/uploads/${file.name}`;
-
-            setFormData((prev) => ({ ...prev, documentUrl: mockUrl }));
-            setNotification({ message: 'Dokiman an telechaje avèk siksè!', type: 'success' });
-        } catch (error) {
-            setNotification({ message: 'Erè lè n ap telechaje dokiman an. Rele ankò.', type: 'error' });
-        } finally {
-            setUploadingFile(false);
+    // 2. Ranmase tout fichye yo chwazi yo epi mete yo nan array a
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files && e.target.files.length > 0) {
+            const filesArray = Array.from(e.target.files);
+            setSelectedFiles(filesArray);
+            setNotification({ message: `${filesArray.length} dokiman pare pou soumèt!`, type: 'success' });
+        } else {
+            setSelectedFiles([]);
         }
     };
 
@@ -80,7 +71,7 @@ const BecomeSeller = ({ onSuccessClose }: BecomeSellerProps) => {
                     message: 'Nou pa ka jwenn aksè ak lokasyon w. Verifye pèmisyon yo.',
                     type: 'error'
                 });
-                setLoadingLocation(false);
+                loadingLocation && setLoadingLocation(false);
             },
             { enableHighAccuracy: true, timeout: 10000 }
         );
@@ -90,13 +81,16 @@ const BecomeSeller = ({ onSuccessClose }: BecomeSellerProps) => {
         e.preventDefault();
         setLoading(true);
         setNotification(null);
+        alert(formData.lat)
 
-        if (!formData.username || !formData.location || !formData.phone || !formData.lat || !formData.lng || !formData.documentUrl) {
-            setNotification({ message: 'Tanpri ranpli tout chan yo epi ajoute pyès idantite w.', type: 'error' });
+        // 3. Validasyon: tcheke si tout chan yo akompli epi si gen fichye
+        if (!formData.username || !formData.location || !formData.phone || !formData.lat || !formData.lng || selectedFiles.length === 0) {
+            setNotification({ message: 'Tanpri ranpli tout chan yo epi ajoute omwen yon dokiman.', type: 'error' });
             setLoading(false);
             return;
         }
 
+        // 4. Prepare nouvo payload la ak tablo fichye yo
         const payload: BecomeSellerPayload = {
             username: formData.username,
             bio: formData.bio || undefined,
@@ -104,14 +98,15 @@ const BecomeSeller = ({ onSuccessClose }: BecomeSellerProps) => {
             lat: parseFloat(formData.lat),
             lng: parseFloat(formData.lng),
             phone: formData.phone,
-            documentUrl: formData.documentUrl,
+            documents: selectedFiles,
         };
 
         try {
             await becomeSeller(payload);
 
             setNotification({ message: 'Demann ou an voye avèk siksè! Admin pral verifye l talè.', type: 'success' });
-            setFormData({ username: '', bio: '', location: '', lat: '', lng: '', phone: '', documentUrl: '' });
+            setFormData({ username: '', bio: '', location: '', lat: '', lng: '', phone: '' });
+            setSelectedFiles([]);
             
             if (onSuccessClose) {
                 setTimeout(onSuccessClose, 2500);
@@ -156,13 +151,11 @@ const BecomeSeller = ({ onSuccessClose }: BecomeSellerProps) => {
             </AnimatePresence>
 
             <div className="w-full max-w-4xl grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-                {/* Imaj bò gòch ak efè glow */}
                 <div className="hidden md:flex justify-center relative group">
                     <div className="absolute inset-0 bg-orange-500/10 dark:bg-orange-500/5 rounded-full blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                     <img src={imgAuth} alt="Become Seller" className="w-80 h-80 object-contain relative z-10" />
                 </div>
                 
-                {/* Imaj pou telefòn */}
                 <div className="flex justify-center w-36 h-36 m-auto p-4 bg-orange-400 dark:bg-orange-500/90 rounded-full md:hidden mb-2 shadow-lg shadow-orange-500/20">
                     <img src={imgAuth} alt="Logo" className="object-contain" />
                 </div>
@@ -218,17 +211,18 @@ const BecomeSeller = ({ onSuccessClose }: BecomeSellerProps) => {
                             />
                         </div>
 
-                        {/* Blòk Upload Dokiman Premium */}
+                        {/* Blòk Seleksyon Dokiman */}
                         <div className="p-4 bg-gray-50 border border-gray-200 rounded-xl flex flex-col gap-2 dark:bg-zinc-900/50 dark:border-zinc-800/80">
                             <label className="text-xs font-bold text-gray-700 dark:text-zinc-400 block uppercase tracking-wide">
-                                Pyès Idantite oswa Dokiman Biznis
+                                Pyès Idantite oswa Dokiman Biznis (Ou ka chwazi plizyè)
                             </label>
                             
                             <input
                                 type="file"
                                 accept="image/*,application/pdf"
+                                multiple // 👈 Pèmèt itilizatè a chwazi plizyè fichye ansanm
                                 onChange={handleFileChange}
-                                disabled={uploadingFile || loading}
+                                disabled={loading}
                                 className="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-orange-50 file:text-orange-600 hover:file:bg-orange-100 dark:file:bg-zinc-800 dark:file:text-zinc-200 dark:hover:file:bg-zinc-700/80 cursor-pointer disabled:opacity-50"
                             />
 
@@ -236,13 +230,19 @@ const BecomeSeller = ({ onSuccessClose }: BecomeSellerProps) => {
                                 <span className="font-semibold text-gray-500 dark:text-zinc-400">Kisa ki akseptab:</span> Foto klè oswa PDF ki gen swa Patant, NIF konpayi, Kat Idantite Nasyonal (CIN), oswa Pasapò.
                             </p>
 
-                            {uploadingFile && <p className="text-xs text-orange-400 animate-pulse mt-1">N ap telechaje fichiye a...</p>}
-                            {formData.documentUrl && !uploadingFile && (
-                                <p className="text-xs text-green-600 dark:text-green-500 font-medium mt-1">✓ Fichiye pare pou soumèt</p>
+                            {selectedFiles.length > 0 && (
+                                <div className="mt-2 text-xs text-green-600 dark:text-green-400 font-medium flex flex-col gap-1">
+                                    <p>✓ {selectedFiles.length} fichye pare pou telechaje sou Firebase.</p>
+                                    <ul className="list-disc pl-4 text-gray-500 dark:text-zinc-400 text-[11px]">
+                                        {selectedFiles.map((f, i) => (
+                                            <li key={i} className="truncate max-w-[350px]">{f.name}</li>
+                                        ))}
+                                    </ul>
+                                </div>
                             )}
                         </div>
 
-                        {/* Blòk Jeolokalizasyon Premium */}
+                        {/* Blòk Jeolokalizasyon */}
                         <div className="p-4 bg-gray-50 border border-gray-200 rounded-xl flex flex-col gap-3 dark:bg-zinc-900/50 dark:border-zinc-800/80">
                             <div className="flex justify-between items-center">
                                 <div className="text-xs font-bold text-gray-600 dark:text-zinc-400 uppercase tracking-wide">Kowòdone GPS Boutik</div>
@@ -279,7 +279,7 @@ const BecomeSeller = ({ onSuccessClose }: BecomeSellerProps) => {
 
                         <button
                             type="submit"
-                            disabled={loading || uploadingFile}
+                            disabled={loading || selectedFiles.length === 0}
                             className="w-full bg-orange-400 dark:bg-orange-500 text-white font-bold py-4 rounded-xl hover:bg-orange-500 dark:hover:bg-orange-600 transition-all shadow-md shadow-orange-500/10 dark:shadow-orange-500/20 disabled:opacity-70 flex items-center justify-center mt-2"
                         >
                             {loading ? <WhiteLoader size={24} /> : 'Voye Demand Verifikasyon'}

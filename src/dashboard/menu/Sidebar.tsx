@@ -1,13 +1,14 @@
 import { NavLink } from 'react-router-dom';
-import { LayoutDashboard, ShoppingBag, Utensils, Heart, Settings, LogOut,CarTaxiFront } from 'lucide-react';
+import { LayoutDashboard, ShoppingBag,User2, Utensils, Settings, LogOut, CarTaxiFront } from 'lucide-react';
 
 const menuItems = [
   { name: 'Dashboard', icon: LayoutDashboard, path: '/dashboard' },
   { name: 'Kòmand', icon: ShoppingBag, path: '/orders' },
   { name: 'Restoran', icon: Utensils, path: '/restaurants' },
-  { name: 'Favori', icon: Heart, path: '/favorites' },
-  { name: 'Anviwònman', icon: Settings, path: '/settings' },
+  { name: 'Admin', icon: User2, path: '/admin-validation' },
   { name: 'Livre', icon: CarTaxiFront, path: '/driver' },
+  { name: 'Anviwònman', icon: Settings, path: '/settings' },
+
 ];
 
 const Sidebar = () => {
@@ -27,10 +28,9 @@ const Sidebar = () => {
                 key={item.name}
                 to={item.path}
                 className={({ isActive }) =>
-                  `flex items-center gap-4 px-4 py-3 rounded-xl transition-all ${
-                    isActive 
-                      ? 'bg-orange-50 text-orange-600 dark:bg-orange-500/10 dark:text-orange-400' 
-                      : 'text-gray-500 hover:bg-gray-50 dark:text-zinc-400 dark:hover:bg-zinc-900/50'
+                  `flex items-center gap-4 px-4 py-3 rounded-xl transition-all ${isActive
+                    ? 'bg-orange-50 text-orange-600 dark:bg-orange-500/10 dark:text-orange-400'
+                    : 'text-gray-500 hover:bg-gray-50 dark:text-zinc-400 dark:hover:bg-zinc-900/50'
                   }`
                 }
               >
@@ -61,8 +61,7 @@ const Sidebar = () => {
             key={item.name}
             to={item.path}
             className={({ isActive }) =>
-              `flex flex-col items-center gap-1 p-2 ${
-                isActive ? 'text-orange-500 dark:text-orange-400' : 'text-gray-400 dark:text-zinc-500'
+              `flex flex-col items-center gap-1 p-2 ${isActive ? 'text-orange-500 dark:text-orange-400' : 'text-gray-400 dark:text-zinc-500'
               }`
             }
           >
