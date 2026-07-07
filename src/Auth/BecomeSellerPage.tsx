@@ -81,7 +81,6 @@ const BecomeSeller = ({ onSuccessClose }: BecomeSellerProps) => {
         e.preventDefault();
         setLoading(true);
         setNotification(null);
-        alert(formData.lat)
 
         // 3. Validasyon: tcheke si tout chan yo akompli epi si gen fichye
         if (!formData.username || !formData.location || !formData.phone || !formData.lat || !formData.lng || selectedFiles.length === 0) {

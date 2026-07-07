@@ -50,9 +50,9 @@ const MAP_BOUNDS = {
 };
 
 // Pri fiks pou baz livrezon ($HTG oswa $USD) + Pri pa distans
-const BASE_DELIVERY_FEE = 50; 
+const BASE_DELIVERY_FEE = 50;
 
-export default function DeliveryDashboard() {
+export default function TrackingDeliveryMap() {
   // ==========================================
   // STATE MANAGEMENT
   // ==========================================
@@ -94,17 +94,15 @@ export default function DeliveryDashboard() {
     const totalLng = MAP_BOUNDS.maxLng - MAP_BOUNDS.minLng;
 
     const x = ((coords.lng - MAP_BOUNDS.minLng) / totalLng) * 100;
-    const y = ((MAP_BOUNDS.maxLat - coords.lat) / totalLat) * 100; 
+    const y = ((MAP_BOUNDS.maxLat - coords.lat) / totalLat) * 100;
 
     return { x: Math.max(2, Math.min(98, x)), y: Math.max(2, Math.min(98, y)) };
   };
 
-  // Kalkile distans senp ant de pwen (Pythagore kòm estimasyon rapid)
   const calculateDistance = (p1: Coords, p2: Coords) => {
     return Math.sqrt(Math.pow(p1.lat - p2.lat, 2) + Math.pow(p1.lng - p2.lng, 2));
   };
 
-  // Lerp: liy dwat ant de pwen pou deplasman an smooth
   const lerp = (start: number, end: number, amt: number) => {
     return (1 - amt) * start + amt * end;
   };
@@ -116,14 +114,15 @@ export default function DeliveryDashboard() {
     const interval = setInterval(() => {
       setDrivers((prevDrivers) =>
         prevDrivers.map((driver) => {
+          // 1. Nou defini kalite a klèman isit la pou evite erè a
           if (driver.status === 'idling' || driver.status === 'completed') return driver;
 
           let targetCoords: Coords;
-          let newStatus = driver.status;
+          // Nou presize tip pou newStatus la
+          let newStatus: 'idling' | 'going_to_restaurant' | 'going_to_client' | 'completed' = driver.status;
           let updatedQueue = [...driver.routeQueue];
           let updatedDeliveries = [...driver.currentDeliveries];
 
-          // 1. Detèmine kote l ap prale (Restoran an premye, apre sa Kliyan yo nan fil la)
           if (driver.status === 'going_to_restaurant' && driver.restaurantCoords) {
             targetCoords = driver.restaurantCoords;
           } else if (driver.status === 'going_to_client' && updatedQueue.length > 0) {
@@ -133,49 +132,37 @@ export default function DeliveryDashboard() {
           }
 
           const dist = calculateDistance(driver.currentCoords, targetCoords);
-          
-          // Kalkile ETA live: Distans ki rete / vitès * koefisyan tan fiktif
           const etaCalculated = Math.ceil((dist / driver.speed) * 1.5);
 
-          // Si li rive trè pre destinasyon an (Tolerans)
           if (dist < 0.001) {
             if (driver.status === 'going_to_restaurant') {
-              // Li rive nan restoran an, kounye a li pral livre premye kliyan nan keu a
               newStatus = 'going_to_client';
             } else if (driver.status === 'going_to_client') {
-              // Li fin livre kliyan ki nan tèt fil la (Queue)
-              const finLivre = updatedQueue.shift(); 
-              
-              // Mete ajou Panel Estatistik pou kòmand sa a ki fin livre
+              const finLivre = updatedQueue.shift();
+
               if (finLivre) {
-                setStats(prev => ({
+                setStats((prev) => ({
                   ...prev,
                   enRoute: Math.max(0, prev.enRoute - 1),
                   completed: prev.completed + 1,
-                  revenue: prev.revenue + BASE_DELIVERY_FEE + Math.floor(driver.speed * 1000) // Pri varyab
+                  revenue: prev.revenue + BASE_DELIVERY_FEE + Math.floor(driver.speed * 1000),
                 }));
-                updatedDeliveries = updatedDeliveries.filter(id => id !== finLivre.id);
+                updatedDeliveries = updatedDeliveries.filter((id) => id !== finLivre.id);
               }
 
-              // Si toujou gen yon dezyèm kliyan nan double livrezon an
-              if (updatedQueue.length > 0) {
-                newStatus = 'going_to_client';
-              } else {
-                // newStatus = 'completed' ;
-              }
+              newStatus = updatedQueue.length > 0 ? 'going_to_client' : 'completed';
             }
 
             return {
               ...driver,
               currentCoords: targetCoords,
-              status: newStatus,
+              status: newStatus, // Kounye a li aksepte "completed" paske nou defini tip la anlè
               routeQueue: updatedQueue,
               currentDeliveries: updatedDeliveries,
-              etaMinutes: 0
+              etaMinutes: 0,
             };
           }
 
-          // Si li poko rive, n ap kontinye fè l mache dwat vè target la
           const nextLat = lerp(driver.currentCoords.lat, targetCoords.lat, driver.speed);
           const nextLng = lerp(driver.currentCoords.lng, targetCoords.lng, driver.speed);
 
@@ -183,7 +170,7 @@ export default function DeliveryDashboard() {
             ...driver,
             currentCoords: { lat: nextLat, lng: nextLng },
             status: newStatus,
-            etaMinutes: etaCalculated
+            etaMinutes: etaCalculated,
           };
         })
       );
@@ -201,7 +188,6 @@ export default function DeliveryDashboard() {
     const resto = nodes.find((n) => n.id === selectedRestoId);
     if (!resto) return;
 
-    // Jwenn chofè ki lib (idling oswa completed)
     const availableDriver = drivers.find((d) => d.status === 'idling' || d.status === 'completed');
 
     if (!availableDriver) {
@@ -209,7 +195,6 @@ export default function DeliveryDashboard() {
       return;
     }
 
-    // Kreye nouvo kliyan 1
     const orderId1 = `K-${Date.now()}-1`;
     const newKliyan1: NodeItem = {
       id: orderId1,
@@ -224,7 +209,6 @@ export default function DeliveryDashboard() {
     let newNodes = [newKliyan1];
     let kòmandKonte = 1;
 
-    // Si se yon double livrezon (Batching), kreye dezyèm kliyan an tou
     if (isDoubleOrder) {
       const orderId2 = `K-${Date.now()}-2`;
       const newKliyan2: NodeItem = {
@@ -237,30 +221,26 @@ export default function DeliveryDashboard() {
       newNodes.push(newKliyan2);
       kòmandKonte = 2;
 
-      // Mete ajou estatistik pou nouvo batch la
       setStats(prev => ({ ...prev, batchedCount: prev.batchedCount + 1 }));
     }
 
-    // Ajoute kliyan yo sou kat la
     setNodes((prev) => [...prev, ...newNodes]);
 
-    // Bay chofè a kòmand lan ak lis rout li a
     setDrivers((prevDrivers) =>
       prevDrivers.map((d) =>
         d.id === availableDriver.id
           ? {
-              ...d,
-              status: 'going_to_restaurant',
-              restaurantCoords: resto.coords,
-              restaurantName: resto.name,
-              routeQueue: queueList,
-              currentDeliveries: queueList.map(q => q.id),
-            }
+            ...d,
+            status: 'going_to_restaurant',
+            restaurantCoords: resto.coords,
+            restaurantName: resto.name,
+            routeQueue: queueList,
+            currentDeliveries: queueList.map(q => q.id),
+          }
           : d
       )
     );
 
-    // Mete ajou estatistik en route yo
     setStats((prev) => ({
       ...prev,
       enRoute: prev.enRoute + kòmandKonte,
@@ -268,105 +248,106 @@ export default function DeliveryDashboard() {
   };
 
   return (
-    <div style={{ fontFamily: 'sans-serif', padding: '20px', backgroundColor: '#f4f6f9', minHeight: '100vh' }}>
-      <h1 style={{ color: '#1e293b', marginBottom: '5px' }}>H-Mizik Delivery Live Engine</h1>
-      <p style={{ color: '#64748b', marginTop: '0', marginBottom: '20px' }}>Simulation Multi-Restoran, Double Livrezon ak ETA an tan reyèl.</p>
+    <div style={{ fontFamily: 'system-ui, sans-serif', padding: '24px', backgroundColor: '#09090b', color: '#fafafa', minHeight: '100vh' }}>
+      <h1 style={{ color: '#f4f4f5', marginBottom: '4px', fontSize: '26px', fontWeight: 700, letterSpacing: '-0.02em' }}>H-Mizik Delivery Live Engine</h1>
+      <p style={{ color: '#a1a1aa', marginTop: '0', marginBottom: '32px', fontSize: '14px' }}>Simulation Multi-Restoran, Double Livrezon ak ETA an tan reyèl.</p>
 
-      {/* BLOCK 1: PANEL ESTATISTIK LIVE */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '15px', marginBottom: '25px' }}>
-        <div style={{ backgroundColor: '#fff', padding: '15px', borderRadius: '8px', boxShadow: '0 2px 4px rgba(0,0,0,0.05)', borderLeft: '4px solid #3b82f6' }}>
-          <div style={{ fontSize: '12px', color: '#64748b', fontWeight: 'bold', textTransform: 'uppercase' }}>Kòmand En Route</div>
-          <div style={{ fontSize: '24px', fontWeight: 'bold', color: '#1e293b', marginTop: '5px' }}>{stats.enRoute}</div>
+      {/* BLOCK 1: PANEL ESTATISTIK LIVE (ZINC CARD STYLE) */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '16px', marginBottom: '32px' }}>
+        <div style={{ backgroundColor: '#18181b', padding: '20px', borderRadius: '8px', border: '1px solid #27272a' }}>
+          <div style={{ fontSize: '12px', color: '#71717a', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Kòmand En Route</div>
+          <div style={{ fontSize: '32px', fontWeight: '700', color: '#f4f4f5', marginTop: '6px', letterSpacing: '-0.03em' }}>{stats.enRoute}</div>
         </div>
-        <div style={{ backgroundColor: '#fff', padding: '15px', borderRadius: '8px', boxShadow: '0 2px 4px rgba(0,0,0,0.05)', borderLeft: '4px solid #10b981' }}>
-          <div style={{ fontSize: '12px', color: '#64748b', fontWeight: 'bold', textTransform: 'uppercase' }}>Kòmand Fin Livre</div>
-          <div style={{ fontSize: '24px', fontWeight: 'bold', color: '#1e293b', marginTop: '5px' }}>{stats.completed}</div>
+        <div style={{ backgroundColor: '#18181b', padding: '20px', borderRadius: '8px', border: '1px solid #27272a' }}>
+          <div style={{ fontSize: '12px', color: '#71717a', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Kòmand Fin Livre</div>
+          <div style={{ fontSize: '32px', fontWeight: '700', color: '#f4f4f5', marginTop: '6px', letterSpacing: '-0.03em' }}>{stats.completed}</div>
         </div>
-        <div style={{ backgroundColor: '#fff', padding: '15px', borderRadius: '8px', boxShadow: '0 2px 4px rgba(0,0,0,0.05)', borderLeft: '4px solid #f59e0b' }}>
-          <div style={{ fontSize: '12px', color: '#64748b', fontWeight: 'bold', textTransform: 'uppercase' }}>Revni Total Live</div>
-          <div style={{ fontSize: '24px', fontWeight: 'bold', color: '#1e293b', marginTop: '5px' }}>{stats.revenue} HTG</div>
+        <div style={{ backgroundColor: '#18181b', padding: '20px', borderRadius: '8px', border: '1px solid #27272a' }}>
+          <div style={{ fontSize: '12px', color: '#71717a', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Revni Total Live</div>
+          <div style={{ fontSize: '32px', fontWeight: '700', color: '#e4e4e7', marginTop: '6px', letterSpacing: '-0.03em' }}>{stats.revenue} HTG</div>
         </div>
-        <div style={{ backgroundColor: '#fff', padding: '15px', borderRadius: '8px', boxShadow: '0 2px 4px rgba(0,0,0,0.05)', borderLeft: '4px solid #8b5cf6' }}>
-          <div style={{ fontSize: '12px', color: '#64748b', fontWeight: 'bold', textTransform: 'uppercase' }}>Double Livrezon (Batch)</div>
-          <div style={{ fontSize: '24px', fontWeight: 'bold', color: '#1e293b', marginTop: '5px' }}>{stats.batchedCount}</div>
+        <div style={{ backgroundColor: '#18181b', padding: '20px', borderRadius: '8px', border: '1px solid #27272a' }}>
+          <div style={{ fontSize: '12px', color: '#71717a', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Double Livrezon (Batch)</div>
+          <div style={{ fontSize: '32px', fontWeight: '700', color: '#e4e4e7', marginTop: '6px', letterSpacing: '-0.03em' }}>{stats.batchedCount}</div>
         </div>
       </div>
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-        
-        {/* INTERACTIVE CONTROLS */}
-        <div style={{ backgroundColor: '#fff', padding: '20px', borderRadius: '8px', boxShadow: '0 2px 4px rgba(0,0,0,0.05)' }}>
-          <h3 style={{ marginTop: '0', color: '#334155' }}>Lanse yon Simulasyon Livrezon</h3>
-          
-          <form onSubmit={handleSimulateOrder} style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+
+        {/* INTERACTIVE CONTROLS (ZINC FORM) */}
+        <div style={{ backgroundColor: '#18181b', padding: '24px', borderRadius: '8px', border: '1px solid #27272a' }}>
+          <h3 style={{ marginTop: '0', marginBottom: '20px', color: '#f4f4f5', fontSize: '16px', fontWeight: '600' }}>Lanse yon Simulasyon Livrezon</h3>
+
+          <form onSubmit={handleSimulateOrder} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
             <div>
-              <label style={{ display: 'block', fontWeight: 'bold', fontSize: '14px', marginBottom: '5px' }}>Chwazi Restoran:</label>
-              <select value={selectedRestoId} onChange={(e) => setSelectedRestoId(e.target.value)} style={{ width: '100%', padding: '8px', borderRadius: '4px', border: '1px solid #cbd5e1' }}>
+              <label style={{ display: 'block', fontWeight: '500', fontSize: '13px', marginBottom: '6px', color: '#d4d4d8' }}>Chwazi Restoran:</label>
+              <select value={selectedRestoId} onChange={(e) => setSelectedRestoId(e.target.value)} style={{ width: '100%', padding: '10px 12px', borderRadius: '6px', backgroundColor: '#09090b', color: '#fafafa', border: '1px solid #27272a', outline: 'none', fontSize: '14px' }}>
                 {nodes.filter(n => n.type === 'restoran').map(r => (
-                  <option key={r.id} value={r.id}>{r.name}</option>
+                  <option key={r.id} value={r.id} style={{ backgroundColor: '#18181b' }}>{r.name}</option>
                 ))}
               </select>
             </div>
 
             {/* TIP LIVREZON: SENP OSWA DOUBLE */}
-            <div style={{ padding: '10px', backgroundColor: '#f8fafc', borderRadius: '6px', border: '1px solid #e2e8f0' }}>
-              <label style={{ fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
-                <input type="checkbox" checked={isDoubleOrder} onChange={(e) => setIsDoubleOrder(e.target.checked)} style={{ transform: 'scale(1.2)' }} />
+            <div style={{ padding: '12px 16px', backgroundColor: '#27272a', borderRadius: '6px', border: '1px solid #3f3f46' }}>
+              <label style={{ fontWeight: '500', display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', color: '#f4f4f5', fontSize: '13px' }}>
+                <input type="checkbox" checked={isDoubleOrder} onChange={(e) => setIsDoubleOrder(e.target.checked)} style={{ accentColor: '#fafafa', transform: 'scale(1.1)' }} />
                 <span>Aktive "Double Livrezon" (Pran 2 kòmand nan menm restoran an)</span>
               </label>
             </div>
 
             {/* KLIYAN 1 PANEL */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '10px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '16px' }}>
               <div>
-                <label style={{ display: 'block', fontSize: '13px',  }}>Non Kliyan 1:</label>
-                <input type="text" value={clientName} onChange={(e) => setClientName(e.target.value)} style={{ width: '90%', padding: '6px', borderRadius: '4px', border: '1px solid #cbd5e1' }} />
+                <label style={{ display: 'block', fontSize: '12px', color: '#a1a1aa', marginBottom: '6px' }}>Non Kliyan 1:</label>
+                <input type="text" value={clientName} onChange={(e) => setClientName(e.target.value)} style={{ width: '100%', padding: '10px 12px', borderRadius: '6px', backgroundColor: '#09090b', color: '#fafafa', border: '1px solid #27272a', boxSizing: 'border-box', fontSize: '14px' }} />
               </div>
               <div>
-                <label style={{ display: 'block', fontSize: '13px' }}>Latitid (18.505 - 18.545):</label>
-                <input type="text" value={clientLat} onChange={(e) => setClientLat(e.target.value)} style={{ width: '90%', padding: '6px', borderRadius: '4px', border: '1px solid #cbd5e1' }} />
+                <label style={{ display: 'block', fontSize: '12px', color: '#a1a1aa', marginBottom: '6px' }}>Latitid (18.505 - 18.545):</label>
+                <input type="text" value={clientLat} onChange={(e) => setClientLat(e.target.value)} style={{ width: '100%', padding: '10px 12px', borderRadius: '6px', backgroundColor: '#09090b', color: '#fafafa', border: '1px solid #27272a', boxSizing: 'border-box', fontSize: '14px' }} />
               </div>
               <div>
-                <label style={{ display: 'block', fontSize: '13px' }}>Lonjitid (-72.315 - -72.265):</label>
-                <input type="text" value={clientLng} onChange={(e) => setClientLng(e.target.value)} style={{ width: '90%', padding: '6px', borderRadius: '4px', border: '1px solid #cbd5e1' }} />
+                <label style={{ display: 'block', fontSize: '12px', color: '#a1a1aa', marginBottom: '6px' }}>Lonjitid (-72.315 - -72.265):</label>
+                <input type="text" value={clientLng} onChange={(e) => setClientLng(e.target.value)} style={{ width: '100%', padding: '10px 12px', borderRadius: '6px', backgroundColor: '#09090b', color: '#fafafa', border: '1px solid #27272a', boxSizing: 'border-box', fontSize: '14px' }} />
               </div>
             </div>
 
-            {/* KLIYAN 2 PANEL (AP PARÈT SÈLMAN SI CHEKBOX LA KOCHE) */}
+            {/* KLIYAN 2 PANEL */}
             {isDoubleOrder && (
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '10px', padding: '15px', backgroundColor: '#f5f3ff', borderRadius: '6px', border: '1px solid #ddd6fe' }}>
-                <div style={{ gridColumn: '1 / -1', fontWeight: 'bold', fontSize: '13px', color: '#6d28d9' }}>Enfòmasyon Dezyèm Kliyan:</div>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '16px', padding: '20px', backgroundColor: '#27272a', borderRadius: '6px', border: '1px solid #3f3f46' }}>
+                <div style={{ gridColumn: '1 / -1', fontWeight: '600', fontSize: '12px', color: '#fafafa', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Enfòmasyon Dezyèm Kliyan:</div>
                 <div>
-                  <label style={{ display: 'block', fontSize: '13px' }}>Non Kliyan 2:</label>
-                  <input type="text" value={clientName2} onChange={(e) => setClientName2(e.target.value)} style={{ width: '90%', padding: '6px', borderRadius: '4px', border: '1px solid #cbd5e1' }} />
+                  <label style={{ display: 'block', fontSize: '12px', color: '#a1a1aa', marginBottom: '6px' }}>Non Kliyan 2:</label>
+                  <input type="text" value={clientName2} onChange={(e) => setClientName2(e.target.value)} style={{ width: '100%', padding: '10px 12px', borderRadius: '6px', backgroundColor: '#09090b', color: '#fafafa', border: '1px solid #3f3f46', boxSizing: 'border-box', fontSize: '14px' }} />
                 </div>
                 <div>
-                  <label style={{ display: 'block', fontSize: '13px' }}>Latitid 2:</label>
-                  <input type="text" value={clientLat2} onChange={(e) => setClientLat2(e.target.value)} style={{ width: '90%', padding: '6px', borderRadius: '4px', border: '1px solid #cbd5e1' }} />
+                  <label style={{ display: 'block', fontSize: '12px', color: '#a1a1aa', marginBottom: '6px' }}>Latitid 2:</label>
+                  <input type="text" value={clientLat2} onChange={(e) => setClientLat2(e.target.value)} style={{ width: '100%', padding: '10px 12px', borderRadius: '6px', backgroundColor: '#09090b', color: '#fafafa', border: '1px solid #3f3f46', boxSizing: 'border-box', fontSize: '14px' }} />
                 </div>
                 <div>
-                  <label style={{ display: 'block', fontSize: '13px' }}>Lonjitid 2:</label>
-                  <input type="text" value={clientLng2} onChange={(e) => setClientLng2(e.target.value)} style={{ width: '90%', padding: '6px', borderRadius: '4px', border: '1px solid #cbd5e1' }} />
+                  <label style={{ display: 'block', fontSize: '12px', color: '#a1a1aa', marginBottom: '6px' }}>Lonjitid 2:</label>
+                  <input type="text" value={clientLng2} onChange={(e) => setClientLng2(e.target.value)} style={{ width: '100%', padding: '10px 12px', borderRadius: '6px', backgroundColor: '#09090b', color: '#fafafa', border: '1px solid #3f3f46', boxSizing: 'border-box', fontSize: '14px' }} />
                 </div>
               </div>
             )}
 
-            <button type="submit" style={{ backgroundColor: '#2563eb', color: '#fff', padding: '10px', borderRadius: '6px', border: 'none', fontWeight: 'bold', cursor: 'pointer', alignSelf: 'flex-start' }}>
+            <button type="submit" style={{ backgroundColor: '#fafafa', color: '#09090b', padding: '10px 20px', borderRadius: '6px', border: 'none', fontWeight: '600', cursor: 'pointer', alignSelf: 'flex-start', transition: 'background-color 0.2s', fontSize: '14px' }}>
               Lanse Livrezon an
             </button>
           </form>
         </div>
 
-        {/* MAP VISUALIZATION */}
-        <div style={{ position: 'relative', width: '100%', height: '450px', backgroundColor: '#e2e8f0', borderRadius: '12px', overflow: 'hidden', boxShadow: 'inset 0 2px 8px rgba(0,0,0,0.1)' }}>
-          
-          {/* Kadriyaj fiktif pou sanble ak yon kat */}
-          <div style={{ position: 'absolute', width: '100%', height: '100%', backgroundImage: 'linear-gradient(#cbd5e1 1px, transparent 1px), linear-gradient(90deg, #cbd5e1 1px, transparent 1px)', backgroundSize: '40px 40px', opacity: 0.4 }} />
+        {/* MAP VISUALIZATION (HIGH CONTRAST ZINC GRID) */}
+        <div style={{ position: 'relative', width: '100%', height: '450px', backgroundColor: '#09090b', borderRadius: '8px', overflow: 'hidden', border: '1px solid #27272a' }}>
+
+          {/* Grid line Zinc fiktif */}
+          <div style={{ position: 'absolute', width: '100%', height: '100%', backgroundImage: 'linear-gradient(#18181b 1px, transparent 1px), linear-gradient(90deg, #18181b 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
 
           {/* AFICHE RESTORAN AK KLIYAN YO */}
           {nodes.map((node) => {
             const { x, y } = convertCoordsToXY(node.coords);
             const isResto = node.type === 'restoran';
+
             return (
               <div
                 key={node.id}
@@ -381,20 +362,49 @@ export default function DeliveryDashboard() {
                   zIndex: 10,
                 }}
               >
+                {/* Container nwa pou ikon an */}
                 <div style={{
-                  width: isResto ? '20px' : '14px',
-                  height: isResto ? '20px' : '14px',
-                  borderRadius: isResto ? '4px' : '50%',
-                  backgroundColor: isResto ? '#f97316' : '#3b82f6',
-                  border: '2px solid #fff',
-                  boxShadow: '0 2px 4px rgba(0,0,0,0.3)'
-                }} />
-                <span style={{ fontSize: '10px', fontWeight: 'bold', backgroundColor: 'rgba(255,255,255,0.85)', padding: '2px 4px', borderRadius: '3px', marginTop: '3px', whiteSpace: 'nowrap', boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}>
+                  width: '30px',
+                  height: '30px',
+                  borderRadius: isResto ? '8px' : '50%',
+                  backgroundColor: '#09090b', // Fond nwa pou bon kontras
+                  border: `2px solid ${isResto ? '#22d3ee' : '#fb923c'}`, // Border koulè vif
+                  boxShadow: isResto ? '0 0 10px #22d3ee' : '0 0 10px #fb923c',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  // Koulè ikon an se koulè vif la, li pral parèt klè sou fon nwa a
+                  color: isResto ? '#22d3ee' : '#fb923c',
+                  fontSize: '16px',
+                }}>
+                  {isResto ? '🍴' : '👤'}
+                </div>
+
+                {/* Label */}
+                <span style={{
+                  fontSize: '10px',
+                  fontWeight: '600',
+                  backgroundColor: '#18181b',
+                  color: '#ffffff',
+                  padding: '3px 6px',
+                  borderRadius: '4px',
+                  marginTop: '4px',
+                  whiteSpace: 'nowrap',
+                  border: `1px solid #3f3f46`
+                }}>
                   {node.name}
                 </span>
               </div>
             );
           })}
+
+
+
+
+
+
+
+
 
           {/* AFICHE CHOFÈ YO LIVE SOU KAT LA AK ETA YO */}
           {drivers.map((driver) => {
@@ -416,42 +426,51 @@ export default function DeliveryDashboard() {
                   zIndex: 20,
                 }}
               >
-                {/* Point Chofè a */}
+                {/* Icon Container: Ikon Motosiklèt pou okipe, Sèk pou disponib */}
                 <div style={{
-                  width: '16px',
-                  height: '16px',
+                  width: '30px',
+                  height: '30px',
                   borderRadius: '50%',
-                  backgroundColor: isOkipe ? '#10b981' : '#64748b',
-                  border: '2px solid #fff',
-                  boxShadow: '0 2px 6px rgba(0,0,0,0.4)',
-                }} />
+                  backgroundColor: '#09090b',
+                  border: `2px solid ${isOkipe ? '#ffffff' : '#a3e635'}`,
+                  boxShadow: isOkipe ? '0 0 15px #ffffff' : '0 0 15px #a3e635',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: '16px',
+                }}>
+                  {isOkipe ? '🏍️' : '🏍️'}
+                </div>
 
                 {/* Ti bwat enfòmasyon ki flote sou tèt chofè a */}
                 <div style={{
-                  fontSize: '9px',
-                  backgroundColor: '#1e293b',
-                  color: '#fff',
-                  padding: '3px 6px',
-                  borderRadius: '4px',
-                  marginTop: '4px',
+                  fontSize: '10px',
+                  backgroundColor: '#18181b',
+                  color: '#fafafa',
+                  padding: '6px 10px',
+                  borderRadius: '6px',
+                  marginTop: '6px',
                   whiteSpace: 'nowrap',
                   display: 'flex',
                   flexDirection: 'column',
-                  gap: '1px',
-                  boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
+                  gap: '2px',
+                  border: `1px solid ${isOkipe ? '#ffffff' : '#a3e635'}`,
+                  boxShadow: '0 4px 12px rgba(0,0,0,0.5)'
                 }}>
-                  <span style={{ fontWeight: 'bold' }}>{driver.name} ({Math.floor(driver.speed * 1000)} km/h)</span>
-                  <span style={{ color: isOkipe ? '#34d399' : '#94a3b8' }}>
+                  <span style={{ fontWeight: '700', color: isOkipe ? '#ffffff' : '#a3e635' }}>
+                    {driver.name} ({Math.floor(driver.speed * 1000)} km/h)
+                  </span>
+                  <span style={{ color: '#e4e4e7', fontSize: '9px' }}>
                     Status: {driver.status === 'going_to_restaurant' ? 'Al chache manje' : driver.status === 'going_to_client' ? 'Ap livre' : 'Disponib'}
                   </span>
                   {isOkipe && driver.etaMinutes > 0 && (
-                    <span style={{ color: '#f59e0b', fontWeight: 'bold' }}>
+                    <span style={{ color: '#ffffff', fontWeight: '700', fontSize: '9px' }}>
                       ⏱️ ETA: {driver.etaMinutes} min
                     </span>
                   )}
                   {driver.routeQueue.length > 1 && (
-                    <span style={{ color: '#a78bfa', fontSize: '8px' }}>
-                      📦 Double (Rete: {driver.routeQueue.length} moun)
+                    <span style={{ color: '#fb923c', fontSize: '9px', fontWeight: '600' }}>
+                      📦 Double (Rete: {driver.routeQueue.length})
                     </span>
                   )}
                 </div>
@@ -461,20 +480,20 @@ export default function DeliveryDashboard() {
         </div>
 
         {/* LIST ENFOMASYON CHOFÈ YO (DETAY) */}
-        <div style={{ backgroundColor: '#fff', padding: '15px', borderRadius: '8px', boxShadow: '0 2px 4px rgba(0,0,0,0.05)' }}>
-          <h4 style={{ marginTop: '0', color: '#334155', borderBottom: '1px solid #f1f5f9', paddingBottom: '8px' }}>Monitè Flòt Livrezon</h4>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+        <div style={{ backgroundColor: '#18181b', padding: '20px', borderRadius: '8px', border: '1px solid #27272a' }}>
+          <h4 style={{ marginTop: '0', color: '#f4f4f5', borderBottom: '1px solid #27272a', paddingBottom: '12px', marginBottom: '16px', fontSize: '14px', fontWeight: '600' }}>Monitè Flòt Livrezon</h4>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
             {drivers.map(d => (
-              <div key={d.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '14px', padding: '8px', backgroundColor: '#f8fafc', borderRadius: '6px' }}>
-                <div>
-                  <strong>{d.name}</strong> 
+              <div key={d.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '13px', padding: '12px 16px', backgroundColor: '#09090b', borderRadius: '6px', border: '1px solid #27272a' }}>
+                <div style={{ color: '#d4d4d8' }}>
+                  <strong style={{ color: '#fafafa' }}>{d.name}</strong>
                   {d.status === 'going_to_restaurant' && ` ➔ Sou wout pou ${d.restaurantName}`}
                   {d.status === 'going_to_client' && ` ➔ Ap livre kliyan: ${d.routeQueue[0]?.clientName || ''}`}
                   {d.status === 'idling' && ` ➔ Disponib pou pran misyon`}
                   {d.status === 'completed' && ` ➔ Fin fè dènye livrezon li`}
                 </div>
-                <div style={{ fontSize: '12px', fontWeight: 'bold', color: d.status !== 'idling' ? '#10b981' : '#64748b' }}>
-                  {d.status !== 'idling' && d.status !== 'completed' ? `Okipe (ETA: ${d.etaMinutes}m)` : 'Lib'}
+                <div style={{ fontSize: '11px', fontWeight: '600', color: d.status !== 'idling' && d.status !== 'completed' ? '#fafafa' : '#71717a' }}>
+                  {d.status !== 'idling' && d.status !== 'completed' ? `OKIPE (${d.etaMinutes}m)` : 'DISPONIB'}
                 </div>
               </div>
             ))}

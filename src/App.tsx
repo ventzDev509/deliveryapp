@@ -14,6 +14,7 @@ import MainDriver from './dashboard/pages/DriverPage/MainDriver';
 import BecomeSellerPage from './Auth/BecomeSellerPage';
 import { useEffect } from 'react';
 import AdminValidations from './dashboard/Admin/MainAdmin';
+import TrackingDeliveryMap from './LiveTrackingMap/LiveTrackingMap';
 function App() {
   useEffect(() => {
     // 1. Nou kreye yon detektè pou n koute sistèm telefòn nan
@@ -51,6 +52,8 @@ function App() {
     <Router>
       <Routes>
 
+        {/* Home */}
+        <Route path="/" element={<TrackingDeliveryMap />} />
         {/* Authentification path  */}
         <Route path="/auth" element={<Auth />} />
         <Route path="/verify-email" element={<EmailVerification />} />
@@ -69,7 +72,7 @@ function App() {
         <Route path="/driver" element={<MainDriver />} />
 
         {/* Admin */}
-          <Route path="/admin-validation" element={<AdminValidations />} />
+        <Route path="/admin-validation" element={<AdminValidations />} />
 
       </Routes>
     </Router>
