@@ -1,217 +1,145 @@
-import { motion, AnimatePresence } from 'framer-motion';
-import { X, Save, User, Phone, Mail } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { X, Save, User, Phone, Mail, CreditCard, ShieldCheck } from 'lucide-react';
+import type { Driver } from '../../../types/driver.types';
+import { useDriver } from '../../../Contexts/DriverContext';
+import WhiteLoader from '../../../loader/WhiteLoader';
+import { AnimatePresence } from 'framer-motion';
+import { Notification } from '../../../notification/Notification';
 
-// 1. Nou defini estrikti Driver la pou match ak paj prensipal la
-interface Driver {
-  id: string;
-  name: string;
-  phone: string;
-  email: string;
-  avatar: string;
-  status: 'Available' | 'Busy' | 'Offline';
-  vehicle: {
-    type: 'Moto' | 'Machin' | 'Bisiklèt';
-    model: string;
-    plateNumber: string;
-  };
-  currentOrderId?: string;
-  rating: number;
-  totalDeliveries: number;
-}
-
-interface DriverDrawerProps {
-  isOpen: boolean;
+interface DriverFormProps {
   onClose: () => void;
-  selectedDriver: Driver | null;
-  onChangeDriver: React.Dispatch<React.SetStateAction<Driver | null>>;
-  onSave: (e: React.FormEvent) => void;
+  driverToEdit?: Driver | null;
 }
 
-const DriverDrawer = ({ isOpen, onClose, selectedDriver, onChangeDriver, onSave }: DriverDrawerProps) => {
-  if (!selectedDriver) return null;
+export const DriverForm = ({ onClose, driverToEdit }: DriverFormProps) => {
+  const { createDriver, updateDriver, loading } = useDriver();
+  const [notification, setNotification] = useState<{ message: string, type: 'error' | 'success' } | null>(null);
+
+  const [formData, setFormData] = useState({
+    name: driverToEdit?.name || '',
+    phone: driverToEdit?.phone || '',
+    email: driverToEdit?.email || '',
+    vehicleType: driverToEdit?.vehicleType || 'MOTORCYCLE',
+    vehiclePlate: driverToEdit?.vehiclePlate || '',
+    status: driverToEdit?.status || 'AVAILABLE',
+    isVerified: driverToEdit?.isVerified || false,
+  });
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setNotification(null);
+
+    try {
+      let success = false;
+      if (driverToEdit) {
+        success = await updateDriver(driverToEdit.id, formData);
+        
+        if (success) setNotification({ message: "Chofè a modifiye avèk siksè!", type: 'success' });
+      } else {
+        success = await createDriver(formData as any);
+        if (success) setNotification({ message: "Chofè a kreye avèk siksè!", type: 'success' });
+      }
+
+      if (success) setTimeout(onClose, 1500);
+      else setNotification({ message: "Yon erè te rive pandan anrejistreman an.", type: 'error' });
+    } catch (error) {
+      setNotification({ message: "Yon erè teknik te rive.", type: 'error' });
+    }
+  };
+
+  useEffect(() => {
+    if (driverToEdit) {
+      setFormData({
+        name: driverToEdit.name || '',
+        phone: driverToEdit.phone || '',
+        email: driverToEdit.email || '',
+        vehicleType: driverToEdit.vehicleType || 'MOTORCYCLE',
+        vehiclePlate: driverToEdit.vehiclePlate || '',
+        status: driverToEdit.status || 'AVAILABLE',
+        isVerified: driverToEdit.isVerified || false,
+      });
+    }
+  }, [driverToEdit]);
 
   return (
-    <AnimatePresence>
-      {isOpen && (
-        <>
-          {/* Backdrop Translucide */}
-          <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={onClose}
-            className="fixed inset-0 bg-black/40 backdrop-blur-[2px] z-50"
-          />
+    <div className="flex flex-col h-full bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100">
+      <div className="absolute top-4 left-6 right-6 z-[9999]">
+        <AnimatePresence>
+          {notification && (
+            <Notification
+              key={notification.message}
+              message={notification.message}
+              type={notification.type}
+              onClose={() => setNotification(null)}
+            />
+          )}
+        </AnimatePresence>
+      </div>
 
-          {/* Kontni Drawer (Slide-over soti a dwat) */}
-          <motion.div 
-            initial={{ x: window.innerWidth < 768 ? 0 : "100%", y: window.innerWidth < 768 ? "100%" : 0 }}
-            animate={{ x: 0, y: 0 }}
-            exit={{ x: window.innerWidth < 768 ? 0 : "100%", y: window.innerWidth < 768 ? "100%" : 0 }}
-            transition={{ type: "spring", damping: 30, stiffness: 240 }}
-            className="fixed right-0 bottom-0 w-full md:w-[420px] h-[85vh] md:h-screen bg-white dark:bg-zinc-900 shadow-2xl z-50 flex flex-col justify-between rounded-t-3xl md:rounded-t-none md:rounded-l-3xl border-l border-gray-100 dark:border-zinc-800/80 transition-colors duration-300"
-          >
-            {/* Tèt Drawer */}
-            <div className="p-6 border-b border-gray-100 dark:border-zinc-800/80 flex items-center justify-between">
-              <div>
-                <h2 className="text-base font-black text-gray-900 dark:text-zinc-50">
-                  {selectedDriver.name ? 'Modifye Profile Chofè' : 'Ajoute yon Nouvo Chofè'}
-                </h2>
-                <p className="text-[11px] text-gray-400 dark:text-zinc-500">Chanjman yo ap parèt sou tablodbò a imedyatman.</p>
-              </div>
-              <button onClick={onClose} className="p-2 bg-gray-50 hover:bg-gray-100 dark:bg-zinc-800 dark:hover:bg-zinc-700/80 rounded-full text-gray-500 dark:text-zinc-400 transition-colors">
-                <X size={16} />
-              </button>
+      <div className="px-6 py-5 border-b border-zinc-100 dark:border-zinc-800 flex items-center justify-between">
+        <h2 className="text-lg font-black">{driverToEdit ? 'Modifye Chofè' : 'Ajoute Chofè'}</h2>
+        <button onClick={onClose} className="p-2 hover:bg-zinc-100 dark:hover:bg-zinc-900 rounded-full transition-colors">
+          <X size={18} className="text-zinc-500" />
+        </button>
+      </div>
+
+      <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-6 space-y-8">
+        <div className="space-y-4">
+          <h3 className="text-[10px] font-black uppercase tracking-widest text-zinc-400 dark:text-zinc-600">Enfòmasyon Pèsonèl</h3>
+          <InputGroup icon={<User size={16} />} label="Non Konplè" value={formData.name} onChange={(v: string) => setFormData({ ...formData, name: v })} />
+          <div className="grid grid-cols-2 gap-4">
+            <InputGroup icon={<Phone size={16} />} label="Telefòn" value={formData.phone} onChange={(v: string) => setFormData({ ...formData, phone: v })} />
+            <InputGroup icon={<Mail size={16} />} label="Imèl" value={formData.email} onChange={(v: string) => setFormData({ ...formData, email: v })} />
+          </div>
+        </div>
+
+        <div className="space-y-4">
+          <h3 className="text-[10px] font-black uppercase tracking-widest text-zinc-400 dark:text-zinc-600">Administrasyon & Veyikil</h3>
+
+          <label className="flex items-center gap-3 p-3 bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl cursor-pointer hover:border-orange-500 transition-colors">
+            <input type="checkbox" checked={formData.isVerified} onChange={(e) => setFormData({ ...formData, isVerified: e.target.checked })} className="accent-orange-500" />
+            <span className="text-sm font-bold flex items-center gap-2"><ShieldCheck size={16} className="text-blue-500" /> Chofè verifye</span>
+          </label>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-1.5">
+              <label className="text-[11px] font-bold text-zinc-600 dark:text-zinc-400">Kalite Veyikil</label>
+              <select value={formData.vehicleType} onChange={(e) => setFormData({ ...formData, vehicleType: e.target.value as any })} className="w-full p-2.5 bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl text-sm outline-none">
+                <option value="MOTORCYCLE">MOTORCYCLE</option>
+                <option value="CAR">CAR</option>
+                <option value="BICYCLE">BICYCLE</option>
+                <option value="TRUCK">TRUCK</option>
+              </select>
             </div>
+            <InputGroup icon={<CreditCard size={16} />} label="Nimewo Plak" value={formData.vehiclePlate} onChange={(v: string) => setFormData({ ...formData, vehiclePlate: v })} />
+          </div>
 
-            {/* Kò Fòm nan (Scrollable) */}
-            <form onSubmit={onSave} className="flex-1 overflow-y-auto p-6 space-y-5 scrollbar-none">
-              
-              {/* Seksyon Avatar ak Estati */}
-              <div className="flex items-center gap-4 bg-gray-50 dark:bg-zinc-950/40 p-4 rounded-2xl border border-gray-100 dark:border-zinc-800/60">
-                <div className="relative w-16 h-16 rounded-xl overflow-hidden bg-gray-200 dark:bg-zinc-800 border border-gray-300 dark:border-zinc-700">
-                  <img src={selectedDriver.avatar} alt="Driver Avatar" className="w-full h-full object-cover" />
-                </div>
-                <div className="flex-1 space-y-1.5">
-                  <label className="text-[11px] font-bold text-gray-500 dark:text-zinc-400 uppercase tracking-wider">Estati Chofè a</label>
-                  <select 
-                    value={selectedDriver.status}
-                    onChange={(e) => onChangeDriver({...selectedDriver, status: e.target.value as any})}
-                    className="w-full px-3 py-2 bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-xl text-xs font-bold text-gray-800 dark:text-zinc-200 focus:outline-none focus:border-orange-500 dark:focus:border-orange-500 transition-all appearance-none"
-                  >
-                    <option value="Available" className="dark:bg-zinc-900">🟢 Disponib (Available)</option>
-                    <option value="Busy" className="dark:bg-zinc-900">🟡 Nan Livrezon (Busy)</option>
-                    <option value="Offline" className="dark:bg-zinc-900">⚫ Deploge (Offline)</option>
-                  </select>
-                </div>
-              </div>
-
-              {/* ENFÒMASYON PÈSONÈL */}
-              <div className="space-y-4">
-                <h3 className="text-[11px] font-black text-orange-500 dark:text-orange-500 uppercase tracking-wider border-b border-gray-100 dark:border-zinc-800/60 pb-1">Enfòmasyon Pèsonèl</h3>
-                
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-[11px] font-bold text-gray-500 dark:text-zinc-400 uppercase tracking-wider flex items-center gap-1">
-                    <User size={12} /> Non Konplè
-                  </label>
-                  <input 
-                    type="text" 
-                    required
-                    value={selectedDriver.name}
-                    onChange={(e) => onChangeDriver({...selectedDriver, name: e.target.value})}
-                    placeholder="Egz: Jean-Robert Baptiste" 
-                    className="w-full px-4 py-3 bg-gray-50 dark:bg-zinc-950 border border-gray-200 dark:border-zinc-800 rounded-xl text-xs font-bold text-gray-800 dark:text-zinc-200 focus:outline-none focus:bg-white dark:focus:bg-zinc-950 focus:border-orange-500 dark:focus:border-orange-500 transition-all"
-                  />
-                </div>
-
-                <div className="grid grid-cols-1 gap-4">
-                  <div className="flex flex-col gap-1.5">
-                    <label className="text-[11px] font-bold text-gray-500 dark:text-zinc-400 uppercase tracking-wider flex items-center gap-1">
-                      <Phone size={12} /> Nimewo Telefòn
-                    </label>
-                    <input 
-                      type="text" 
-                      required
-                      value={selectedDriver.phone}
-                      onChange={(e) => onChangeDriver({...selectedDriver, phone: e.target.value})}
-                      placeholder="Egz: +509 3737-1234" 
-                      className="w-full px-4 py-3 bg-gray-50 dark:bg-zinc-950 border border-gray-200 dark:border-zinc-800 rounded-xl text-xs font-bold text-gray-800 dark:text-zinc-200 focus:outline-none focus:bg-white dark:focus:bg-zinc-950 focus:border-orange-500 dark:focus:border-orange-500 transition-all"
-                    />
-                  </div>
-
-                  <div className="flex flex-col gap-1.5">
-                    <label className="text-[11px] font-bold text-gray-500 dark:text-zinc-400 uppercase tracking-wider flex items-center gap-1">
-                      <Mail size={12} /> Adrès Imèl
-                    </label>
-                    <input 
-                      type="email" 
-                      required
-                      value={selectedDriver.email}
-                      onChange={(e) => onChangeDriver({...selectedDriver, email: e.target.value})}
-                      placeholder="Egz: jr.baptiste@delivery.com" 
-                      className="w-full px-4 py-3 bg-gray-50 dark:bg-zinc-950 border border-gray-200 dark:border-zinc-800 rounded-xl text-xs font-bold text-gray-800 dark:text-zinc-200 focus:outline-none focus:bg-white dark:focus:bg-zinc-950 focus:border-orange-500 dark:focus:border-orange-500 transition-all"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              {/* DETAY SOU MACHIN NAN */}
-              <div className="space-y-4 pt-2">
-                <h3 className="text-[11px] font-black text-orange-500 dark:text-orange-500 uppercase tracking-wider border-b border-gray-100 dark:border-zinc-800/60 pb-1">Detay sou Machin</h3>
-                
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="flex flex-col gap-1.5">
-                    <label className="text-[11px] font-bold text-gray-500 dark:text-zinc-400 uppercase tracking-wider">Kalite Machin</label>
-                    <select 
-                      value={selectedDriver.vehicle.type}
-                      onChange={(e) => onChangeDriver({
-                        ...selectedDriver, 
-                        vehicle: { ...selectedDriver.vehicle, type: e.target.value as any }
-                      })}
-                      className="w-full px-4 py-3 bg-gray-50 dark:bg-zinc-950 border border-gray-200 dark:border-zinc-800 rounded-xl text-xs font-bold text-gray-800 dark:text-zinc-200 focus:outline-none focus:bg-white dark:focus:bg-zinc-950 focus:border-orange-500 dark:focus:border-orange-500 transition-all appearance-none"
-                    >
-                      <option value="Moto" className="dark:bg-zinc-900">🏍️ Moto</option>
-                      <option value="Machin" className="dark:bg-zinc-900">🚗 Machin</option>
-                      <option value="Bisiklèt" className="dark:bg-zinc-900">🚲 Bisiklèt</option>
-                    </select>
-                  </div>
-
-                  <div className="flex flex-col gap-1.5">
-                    <label className="text-[11px] font-bold text-gray-500 dark:text-zinc-400 uppercase tracking-wider">Nimewo Plak</label>
-                    <input 
-                      type="text" 
-                      required
-                      value={selectedDriver.vehicle.plateNumber}
-                      onChange={(e) => onChangeDriver({
-                        ...selectedDriver, 
-                        vehicle: { ...selectedDriver.vehicle, plateNumber: e.target.value }
-                      })}
-                      placeholder="Egz: 1-00234" 
-                      className="w-full px-4 py-3 bg-gray-50 dark:bg-zinc-950 border border-gray-200 dark:border-zinc-800 rounded-xl text-xs font-bold text-gray-800 dark:text-zinc-200 focus:outline-none focus:bg-white dark:focus:bg-zinc-950 focus:border-orange-500 dark:focus:border-orange-500 transition-all uppercase tracking-wider"
-                    />
-                  </div>
-                </div>
-
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-[11px] font-bold text-gray-500 dark:text-zinc-400 uppercase tracking-wider">Modèl ak Koulè</label>
-                  <input 
-                    type="text" 
-                    required
-                    value={selectedDriver.vehicle.model}
-                    onChange={(e) => onChangeDriver({
-                      ...selectedDriver, 
-                      vehicle: { ...selectedDriver.vehicle, model: e.target.value }
-                    })}
-                    placeholder="Egz: Dayun 150 (Nwa)" 
-                    className="w-full px-4 py-3 bg-gray-50 dark:bg-zinc-950 border border-gray-200 dark:border-zinc-800 rounded-xl text-xs font-bold text-gray-800 dark:text-zinc-200 focus:outline-none focus:bg-white dark:focus:bg-zinc-950 focus:border-orange-500 dark:focus:border-orange-500 transition-all"
-                  />
-                </div>
-              </div>
-
-            </form>
-
-            {/* Pye Drawer la (Aksyon yo) */}
-            <div className="p-6 border-t border-gray-100 dark:border-zinc-800/80 bg-gray-50/50 dark:bg-zinc-950/30 flex items-center gap-3">
-              <button 
-                type="button" 
-                onClick={onClose}
-                className="flex-1 py-3 border border-gray-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-gray-500 dark:text-zinc-400 text-xs font-bold rounded-xl transition-all active:scale-95 hover:bg-gray-50 dark:hover:bg-zinc-800"
-              >
-                Anile
-              </button>
-              <button 
-                onClick={onSave}
-                className="flex-1 py-3 bg-orange-500 hover:bg-orange-600 text-white text-xs font-bold rounded-xl transition-all flex items-center justify-center gap-2 shadow-md shadow-orange-500/10 active:scale-95"
-              >
-                <Save size={14} />
-                <span>Sove Chanjman</span>
-              </button>
+          <div className="space-y-1.5">
+            <label className="text-[11px] font-bold text-zinc-600 dark:text-zinc-400">Estati Chofè</label>
+            <div className="grid grid-cols-3 gap-2">
+              {['AVAILABLE', 'ON_DELIVERY', 'BROKEN_DOWN', 'IN_TRAFFIC', 'OFFLINE', 'SUSPENDED'].map((s) => (
+                <button key={s} type="button" onClick={() => setFormData({ ...formData, status: s as any })}
+                  className={`py-2 text-[10px] font-bold border rounded-lg transition-all ${formData.status === s ? 'border-orange-500 bg-orange-500/10 text-orange-600' : 'border-zinc-200 dark:border-zinc-800'}`}>
+                  {s.replace('_', ' ')}
+                </button>
+              ))}
             </div>
-          </motion.div>
-        </>
-      )}
-    </AnimatePresence>
+          </div>
+        </div>
+      </form>
+
+      <div className="p-6 border-t border-zinc-100 dark:border-zinc-800">
+        <button type="submit" onClick={handleSubmit} disabled={loading} className="w-full py-3 rounded-xl bg-zinc-900 dark:bg-orange-500 text-white font-bold flex justify-center gap-2 hover:opacity-90 transition-opacity">
+          {loading ? <WhiteLoader size={24} /> : <><Save size={16} /> Sove Enfòmasyon yo</>}
+        </button>
+      </div>
+    </div>
   );
 };
 
-export default DriverDrawer;
+const InputGroup = ({ icon, label, value, onChange }: any) => (
+  <div className="space-y-1.5">
+    <label className="text-[11px] font-bold text-zinc-600 dark:text-zinc-400 flex items-center gap-1.5">{icon} {label}</label>
+    <input value={value} onChange={(e) => onChange(e.target.value)} className="w-full px-4 py-2.5 bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl text-sm outline-none" />
+  </div>
+);
