@@ -14,7 +14,7 @@ import MainDriver from './dashboard/pages/DriverPage/MainDriver';
 import BecomeSellerPage from './Auth/BecomeSellerPage';
 import { useEffect } from 'react';
 import AdminValidations from './dashboard/Admin/MainAdmin';
-import TrackingDeliveryMap from './LiveTrackingMap/LiveTrackingMap';
+// import TrackingDeliveryMap from './LiveTrackingMap/LiveTrackingMap';
 import SimpleMap from './LiveTrackingMap/m';
 function App() {
   useEffect(() => {
