@@ -15,6 +15,7 @@ import BecomeSellerPage from './Auth/BecomeSellerPage';
 import { useEffect } from 'react';
 import AdminValidations from './dashboard/Admin/MainAdmin';
 import TrackingDeliveryMap from './LiveTrackingMap/LiveTrackingMap';
+import SimpleMap from './LiveTrackingMap/m';
 function App() {
   useEffect(() => {
     // 1. Nou kreye yon detektè pou n koute sistèm telefòn nan
@@ -53,7 +54,7 @@ function App() {
       <Routes>
 
         {/* Home */}
-        <Route path="/" element={<TrackingDeliveryMap />} />
+        <Route path="/" element={<SimpleMap />} />
         {/* Authentification path  */}
         <Route path="/auth" element={<Auth />} />
         <Route path="/verify-email" element={<EmailVerification />} />

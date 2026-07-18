@@ -1,2 +1,14 @@
 @import "tailwindcss";
 
+@import "leaflet/dist/leaflet.css";
+
+.pulse-icon {
+    background: white;
+    border-radius: 50%;
+    border: 3px solid #3b82f6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 10px rgba(0,0,0,0.5);
+    font-size: 16px;
+}
