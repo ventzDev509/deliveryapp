@@ -9,6 +9,18 @@ import axios from 'axios';
 
 const socket = io('https://backenddelivery-t22i.onrender.com');
 
+// Ranplase enum la pa yon objè as const (Konpatib ak erasableSyntaxOnly)
+const DriverStatus = {
+    AVAILABLE: 'AVAILABLE',
+    ON_DELIVERY: 'ON_DELIVERY',
+    BROKEN_DOWN: 'BROKEN_DOWN',
+    IN_TRAFFIC: 'IN_TRAFFIC',
+    OFFLINE: 'OFFLINE',
+    SUSPENDED: 'SUSPENDED'
+} as const;
+
+type DriverStatusType = typeof DriverStatus[keyof typeof DriverStatus];
+
 const createCustomIcon = (color: string, emoji: string) => L.divIcon({
     html: `<div style="background-color: ${color}; width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 3px solid white; box-shadow: 0 4px 6px rgba(0,0,0,0.3); font-size: 18px; transition: all 0.5s ease-in-out;">${emoji}</div>`,
     className: 'custom-marker',
@@ -16,7 +28,6 @@ const createCustomIcon = (color: string, emoji: string) => L.divIcon({
     iconAnchor: [17, 17],
 });
 
-// Konpozan pou kenbe kat la fwaye (fòkis) sou chofè a an tan reyèl
 function DriverTracker({ driverPosition }: { driverPosition: [number, number] | null }) {
     const map = useMap();
     useEffect(() => {
@@ -36,7 +47,6 @@ function MapContent() {
     const [routeFetched, setRouteFetched] = useState<boolean>(false);
     const map = useMap();
 
-    // 1. Jwenn pozisyon itilizatè a (pwen arive)
     useEffect(() => {
         if (!navigator.geolocation) return;
         navigator.geolocation.getCurrentPosition(
@@ -46,7 +56,6 @@ function MapContent() {
         );
     }, []);
 
-    // 2. JWENN RESTORAN YO
     useEffect(() => {
         axios.get('https://backenddelivery-t22i.onrender.com/restaurants')
             .then((res) => {
@@ -57,7 +66,6 @@ function MapContent() {
             });
     }, []);
 
-    // 3. REQUISYON OSRM: SOTI NAN CHOFÈ -> RESTORAN -> ITILIZATÈ
     useEffect(() => {
         if (!myPosition || routeFetched || restaurants.length === 0) return;
 
@@ -93,7 +101,7 @@ function MapContent() {
                         if (exists) {
                             return prev.map((d: any) =>
                                 d.id === testDriverId
-                                    ? { ...d, currentLat: firstPoint[0], currentLng: firstPoint[1], status: 'ON_DELIVERY' }
+                                    ? { ...d, currentLat: firstPoint[0], currentLng: firstPoint[1], status: DriverStatus.ON_DELIVERY }
                                     : d
                             );
                         } else {
@@ -103,7 +111,7 @@ function MapContent() {
                                 vehicleType: 'MOTORCYCLE',
                                 currentLat: firstPoint[0],
                                 currentLng: firstPoint[1],
-                                status: 'ON_DELIVERY'
+                                status: DriverStatus.ON_DELIVERY
                             }];
                         }
                     });
@@ -116,7 +124,6 @@ function MapContent() {
 
     }, [myPosition, restaurants, routeFetched, setDrivers]);
 
-    // 4. RESEVWA POZISYON CHOFÈ A AK ANIMASYON LIKID
     useEffect(() => {
         socket.on('driverMoved', (data: { driverId: string, lat: number, lng: number }) => {
             setDrivers((prev: any[]) => {
@@ -155,7 +162,7 @@ function MapContent() {
 
                             requestAnimationFrame(animateMarker);
 
-                            return { ...d, status: 'ON_DELIVERY' };
+                            return { ...d, status: DriverStatus.ON_DELIVERY };
                         }
                         return d;
                     });
@@ -166,7 +173,7 @@ function MapContent() {
                         vehicleType: 'MOTORCYCLE',
                         currentLat: data.lat,
                         currentLng: data.lng,
-                        status: 'ON_DELIVERY'
+                        status: DriverStatus.ON_DELIVERY
                     }];
                 }
             });
@@ -175,15 +182,11 @@ function MapContent() {
         return () => { socket.off('driverMoved'); };
     }, [setDrivers]);
 
-    // 5. SIMILASYON DEPLASMAN CHOFÈ A SOU WOUT LA (Dapre Estati Chofè a)
     useEffect(() => {
         const testDriverId = "62bffbc0-1639-4568-9f08-87f91d7658c9";
-
-        // Jwenn chofè a ak estati li nan lis la
         const activeDriver = drivers.find((d: any) => d.id === testDriverId);
 
-        // Si chofè a pa sou 'ON_DELIVERY', nou pa kòmanse oswa nou sispann similasyon an
-        if (!activeDriver || activeDriver.status !== 'ON_DELIVERY' || routeCoords.length === 0) {
+        if (!activeDriver || activeDriver.status !== DriverStatus.ON_DELIVERY || routeCoords.length === 0) {
             return;
         }
 
@@ -199,11 +202,10 @@ function MapContent() {
                 });
                 index++;
             } else {
-                index = 0; // Tounen nan kòmansman wout la si l fini
+                index = 0;
             }
         }, 2000);
 
-        // Netwaye entèval la si estati a chanje oswa si konpozan an desann
         return () => clearInterval(interval);
 
     }, [routeCoords, drivers]);
@@ -213,7 +215,6 @@ function MapContent() {
     const markerEmoji = isSeller ? '🏪' : '👤';
     const displayName = isSeller ? (user?.profile?.username || user?.email || 'Magazen Mwen') : 'Mwen';
 
-    // Jwenn pozisyon chofè tès la pou nou ka pase l bay DriverTracker la
     const testDriverId = "62bffbc0-1639-4568-9f08-87f91d7658c9";
     const activeDriver = drivers.find((d: any) => d.id === testDriverId);
     const driverPosition: [number, number] | null = activeDriver?.currentLat && activeDriver?.currentLng
@@ -222,7 +223,6 @@ function MapContent() {
 
     return (
         <>
-            {/* Kat la ap swiv chofè a an tan reyèl olye de itilizatè a */}
             <DriverTracker driverPosition={driverPosition} />
 
             {routeCoords.length > 0 && (
@@ -232,7 +232,6 @@ function MapContent() {
                 />
             )}
 
-            {/* ITILIZATÈ A */}
             {myPosition && (
                 <Marker position={myPosition} icon={createCustomIcon(markerColor, markerEmoji)}>
                     <Tooltip permanent direction="top" className="custom-user-tooltip">
@@ -241,7 +240,6 @@ function MapContent() {
                 </Marker>
             )}
 
-            {/* RESTORAN YO */}
             {restaurants.map((rest) => {
                 const lat = rest.owner?.profile?.lat || 19.445;
                 const lng = rest.owner?.profile?.lng || -72.685;
@@ -259,7 +257,6 @@ function MapContent() {
                 );
             })}
 
-            {/* CHOFÈ A */}
             {drivers.filter(d => d.currentLat && d.currentLng).map(d => {
                 let distanceText = '';
                 let timeText = '';
@@ -319,7 +316,7 @@ export default function SimpleMap() {
     }, []);
 
     return (
-        <div style={{ height: '100vh', width: '100%' }}>
+        <div style={{ height: '100vh', width: '100%', position: 'relative' }}>
             <MapContainer center={[19.445, -72.685]} zoom={15.5} style={{ height: '100%', width: '100%' }}>
                 <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
                 <MapContent />
