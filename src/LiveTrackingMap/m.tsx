@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { Marker, Tooltip, Polyline, useMap, MapContainer, TileLayer } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -16,14 +16,13 @@ const createCustomIcon = (color: string, emoji: string) => L.divIcon({
     iconAnchor: [17, 17],
 });
 
-// Konpozan pou kenbe kat la fwaye (fòkis) sou chofè a SÈLMAN si li sou ON_DELIVERY
+// Konpozan pou swiv chofè a sèlman si li sou ON_DELIVERY
 function DriverTracker({ driverPosition, isOnDelivery }: { driverPosition: [number, number] | null, isOnDelivery: boolean }) {
     const map = useMap();
     
     useEffect(() => {
-        // Chak fwa pozisyon chofè a chanje epi li sou ON_DELIVERY, n ap fòse kat la swiv li
         if (driverPosition && isOnDelivery) {
-            map.setView(driverPosition, map.getZoom(), { animate: true });
+            map.panTo(driverPosition, { animate: true });
         }
     }, [driverPosition, isOnDelivery, map]);
 
@@ -39,7 +38,14 @@ function MapContent() {
     const [routeFetched, setRouteFetched] = useState<boolean>(false);
     const map = useMap();
 
-    // 1. Jwenn pozisyon itilizatè a (pwen arive)
+    // Sèvi ak yon ref pou kenbe estati ak wout la san yo pa kraze entèval la
+    const routeCoordsRef = useRef<[number, number][]>([]);
+    routeCoordsRef.current = routeCoords;
+
+    const driversRef = useRef<any[]>(drivers);
+    driversRef.current = drivers;
+
+    // 1. Jwenn pozisyon itilizatè a
     useEffect(() => {
         if (!navigator.geolocation) return;
         navigator.geolocation.getCurrentPosition(
@@ -60,7 +66,7 @@ function MapContent() {
             });
     }, []);
 
-    // 3. REQUISYON OSRM: SOTI NAN CHOFÈ -> RESTORAN -> ITILIZATÈ
+    // 3. REQUISYON OSRM
     useEffect(() => {
         if (!myPosition || routeFetched || restaurants.length === 0) return;
 
@@ -70,10 +76,8 @@ function MapContent() {
 
         const startLng = -72.6850;
         const startLat = 19.4450;
-
         const midLng = restLng;
         const midLat = restLat;
-
         const endLng = myPosition[1];
         const endLat = myPosition[0];
 
@@ -119,7 +123,7 @@ function MapContent() {
 
     }, [myPosition, restaurants, routeFetched, setDrivers]);
 
-    // 4. RESEVWA POZISYON CHOFÈ A AK ANIMASYON LIKID
+    // 4. RESEVWA POZISYON CHOFÈ A SOU SOCKET
     useEffect(() => {
         socket.on('driverMoved', (data: { driverId: string, lat: number, lng: number }) => {
             setDrivers((prev: any[]) => {
@@ -128,37 +132,12 @@ function MapContent() {
                 if (exists) {
                     return prev.map((d: any) => {
                         if (d.id === data.driverId) {
-                            const startLat = d.currentLat || data.lat;
-                            const startLng = d.currentLng || data.lng;
-                            const endLat = data.lat;
-                            const endLng = data.lng;
-
-                            const duration = 1500;
-                            const startTime = performance.now();
-
-                            const animateMarker = (currentTime: number) => {
-                                const elapsed = currentTime - startTime;
-                                const progress = Math.min(elapsed / duration, 1);
-
-                                const currentAnimatedLat = startLat + (endLat - startLat) * progress;
-                                const currentAnimatedLng = startLng + (endLng - startLng) * progress;
-
-                                setDrivers((latestPrev: any[]) =>
-                                    latestPrev.map((driver: any) =>
-                                        driver.id === data.driverId
-                                            ? { ...driver, currentLat: currentAnimatedLat, currentLng: currentAnimatedLng }
-                                            : driver
-                                    )
-                                );
-
-                                if (progress < 1) {
-                                    requestAnimationFrame(animateMarker);
-                                }
+                            return { 
+                                ...d, 
+                                currentLat: data.lat, 
+                                currentLng: data.lng, 
+                                status: 'ON_DELIVERY' 
                             };
-
-                            requestAnimationFrame(animateMarker);
-
-                            return { ...d, status: 'ON_DELIVERY' };
                         }
                         return d;
                     });
@@ -178,21 +157,22 @@ function MapContent() {
         return () => { socket.off('driverMoved'); };
     }, [setDrivers]);
 
-    // 5. SIMILASYON DEPLASMAN CHOFÈ A SOU WOUT LA (Dapre Estati Chofè a)
+    // 5. SIMILASYON DEPLASMAN CHOFÈ A (Koulye a li itilize refs pou l pa kanpe)
     useEffect(() => {
         const testDriverId = "62bffbc0-1639-4568-9f08-87f91d7658c9";
-
-        const activeDriver = drivers.find((d: any) => d.id === testDriverId);
-
-        if (!activeDriver || activeDriver.status !== 'ON_DELIVERY' || routeCoords.length === 0) {
-            return;
-        }
-
         let index = 0;
 
         const interval = setInterval(() => {
-            if (index < routeCoords.length) {
-                const point = routeCoords[index];
+            const activeDriver = driversRef.current.find((d: any) => d.id === testDriverId);
+            const coords = routeCoordsRef.current;
+
+            // Si chofè a pa sou ON_DELIVERY oswa wout la vid, nou pa voye anyen
+            if (!activeDriver || activeDriver.status !== 'ON_DELIVERY' || coords.length === 0) {
+                return;
+            }
+
+            if (index < coords.length) {
+                const point = coords[index];
                 socket.emit('updateLocation', {
                     driverId: testDriverId,
                     lat: point[0],
@@ -200,32 +180,28 @@ function MapContent() {
                 });
                 index++;
             } else {
-                index = 0; 
+                index = 0; // Tounen nan kòmansman wout la si l fini
             }
         }, 2000);
 
         return () => clearInterval(interval);
-
-    }, [routeCoords, drivers]);
+    }, [routeFetched]); // Sèlman depann sou routeFetched pou l kòmanse yon sèl fwa
 
     const isSeller = user?.role === 'RESTAURANT_OWNER';
     const markerColor = isSeller ? '#f59e0b' : '#3b82f6';
     const markerEmoji = isSeller ? '🏪' : '👤';
     const displayName = isSeller ? (user?.profile?.username || user?.email || 'Magazen Mwen') : 'Mwen';
 
-    // Jwenn pozisyon chofè tès la ak estati l
     const testDriverId = "62bffbc0-1639-4568-9f08-87f91d7658c9";
     const activeDriver = drivers.find((d: any) => d.id === testDriverId);
     const driverPosition: [number, number] | null = activeDriver?.currentLat && activeDriver?.currentLng
         ? [activeDriver.currentLat, activeDriver.currentLng]
         : null;
     
-    // Tcheke si chofè a nan estati ON_DELIVERY vre
     const isOnDelivery = activeDriver?.status === 'ON_DELIVERY';
 
     return (
         <>
-            {/* Kat la ap swiv chofè a sèlman si li sou ON_DELIVERY */}
             <DriverTracker driverPosition={driverPosition} isOnDelivery={isOnDelivery} />
 
             {routeCoords.length > 0 && (
@@ -278,7 +254,6 @@ function MapContent() {
 
                     const averageSpeedMps = 8.33;
                     const estimatedSecondsRemaining = distanceMeters / averageSpeedMps;
-
                     const minutes = Math.floor(estimatedSecondsRemaining / 60);
                     const seconds = Math.round(estimatedSecondsRemaining % 60);
 
