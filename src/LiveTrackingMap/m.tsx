@@ -38,7 +38,6 @@ function MapContent() {
     const [routeFetched, setRouteFetched] = useState<boolean>(false);
     const map = useMap();
 
-    // Sèvi ak yon ref pou kenbe estati ak wout la san yo pa kraze entèval la
     const routeCoordsRef = useRef<[number, number][]>([]);
     routeCoordsRef.current = routeCoords;
 
@@ -123,25 +122,50 @@ function MapContent() {
 
     }, [myPosition, restaurants, routeFetched, setDrivers]);
 
-    // 4. RESEVWA POZISYON CHOFÈ A SOU SOCKET
+    // 4. RESEVWA POZISYON CHOFÈ A SOU SOCKET AK ANIMASYON LIKID (SMOOTH)
     useEffect(() => {
         socket.on('driverMoved', (data: { driverId: string, lat: number, lng: number }) => {
             setDrivers((prev: any[]) => {
-                const exists = prev.some((d: any) => d.id === data.driverId);
+                const driverIndex = prev.findIndex((d: any) => d.id === data.driverId);
 
-                if (exists) {
-                    return prev.map((d: any) => {
-                        if (d.id === data.driverId) {
-                            return { 
-                                ...d, 
-                                currentLat: data.lat, 
-                                currentLng: data.lng, 
-                                status: 'ON_DELIVERY' 
-                            };
+                if (driverIndex !== -1) {
+                    const currentDriver = prev[driverIndex];
+                    const startLat = currentDriver.currentLat ?? data.lat;
+                    const startLng = currentDriver.currentLng ?? data.lng;
+                    const endLat = data.lat;
+                    const endLng = data.lng;
+
+                    // Animatè pou glise makè a pandan tan entèval la (pa egzanp 1800ms)
+                    const duration = 1800;
+                    const startTime = performance.now();
+
+                    const animate = (currentTime: number) => {
+                        const elapsed = currentTime - startTime;
+                        const progress = Math.min(elapsed / duration, 1);
+
+                        // Easing (an doulè nan kòmansman ak nan fen) pou l parèt pi natirèl
+                        // const easeProgress = 0.5 - Math.cos(progress * Math.PI) / 0.5; 
+
+                        const interpolatedLat = startLat + (endLat - startLat) * progress;
+                        const interpolatedLng = startLng + (endLng - startLng) * progress;
+
+                        setDrivers((latestPrev: any[]) =>
+                            latestPrev.map((d: any) =>
+                                d.id === data.driverId
+                                    ? { ...d, currentLat: interpolatedLat, currentLng: interpolatedLng, status: 'ON_DELIVERY' }
+                                    : d
+                            )
+                        );
+
+                        if (progress < 1) {
+                            requestAnimationFrame(animate);
                         }
-                        return d;
-                    });
+                    };
+
+                    requestAnimationFrame(animate);
+                    return prev;
                 } else {
+                    // Si chofè a pa te la anvan, n ap ajoute l dirèkteman
                     return [...prev, {
                         id: data.driverId,
                         name: 'Chofè Tès',
@@ -157,7 +181,7 @@ function MapContent() {
         return () => { socket.off('driverMoved'); };
     }, [setDrivers]);
 
-    // 5. SIMILASYON DEPLASMAN CHOFÈ A (Koulye a li itilize refs pou l pa kanpe)
+    // 5. SIMILASYON DEPLASMAN CHOFÈ A
     useEffect(() => {
         const testDriverId = "62bffbc0-1639-4568-9f08-87f91d7658c9";
         let index = 0;
@@ -166,7 +190,6 @@ function MapContent() {
             const activeDriver = driversRef.current.find((d: any) => d.id === testDriverId);
             const coords = routeCoordsRef.current;
 
-            // Si chofè a pa sou ON_DELIVERY oswa wout la vid, nou pa voye anyen
             if (!activeDriver || activeDriver.status !== 'ON_DELIVERY' || coords.length === 0) {
                 return;
             }
@@ -180,12 +203,12 @@ function MapContent() {
                 });
                 index++;
             } else {
-                index = 0; // Tounen nan kòmansman wout la si l fini
+                index = 0; 
             }
         }, 2000);
 
         return () => clearInterval(interval);
-    }, [routeFetched]); // Sèlman depann sou routeFetched pou l kòmanse yon sèl fwa
+    }, [routeFetched]);
 
     const isSeller = user?.role === 'RESTAURANT_OWNER';
     const markerColor = isSeller ? '#f59e0b' : '#3b82f6';
