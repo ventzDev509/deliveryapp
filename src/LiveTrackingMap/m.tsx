@@ -19,7 +19,7 @@ const DriverStatus = {
     SUSPENDED: 'SUSPENDED'
 } as const;
 
-type DriverStatusType = typeof DriverStatus[keyof typeof DriverStatus];
+// type DriverStatusType = typeof DriverStatus[keyof typeof DriverStatus];
 
 const createCustomIcon = (color: string, emoji: string) => L.divIcon({
     html: `<div style="background-color: ${color}; width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 3px solid white; box-shadow: 0 4px 6px rgba(0,0,0,0.3); font-size: 18px; transition: all 0.5s ease-in-out;">${emoji}</div>`,
