@@ -19,12 +19,14 @@ const createCustomIcon = (color: string, emoji: string) => L.divIcon({
 // Konpozan pou kenbe kat la fwaye (fòkis) sou chofè a SÈLMAN si li sou ON_DELIVERY
 function DriverTracker({ driverPosition, isOnDelivery }: { driverPosition: [number, number] | null, isOnDelivery: boolean }) {
     const map = useMap();
+    
     useEffect(() => {
-        // Si chofè a pa sou ON_DELIVERY, nou kite itilizatè a deplase kat la an libète
+        // Chak fwa pozisyon chofè a chanje epi li sou ON_DELIVERY, n ap fòse kat la swiv li
         if (driverPosition && isOnDelivery) {
-            map.setView(driverPosition, 20, { animate: true });
+            map.setView(driverPosition, map.getZoom(), { animate: true });
         }
     }, [driverPosition, isOnDelivery, map]);
+
     return null;
 }
 
