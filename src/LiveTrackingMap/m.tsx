@@ -7,7 +7,6 @@ import { io } from 'socket.io-client';
 import { useAuth } from '../Contexts/AuthContext';
 import axios from 'axios';
 
-// const socket = io('http://localhost:3000');
 const socket = io('https://backenddelivery-t22i.onrender.com');
 
 const createCustomIcon = (color: string, emoji: string) => L.divIcon({
@@ -17,13 +16,14 @@ const createCustomIcon = (color: string, emoji: string) => L.divIcon({
     iconAnchor: [17, 17],
 });
 
-function MapController({ center }: { center: [number, number] }) {
+// Konpozan pou kenbe kat la fwaye (fòkis) sou chofè a an tan reyèl
+function DriverTracker({ driverPosition }: { driverPosition: [number, number] | null }) {
     const map = useMap();
     useEffect(() => {
-        if (center) {
-            map.setView(center, 15.5);
+        if (driverPosition) {
+            map.setView(driverPosition, 15.5, { animate: true });
         }
-    }, [center, map]);
+    }, [driverPosition, map]);
     return null;
 }
 
@@ -36,7 +36,7 @@ function MapContent() {
     const [routeFetched, setRouteFetched] = useState<boolean>(false); 
     const map = useMap();
 
-    // 1. Jwenn pozisyon itilizatè a
+    // 1. Jwenn pozisyon itilizatè a (pwen arive)
     useEffect(() => {
         if (!navigator.geolocation) return;
         navigator.geolocation.getCurrentPosition(
@@ -86,8 +86,7 @@ function MapContent() {
                     setRouteFetched(true); 
 
                     const firstPoint = coords[0]; 
-                    // const testDriverId = "9627dc24-9ab8-4c8d-b66c-e549e46532e5";
-                       const testDriverId = "62bffbc0-1639-4568-9f08-87f91d7658c9";
+                    const testDriverId = "62bffbc0-1639-4568-9f08-87f91d7658c9";
 
                     setDrivers((prev: any[]) => {
                         const exists = prev.some((d: any) => d.id === testDriverId);
@@ -205,9 +204,17 @@ function MapContent() {
     const markerEmoji = isSeller ? '🏪' : '👤';
     const displayName = isSeller ? (user?.profile?.username || user?.email || 'Magazen Mwen') : 'Mwen';
 
+    // Jwenn pozisyon chofè tès la pou nou ka pase l bay DriverTracker la
+    const testDriverId = "62bffbc0-1639-4568-9f08-87f91d7658c9";
+    const activeDriver = drivers.find((d: any) => d.id === testDriverId);
+    const driverPosition: [number, number] | null = activeDriver?.currentLat && activeDriver?.currentLng 
+        ? [activeDriver.currentLat, activeDriver.currentLng] 
+        : null;
+
     return (
         <>
-            {myPosition && <MapController center={myPosition} />}
+            {/* Kat la ap swiv chofè a an tan reyèl olye de itilizatè a */}
+            <DriverTracker driverPosition={driverPosition} />
 
             {routeCoords.length > 0 && (
                 <Polyline 
@@ -304,7 +311,7 @@ export default function SimpleMap() {
 
     return (
         <div style={{ height: '100vh', width: '100%' }}>
-            <MapContainer center={[19.445, -72.685]} zoom={16} style={{ height: '100%', width: '100%' }}>
+            <MapContainer center={[19.445, -72.685]} zoom={15.5} style={{ height: '100%', width: '100%' }}>
                 <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
                 <MapContent />
             </MapContainer>
