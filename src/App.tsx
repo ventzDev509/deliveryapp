@@ -54,7 +54,7 @@ function App() {
       <Routes>
 
         {/* Home */}
-        <Route path="/" element={<SimpleMap />} />
+        <Route path="/" element={""} />
         {/* Authentification path  */}
         <Route path="/auth" element={<Auth />} />
         <Route path="/verify-email" element={<EmailVerification />} />
