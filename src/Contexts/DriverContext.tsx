@@ -133,6 +133,7 @@ const updateDriver = async (id: string, data: any): Promise<boolean> => {
       createDriver, 
       updateDriverStatus, 
       deleteDriver,
+      setDrivers,
       approveDriver,
       getDriverStats,
       updateDriver

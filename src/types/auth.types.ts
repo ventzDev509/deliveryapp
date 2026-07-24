@@ -8,6 +8,9 @@ export interface Profile {
     isSeller: boolean;
     userId: string;
     updatedAt: Date;
+    lat? : string | null;
+    lng?:string | null
+
 }
 
 export interface User {
@@ -18,6 +21,9 @@ export interface User {
     isEmailConfirmed: boolean;
     profile: Profile | null;
     provider?: string | null;
+    lat? : number | null;
+    lng?:number | null
+    
 }
 
 export interface AuthResponse {

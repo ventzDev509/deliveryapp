@@ -1,105 +1,306 @@
-import React, { useEffect } from 'react';
-import { MapContainer, TileLayer, Marker, Tooltip, useMap } from 'react-leaflet';
-import 'leaflet/dist/leaflet.css';
+import { useEffect, useState } from 'react';
+import { Marker, Tooltip, Polyline, useMap, MapContainer, TileLayer } from 'react-leaflet';
 import L from 'leaflet';
-import 'leaflet-routing-machine';
-import 'leaflet-routing-machine/dist/leaflet-routing-machine.css';
+import 'leaflet/dist/leaflet.css';
 import { useDriver } from '../Contexts/DriverContext';
+import { io } from 'socket.io-client';
+import { useAuth } from '../Contexts/AuthContext';
+import axios from 'axios';
 
-// 1. Konfigirasyon Ikon Vizib (DivIcon)
+// const socket = io('http://localhost:3000');
+const socket = io('https://backenddelivery-t22i.onrender.com');
+
 const createCustomIcon = (color: string, emoji: string) => L.divIcon({
-    html: `<div style="background-color: ${color}; width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 3px solid white; box-shadow: 0 4px 6px rgba(0,0,0,0.3); font-size: 18px;">${emoji}</div>`,
+    html: `<div style="background-color: ${color}; width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 3px solid white; box-shadow: 0 4px 6px rgba(0,0,0,0.3); font-size: 18px; transition: all 0.5s ease-in-out;">${emoji}</div>`,
     className: 'custom-marker',
     iconSize: [35, 35],
     iconAnchor: [17, 17],
 });
 
-// Done simulation pou User ak Restoran
-const mockData = {
-    users: [{ id: 'u1', lat: 19.465, lng: -72.675, name: "Kliyan: Rue du Soleil" },
-        { id: 'u1', lat: 19.445, lng: -72.681, name: "Kliyan: 3" }
-    ],
-    restaurants: [{ id: 'r1', lat: 19.440, lng: -72.670, name: "Restoran: Pòtoprens Burger" }]
-};
-
-// 2. Konpozan Routing
-function Routing({ start, end }: { start: [number, number], end: [number, number] }) {
-    const map = useMap();
-    useEffect(() => {
-        if (!map) return;
-        const routingControl = (L as any).Routing.control({
-            waypoints: [L.latLng(start[0], start[1]), L.latLng(end[0], end[1])],
-            router: (L as any).Routing.osrmv1({ profile: 'car' }),
-            lineOptions: { styles: [{ color: '#3b82f6', weight: 6, opacity: 0.7 }] },
-            addWaypoints: false,
-            draggableWaypoints: false,
-            routeWhileDragging: false,
-            show: false,
-            createMarker: () => null
-        }).addTo(map);
-        return () => { map.removeControl(routingControl); };
-    }, [map, start, end]);
-    return null;
-}
-
-// 3. Konpozan pou "Focus" kat la sou yon kowòdone
 function MapController({ center }: { center: [number, number] }) {
     const map = useMap();
     useEffect(() => {
-        map.setView(center, 16);
+        if (center) {
+            map.setView(center, 15.5);
+        }
     }, [center, map]);
     return null;
 }
 
-// 4. Konpozan prensipal Map la
 function MapContent() {
-    const { drivers } = useDriver();
+    const { drivers, setDrivers } = useDriver();
+    const { user } = useAuth();
+    const [myPosition, setMyPosition] = useState<[number, number] | null>(null);
+    const [restaurants, setRestaurants] = useState<any[]>([]);
+    const [routeCoords, setRouteCoords] = useState<[number, number][]>([]);
+    const [routeFetched, setRouteFetched] = useState<boolean>(false); 
+    const map = useMap();
+
+    // 1. Jwenn pozisyon itilizatè a
+    useEffect(() => {
+        if (!navigator.geolocation) return;
+        navigator.geolocation.getCurrentPosition(
+            (pos) => setMyPosition([pos.coords.latitude, pos.coords.longitude]),
+            (err) => console.error(err),
+            { enableHighAccuracy: true }
+        );
+    }, []);
+
+    // 2. JWENN RESTORAN YO
+    useEffect(() => {
+        axios.get('https://backenddelivery-t22i.onrender.com/restaurants')
+            .then((res) => {
+                setRestaurants(res.data);
+            })
+            .catch((err) => {
+                console.error("Erè restoran:", err);
+            });
+    }, []);
+
+    // 3. REQUISYON OSRM: SOTI NAN CHOFÈ -> RESTORAN -> ITILIZATÈ
+    useEffect(() => {
+        if (!myPosition || routeFetched || restaurants.length === 0) return;
+
+        const targetRest = restaurants[0];
+        const restLat = targetRest.owner?.profile?.lat || 19.4470;
+        const restLng = targetRest.owner?.profile?.lng || -72.6870;
+
+        const startLng = -72.6850;
+        const startLat = 19.4450;
+        
+        const midLng = restLng;
+        const midLat = restLat;
+
+        const endLng = myPosition[1];
+        const endLat = myPosition[0];
+
+        const url = `https://router.project-osrm.org/route/v1/driving/${startLng},${startLat};${midLng},${midLat};${endLng},${endLat}?overview=full&geometries=geojson`;
+
+        axios.get(url)
+            .then((res) => {
+                if (res.data.routes && res.data.routes.length > 0) {
+                    const route = res.data.routes[0];
+                    const coords = route.geometry.coordinates.map((c: [number, number]) => [c[1], c[0]]);
+                    
+                    setRouteCoords(coords);
+                    setRouteFetched(true); 
+
+                    const firstPoint = coords[0]; 
+                    const testDriverId = "9627dc24-9ab8-4c8d-b66c-e549e46532e5";
+
+                    setDrivers((prev: any[]) => {
+                        const exists = prev.some((d: any) => d.id === testDriverId);
+                        if (exists) {
+                            return prev.map((d: any) => 
+                                d.id === testDriverId 
+                                    ? { ...d, currentLat: firstPoint[0], currentLng: firstPoint[1], status: 'ON_DELIVERY' } 
+                                    : d
+                            );
+                        } else {
+                            return [...prev, {
+                                id: testDriverId,
+                                name: 'Chofè Tès',
+                                vehicleType: 'MOTORCYCLE',
+                                currentLat: firstPoint[0],
+                                currentLng: firstPoint[1],
+                                status: 'ON_DELIVERY'
+                            }];
+                        }
+                    });
+                }
+            })
+            .catch((err) => {
+                console.error("Erè nan OSRM:", err);
+                setRouteCoords([[startLat, startLng], [endLat, endLng]]);
+            });
+
+    }, [myPosition, restaurants, routeFetched, setDrivers]);
+
+    // 4. RESEVWA POZISYON CHOFÈ A AK ANIMASYON LIKID
+    useEffect(() => {
+        socket.on('driverMoved', (data: { driverId: string, lat: number, lng: number }) => {
+            setDrivers((prev: any[]) => {
+                const exists = prev.some((d: any) => d.id === data.driverId);
+
+                if (exists) {
+                    return prev.map((d: any) => {
+                        if (d.id === data.driverId) {
+                            const startLat = d.currentLat || data.lat;
+                            const startLng = d.currentLng || data.lng;
+                            const endLat = data.lat;
+                            const endLng = data.lng;
+                            
+                            const duration = 1500; 
+                            const startTime = performance.now();
+
+                            const animateMarker = (currentTime: number) => {
+                                const elapsed = currentTime - startTime;
+                                const progress = Math.min(elapsed / duration, 1);
+
+                                const currentAnimatedLat = startLat + (endLat - startLat) * progress;
+                                const currentAnimatedLng = startLng + (endLng - startLng) * progress;
+
+                                setDrivers((latestPrev: any[]) => 
+                                    latestPrev.map((driver: any) => 
+                                        driver.id === data.driverId 
+                                            ? { ...driver, currentLat: currentAnimatedLat, currentLng: currentAnimatedLng } 
+                                            : driver
+                                    )
+                                );
+
+                                if (progress < 1) {
+                                    requestAnimationFrame(animateMarker);
+                                }
+                            };
+
+                            requestAnimationFrame(animateMarker);
+
+                            return { ...d, status: 'ON_DELIVERY' };
+                        }
+                        return d;
+                    });
+                } else {
+                    return [...prev, {
+                        id: data.driverId,
+                        name: 'Chofè Tès',
+                        vehicleType: 'MOTORCYCLE',
+                        currentLat: data.lat,
+                        currentLng: data.lng,
+                        status: 'ON_DELIVERY'
+                    }];
+                }
+            });
+        });
+
+        return () => { socket.off('driverMoved'); };
+    }, [setDrivers]);
+
+    // 5. SIMILASYON DEPLASMAN CHOFÈ A SOU WOUT LA
+    useEffect(() => {
+        const testDriverId = "9627dc24-9ab8-4c8d-b66c-e549e46532e5"; 
+        let index = 0;
+
+        const interval = setInterval(() => {
+            if (routeCoords.length > 0) {
+                if (index < routeCoords.length) {
+                    const point = routeCoords[index]; 
+                    socket.emit('updateLocation', {
+                        driverId: testDriverId,
+                        lat: point[0],
+                        lng: point[1]
+                    });
+                    index++;
+                } else {
+                    index = 0; 
+                }
+            }
+        }, 2000); 
+
+        return () => clearInterval(interval);
+    }, [routeCoords]);
+
+    const isSeller = user?.role === 'RESTAURANT_OWNER';
+    const markerColor = isSeller ? '#f59e0b' : '#3b82f6';
+    const markerEmoji = isSeller ? '🏪' : '👤';
+    const displayName = isSeller ? (user?.profile?.username || user?.email || 'Magazen Mwen') : 'Mwen';
 
     return (
         <>
-            {/* Santre kat la sou premye kliyan an */}
-            {mockData.users.length > 0 && <MapController center={[mockData.users[0].lat, mockData.users[0].lng]} />}
+            {myPosition && <MapController center={myPosition} />}
 
-            {/* Kliyan */}
-            {mockData.users.map(u => (
-                <Marker key={u.id} position={[u.lat, u.lng]} icon={createCustomIcon('#3b82f6', '👤')}>
-                    <Tooltip permanent direction="top">{u.name}</Tooltip>
+            {routeCoords.length > 0 && (
+                <Polyline 
+                    positions={routeCoords} 
+                    pathOptions={{ color: '#3b82f6', weight: 6, opacity: 0.7 }} 
+                />
+            )}
+
+            {/* ITILIZATÈ A */}
+            {myPosition && (
+                <Marker position={myPosition} icon={createCustomIcon(markerColor, markerEmoji)}>
+                    <Tooltip permanent direction="top" className="custom-user-tooltip">
+                        {displayName}
+                    </Tooltip>
                 </Marker>
-            ))}
+            )}
 
-            {/* Chofè yo */}
-            {drivers
-                .filter(d => d.currentLat !== null && d.currentLng !== null)
-                .map(d => (
-                    <React.Fragment key={d.id}>
-                        <Marker
-                            position={[d.currentLat!, d.currentLng!]}
-                            icon={createCustomIcon('#16a34a', d.vehicleType === 'MOTORCYCLE' ? '🏍️' : '🚗')}
-                        >
-                            <Tooltip permanent direction="top">{d.name}</Tooltip>
-                        </Marker>
+            {/* RESTORAN YO */}
+            {restaurants.map((rest) => {
+                const lat = rest.owner?.profile?.lat || 19.445;
+                const lng = rest.owner?.profile?.lng || -72.685;
 
-                        {/* Wout la parèt sèlman lè estati a se ON_DELIVERY */}
-                        {d.status === 'ON_DELIVERY' && mockData.users.length > 0 && (
-                            <Routing
-                                start={[d.currentLat!, d.currentLng!]}
-                                end={[mockData.users[0].lat, mockData.users[0].lng]}
-                            />
-                        )}
-                    </React.Fragment>
-                ))}
+                return (
+                    <Marker
+                        key={rest.id}
+                        position={[lat, lng]}
+                        icon={createCustomIcon('#f59e0b', '🏪')}
+                    >
+                        <Tooltip permanent direction="top" className="custom-restaurant-tooltip">
+                            {rest.name || 'Restoran'}
+                        </Tooltip>
+                    </Marker>
+                );
+            })}
 
-            {/* Restoran */}
-            {mockData.restaurants.map(r => (
-                <Marker key={r.id} position={[r.lat, r.lng]} icon={createCustomIcon('#ef4444', '🍽️')}>
-                    <Tooltip permanent direction="top">{r.name}</Tooltip>
-                </Marker>
-            ))}
+            {/* CHOFÈ A */}
+            {drivers.filter(d => d.currentLat && d.currentLng).map(d => {
+                let distanceText = '';
+                let timeText = '';
+
+                if (myPosition && map) {
+                    const distanceMeters = map.distance(
+                        [d.currentLat!, d.currentLng!],
+                        [myPosition[0], myPosition[1]]
+                    );
+                    
+                    if (distanceMeters >= 1000) {
+                        distanceText = ` - ${(distanceMeters / 1000).toFixed(1)} km`;
+                    } else {
+                        distanceText = ` - ${Math.round(distanceMeters)} m`;
+                    }
+
+                    const averageSpeedMps = 8.33; 
+                    const estimatedSecondsRemaining = distanceMeters / averageSpeedMps;
+
+                    const minutes = Math.floor(estimatedSecondsRemaining / 60);
+                    const seconds = Math.round(estimatedSecondsRemaining % 60);
+
+                    if (distanceMeters < 20) {
+                        timeText = ` ⏱️ Rive!`;
+                    } else if (minutes > 0) {
+                        timeText = ` ⏱️ ${minutes} min`;
+                    } else {
+                        timeText = ` ⏱️ ${seconds} sek`;
+                    }
+                }
+
+                return (
+                    <Marker
+                        key={d.id}
+                        position={[d.currentLat!, d.currentLng!]}
+                        icon={createCustomIcon('#16a34a', d.vehicleType === 'MOTORCYCLE' ? '🏍️' : '🚗')}
+                    >
+                        <Tooltip permanent direction="top" className="custom-driver-tooltip">
+                            {d.name} {distanceText} {timeText}
+                        </Tooltip>
+                    </Marker>
+                );
+            })}
         </>
     );
 }
 
 export default function SimpleMap() {
+    useEffect(() => {
+        socket.on('connect', () => {
+            console.log('✅ Konekte ak sèvè a! ID:', socket.id);
+        });
+
+        socket.on('connect_error', (err) => {
+            console.log('❌ Erè koneksyon:', err.message);
+        });
+    }, []);
+
     return (
         <div style={{ height: '100vh', width: '100%' }}>
             <MapContainer center={[19.445, -72.685]} zoom={16} style={{ height: '100%', width: '100%' }}>

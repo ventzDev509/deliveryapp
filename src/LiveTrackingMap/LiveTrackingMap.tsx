@@ -18,7 +18,8 @@ const MAP_BOUNDS = {
   minLng: -72.700, maxLng: -72.650
 };
 
-const SOCKET_URL = 'http://localhost:3000';
+// const SOCKET_URL = 'http://localhost:3000';
+const SOCKET_URL = 'https://backenddelivery-t22i.onrender.com';
 
 export default function TrackingDeliveryMap() {
   const [drivers, setDrivers] = useState<Driver[]>([]);

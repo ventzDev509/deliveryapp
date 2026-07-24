@@ -1,3 +1,4 @@
+import type { Dispatch, SetStateAction } from "react";
 import type { CreateDriverDto } from "./dto/create-driver.dto";
 
 export interface Driver {
@@ -5,9 +6,10 @@ export interface Driver {
     name: string;
     status: 'AVAILABLE' | 'ON_DELIVERY' | 'BROKEN_DOWN' | 'IN_TRAFFIC' | 'OFFLINE';
     currentLat: number | null;
-    phone:string;
-    email:string;
-    isVerified:boolean;
+    phone: string;
+    email: string;
+
+    isVerified: boolean;
     currentLng: number | null;
     vehicleType: 'MOTORCYCLE' | 'BICYCLE' | 'CAR' | 'TRUCK';
     vehiclePlate?: string;
@@ -17,6 +19,7 @@ export interface Driver {
 export interface DriverContextType {
     drivers: Driver[];
     loading: boolean;
+    setDrivers: Dispatch<SetStateAction<Driver[]>>;
     fetchDrivers: () => Promise<void>;
     createDriver: (data: CreateDriverDto) => Promise<boolean>;
     updateDriverStatus: (id: string, status: string) => Promise<boolean>;

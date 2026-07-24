@@ -12,3 +12,48 @@
     box-shadow: 0 0 10px rgba(0,0,0,0.5);
     font-size: 16px;
 }
+
+/* 1. CHOFÈ A: Style Nwa ak Vèt (Modèn epi ki kanpe deyò) */
+.leaflet-tooltip.custom-driver-tooltip {
+    background-color: #0f172a !important;
+    color: #4ade80 !important;
+    border: 2px solid #22c55e !important;
+    border-radius: 10px !important;
+    padding: 8px 12px !important;
+    font-size: 14px !important;
+    font-weight: bold !important;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.5) !important;
+}
+.leaflet-tooltip.custom-driver-tooltip.leaflet-tooltip-top::before {
+    border-top-color: #0f172a !important;
+}
+
+/* 2. RESTORAN AN: Style Oranj / Jòn (Cho epi ki atire je a) */
+.leaflet-tooltip.custom-restaurant-tooltip {
+    background-color: #78350f !important;
+    color: #fef3c7 !important;
+    border: 2px solid #f59e0b !important;
+    border-radius: 10px !important;
+    padding: 8px 12px !important;
+    font-size: 14px !important;
+    font-weight: bold !important;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.5) !important;
+}
+.leaflet-tooltip.custom-restaurant-tooltip.leaflet-tooltip-top::before {
+    border-top-color: #78350f !important;
+}
+
+/* 3. ITILIZATÈ A: Style Vyolèt / Ble Fonse (Frais epi pwòp) */
+.leaflet-tooltip.custom-user-tooltip {
+    background-color: #312e81 !important;
+    color: #c7d2fe !important;
+    border: 2px solid #6366f1 !important;
+    border-radius: 10px !important;
+    padding: 8px 12px !important;
+    font-size: 14px !important;
+    font-weight: bold !important;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.5) !important;
+}
+.leaflet-tooltip.custom-user-tooltip.leaflet-tooltip-top::before {
+    border-top-color: #312e81 !important;
+}
