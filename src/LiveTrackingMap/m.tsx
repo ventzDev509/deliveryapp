@@ -87,7 +87,7 @@ function MapContent() {
 
                     const firstPoint = coords[0]; 
                     // const testDriverId = "9627dc24-9ab8-4c8d-b66c-e549e46532e5";
-                    const testDriverId = "6f3c826d-b735-4f2c-b46e-1667038c730c";
+                       const testDriverId = "62bffbc0-1639-4568-9f08-87f91d7658c9";
 
                     setDrivers((prev: any[]) => {
                         const exists = prev.some((d: any) => d.id === testDriverId);
@@ -178,7 +178,7 @@ function MapContent() {
 
     // 5. SIMILASYON DEPLASMAN CHOFÈ A SOU WOUT LA
     useEffect(() => {
-        const testDriverId = "9627dc24-9ab8-4c8d-b66c-e549e46532e5"; 
+        const testDriverId = "62bffbc0-1639-4568-9f08-87f91d7658c9"; 
         let index = 0;
 
         const interval = setInterval(() => {
