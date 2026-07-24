@@ -8,7 +8,7 @@ import { Notification } from '../../../../notification/Notification';
 export default function UpdateProfile() {
     const { profile, fetchProfile, updateProfile, loading } = useProfile();
     const { user } = useAuth();
-    const [isUpdate, setIsUpdate] = useState(false)
+    const [_, setIsUpdate] = useState(false)
     const [notification, setNotification] = useState<{ message: string, type: 'error' | 'success' } | null>(null);
 
     const [formData, setFormData] = useState({
