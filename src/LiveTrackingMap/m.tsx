@@ -21,7 +21,7 @@ function DriverTracker({ driverPosition }: { driverPosition: [number, number] | 
     const map = useMap();
     useEffect(() => {
         if (driverPosition) {
-            map.setView(driverPosition, 15.5, { animate: true });
+            map.setView(driverPosition, 20, { animate: true });
         }
     }, [driverPosition, map]);
     return null;
