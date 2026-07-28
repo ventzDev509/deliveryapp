@@ -23,14 +23,6 @@ const RestaurantSettings = () => {
                     <h1 className="text-xl md:text-2xl font-black text-gray-900 dark:text-zinc-50 tracking-tight">Konfigirasyon Restoran</h1>
                     <p className="text-xs text-gray-400 dark:text-zinc-500 mt-0.5">Jere enfòmasyon piblik, orè travay, ak paramèt livrezon ou.</p>
                 </div>
-
-                <button
-                    onClick={handleSaveSettings}
-                    className="flex items-center justify-center gap-2 px-5 py-2.5 bg-orange-500 hover:bg-orange-600 text-white rounded-2xl text-xs font-bold transition-all shadow-md shadow-orange-500/10 active:scale-95 sm:w-auto w-full"
-                >
-                    <Save size={16} />
-                    <span>Sove Tout</span>
-                </button>
             </div>
 
             {/* 2. DESIGN PREMIUM BANNER AK LOGO */}
