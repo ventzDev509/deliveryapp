@@ -11,7 +11,6 @@ const MainMenu = () => {
             {/* Kontenè Prensipal la - Ak sipò nèt pou dark mode */}
             <div className="flex-1 flex flex-col gap-4 p-4 md:p-6 lg:ml-64 mb-20 md:mb-0">
                 <TopBar />
-                
                 <main className="w-full flex flex-col gap-4">
                     <MenuPage />
                 </main>
