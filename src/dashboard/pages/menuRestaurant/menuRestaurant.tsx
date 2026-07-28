@@ -121,9 +121,9 @@ const MenuPage = () => {
         </div>
       </div>
 
-     {/* 2. FILTRE KATEGORI */}
-      <div className="w-full overflow-hidden">
-        <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none border-b border-gray-100 dark:border-zinc-800/60 w-full touch-pan-x">
+    {/* 2. FILTRE KATEGORI */}
+      <div className="w-full max-w-[calc(100vw-2rem)] sm:max-w-none overflow-x-auto scrollbar-none pb-2 border-b border-gray-100 dark:border-zinc-800/60">
+        <div className="flex items-center gap-2 w-max">
           {/* Bouton Tout */}
           <button
             onClick={() => setActiveCategory('All')}
