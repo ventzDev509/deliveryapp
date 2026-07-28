@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Store, Clock, Save, ShieldCheck,  } from 'lucide-react';
+import { Store, Clock, ShieldCheck,  } from 'lucide-react';
 
 import AdvancedSettings from './AdvancedSettings';
 import UpdateProfile from './components/UpdateProfile';
@@ -9,10 +9,7 @@ import HouseOfWork from './components/HoursOfWork';
 
 const RestaurantSettings = () => {
     const [activeTab, setActiveTab] = useState<'profile' | 'hours' | 'delivery' | 'advanced'>('profile');
-    const handleSaveSettings = (e: React.FormEvent) => {
-        e.preventDefault();
-        alert("Konfigirasyon an sove ak siksè! 🎉");
-    };
+   
 
     return (
         <div className="w-full  mx-auto flex flex-col gap-6 pb-12 transition-colors duration-300">
@@ -59,7 +56,7 @@ const RestaurantSettings = () => {
             </div>
 
             {/* 4. KONTNI TAB YO AK ANIMASYON CONTENANT */}
-            <div className="bg-white dark:bg-zinc-900 rounded-2xl border border-gray-200 dark:border-zinc-800 p-6 min-h-[300px] shadow-sm">
+            <div className="bg-white dark:bg-zinc-900 rounded-2xl border border-gray-200 dark:border-zinc-800 p-4 min-h-[300px] shadow-sm">
                 
                     <AnimatePresence mode="wait">
 
