@@ -92,7 +92,7 @@ export default function HouseOfWork() {
                 )}
             </AnimatePresence>
             {/* Header ak Bouton Sove */}
-            <div className="flex items-center justify-between bg-white dark:bg-zinc-900 p-4 rounded-2xl border border-gray-100 dark:border-zinc-800 shadow-xs">
+            <div className="flex items-center justify-between bg-white dark:bg-zinc-900 p-1 rounded-2xl border border-gray-100 dark:border-zinc-800 shadow-xs">
                 <div>
                     <h3 className="text-sm font-bold text-gray-800 dark:text-zinc-100">Orè Operasyon yo</h3>
                     <p className="text-xs text-gray-400 dark:text-zinc-400 mt-0.5">Konfigure lè restoran an ap louvri pou chak jou nan semenn nan.</p>

@@ -19,7 +19,7 @@ export default function HoursRow({
     return (
         <motion.div
             layout="position"
-            className={`flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4  rounded-xl border transition-all duration-300 ${
+            className={`flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 p-2 rounded-xl border transition-all duration-300 ${
                 isOpen
                     ? "bg-white border-gray-200 shadow-sm dark:bg-zinc-900 dark:border-zinc-800"
                     : "bg-gray-50/50 border-gray-100 opacity-70 dark:bg-zinc-900/40 dark:border-zinc-800"
