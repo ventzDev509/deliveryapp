@@ -52,7 +52,7 @@ export const ProfileProvider = ({ children }: { children: ReactNode }) => {
     };
 
     // 3. Mizajou foto pwofil ak banyè (Banner)
-    const updateProfileImages = async (userId: string, profileImage?: File, bannerImage?: File): Promise<any> => {
+    const updateProfileImages = async (_: string, profileImage?: File, bannerImage?: File): Promise<any> => {
         setLoading(true);
         try {
             const formData = new FormData();

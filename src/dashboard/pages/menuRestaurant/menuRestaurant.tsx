@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, Plus, Edit2, ToggleLeft, ToggleRight, Utensils, Flame, Layers, Clock, Loader2 } from 'lucide-react';
+import { Search, Plus, Edit2, ToggleLeft, ToggleRight, Utensils,  Clock, Loader2 } from 'lucide-react';
 import MenuDrawer from './MenuDrawer';
 import { useAuth } from '../../../Contexts/AuthContext';
 import { useRestaurant } from '../../../Contexts/RestaurantContext';
