@@ -1,13 +1,16 @@
-import { useState } from 'react';
-import { Power, Wallet, Globe, Smartphone, Landmark, Clock3, Percent, Video } from 'lucide-react';
-import { BsInstagram } from 'react-icons/bs';
-import { FaFacebook } from 'react-icons/fa';
+import { useState, useEffect } from 'react';
+import { Wallet } from 'lucide-react';
+
+import { useProfile } from '../../../Contexts/ProfileContext';
+import { useAuth } from '../../../Contexts/AuthContext';
+import { Notification } from '../../../notification/Notification';
 
 const AdvancedSettings = () => {
-  // 1. State pou Ijans Ouvè/Fèmen
-  const [isStoreOpen, setIsStoreOpen] = useState(true);
+  const { fetchProfile } = useProfile();
+  const { user } = useAuth();
+  const [notification, setNotification] = useState<{ message: string, type: 'error' | 'success' } | null>(null);
 
-  // 2. State pou Metòd Peman yo
+  // 2. State pou Metòd Peman yo (Sèlman cash ki aktif, lòt yo desaktive)
   const [payments, setPayments] = useState({
     cash: true,
     moncash: false,
@@ -15,82 +18,36 @@ const AdvancedSettings = () => {
     card: false,
   });
 
-  // 3. State pou Lyen ak Kontak
-  const [whatsapp, setWhatsapp] = useState("+509 3700-0000");
-  const [website, setWebsite] = useState("www.kantinpeyimwen.com");
-  const [instagram, setInstagram] = useState("kantin_peyi_mwen");
-  const [facebook, setFacebook] = useState("kantinpeyimwen");
-  const [tiktok, setTiktok] = useState("kantinpeyimwen"); // 🚀 NOUVO: TikTok state
+  // Chache pwofil la lè konpozan an monte
+  useEffect(() => {
+    const userId = user?.id;
+    if (userId) {
+      fetchProfile(userId);
+    }
+  }, [user]);
 
-  // 4. State pou Tan Preparasyon ak Taks
-  const [prepTime, setPrepTime] = useState("20-30");
-  const [taxRate, setTaxRate] = useState(10);
+  // Efase notifikasyon apre 3 segond
+  useEffect(() => {
+    if (notification) {
+      const timer = setTimeout(() => {
+        setNotification(null);
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [notification]);
 
   return (
-    <div className="space-y-6 transition-colors duration-300">
-      
-      {/* SEKSYON 1: PANIC BUTTON (OUVÈ / FÈMEN IJAN) */}
-      <div className="p-4 rounded-2xl border border-gray-100 dark:border-zinc-800 bg-gray-50/50 dark:bg-zinc-900/50 flex items-center justify-between gap-4">
-        <div className="flex flex-col gap-0.5">
-          <h3 className="text-xs font-black text-gray-800 dark:text-zinc-200 flex items-center gap-1.5">
-            Status Restoran an (An Tan Reyèl)
-          </h3>
-          <p className="text-[11px] text-gray-400 dark:text-zinc-500">Ou ka fèmen restoran an byen vit si gen yon ijans.</p>
-        </div>
+    <div className="space-y-6 transition-colors duration-300 relative w-full">
+      {notification && (
+        <Notification
+          message={notification.message}
+          type={notification.type}
+          duration={8000}
+          onClose={() => setNotification(null)}
+        />
+      )}
 
-        <button
-          type="button"
-          onClick={() => setIsStoreOpen(!isStoreOpen)}
-          className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all shadow-sm active:scale-95 ${
-            isStoreOpen 
-              ? 'bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800' 
-              : 'bg-rose-50 dark:bg-rose-950/30 text-rose-700 dark:text-rose-400 border border-rose-200 dark:border-rose-800'
-          }`}
-        >
-          <Power size={14} className={isStoreOpen ? "animate-pulse" : ""} />
-          <span>{isStoreOpen ? "LOUVRI" : "FÈMEN"}</span>
-        </button>
-      </div>
-
-      {/* SEKSYON 2: OPERASYON AK FINANS */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4 border border-gray-100 dark:border-zinc-800 rounded-2xl bg-gray-50/20 dark:bg-zinc-900/10">
-        <div className="flex flex-col gap-1.5">
-          <label className="text-[11px] font-bold text-gray-500 dark:text-zinc-400 uppercase tracking-wider flex items-center gap-1">
-            <Clock3 size={12} className="text-orange-500" /> Tan Preparasyon Mwayèn (Minit)
-          </label>
-          <select 
-            value={prepTime}
-            onChange={(e) => setPrepTime(e.target.value)}
-            className="w-full px-4 py-3 bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-xl text-xs font-bold text-gray-800 dark:text-zinc-200 focus:outline-none focus:border-orange-500 dark:focus:border-orange-500 transition-all appearance-none"
-          >
-            <option value="10-15">10 - 15 minit</option>
-            <option value="15-20">15 - 20 minit</option>
-            <option value="20-30">20 - 30 minit</option>
-            <option value="30-45">30 - 45 minit</option>
-            <option value="45+">Plis pase 45 minit</option>
-          </select>
-        </div>
-
-        <div className="flex flex-col gap-1.5">
-          <label className="text-[11px] font-bold text-gray-500 dark:text-zinc-400 uppercase tracking-wider flex items-center gap-1">
-            <Percent size={12} className="text-orange-500" /> Taks sou chak kòmand (%)
-          </label>
-          <div className="relative">
-            <input 
-              type="number" 
-              min="0"
-              max="100"
-              value={taxRate || ''}
-              onChange={(e) => setTaxRate(parseInt(e.target.value) || 0)}
-              placeholder="0"
-              className="w-full px-4 py-3 bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-xl text-xs font-bold text-gray-800 dark:text-zinc-200 focus:outline-none focus:border-orange-500 dark:focus:border-orange-500 transition-all"
-            />
-            <span className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 dark:text-zinc-500 text-xs font-bold">%</span>
-          </div>
-        </div>
-      </div>
-
-      {/* SEKSYON 3: METÒD PEMAN */}
+      {/* SEKSYON 2: METÒD PEMAN */}
       <div className="space-y-3">
         <div>
           <h3 className="text-xs font-bold text-gray-800 dark:text-zinc-200 flex items-center gap-1.5">
@@ -100,31 +57,42 @@ const AdvancedSettings = () => {
           <p className="text-[11px] text-gray-400 dark:text-zinc-500">Chwazi kijan kliyan yo ka peye pou manje a.</p>
         </div>
 
-        <div className="grid grid-cols-2 gap-3">
+        {/* Chanje grid-cols-2 an grid-cols-1 sm:grid-cols-2 pou l responsif sou telefòn */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {[
-            { id: 'cash', label: 'Kach nan Livrezon', sub: 'Lajan kach (COD)' },
-            { id: 'moncash', label: 'MonCash', sub: 'Peman mobil Digicel' },
-            { id: 'natcash', label: 'Natcash', sub: 'Peman mobil Natcom' },
-            { id: 'card', label: 'Kat Kredi / Debit', sub: 'Stripe / Visa / Master' },
+            { id: 'cash', label: 'Kach nan Livrezon', sub: 'Lajan kach (COD)', disabled: false },
+            { id: 'moncash', label: 'MonCash', sub: 'Peman mobil Digicel', disabled: true },
+            { id: 'natcash', label: 'Natcash', sub: 'Peman mobil Natcom', disabled: true },
+            { id: 'card', label: 'Kat Kredi / Debit', sub: 'Stripe / Visa / Master', disabled: true },
           ].map((item) => {
             const isChecked = payments[item.id as keyof typeof payments];
             return (
               <label 
                 key={item.id}
-                className={`p-3 rounded-xl border cursor-pointer flex items-start gap-3 transition-all select-none ${
-                  isChecked 
-                    ? 'bg-white dark:bg-zinc-900 border-orange-500 shadow-sm' 
-                    : 'bg-gray-50/30 dark:bg-zinc-900/10 border-gray-100 dark:border-zinc-800 hover:border-gray-200 dark:hover:border-zinc-700'
+                className={`p-3 rounded-xl border flex items-start gap-3 transition-all select-none relative ${
+                  item.disabled 
+                    ? 'opacity-60 bg-gray-100/50 dark:bg-zinc-900/30 border-gray-200 dark:border-zinc-800 cursor-not-allowed'
+                    : isChecked 
+                      ? 'bg-white dark:bg-zinc-900 border-orange-500 shadow-sm cursor-pointer' 
+                      : 'bg-gray-50/30 dark:bg-zinc-900/10 border-gray-100 dark:border-zinc-800 cursor-pointer'
                 }`}
               >
                 <input 
                   type="checkbox"
                   checked={isChecked}
-                  onChange={() => setPayments({ ...payments, [item.id]: !isChecked })}
-                  className="mt-0.5 h-3.5 w-3.5 rounded-md border-gray-300 dark:border-zinc-700 text-orange-500 focus:ring-orange-500 accent-orange-500"
+                  disabled={item.disabled}
+                  onChange={() => !item.disabled && setPayments({ ...payments, [item.id]: !isChecked })}
+                  className="mt-0.5 h-3.5 w-3.5 rounded-md border-gray-300 dark:border-zinc-700 text-orange-500 focus:ring-orange-500 accent-orange-500 cursor-pointer"
                 />
-                <div className="flex flex-col">
-                  <span className="text-xs font-bold text-gray-800 dark:text-zinc-200">{item.label}</span>
+                <div className="flex flex-col flex-1">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-gray-800 dark:text-zinc-200">{item.label}</span>
+                    {item.disabled && (
+                      <span className="text-[9px] font-extrabold px-1.5 py-0.5 bg-orange-100 dark:bg-orange-950/50 text-orange-600 dark:text-orange-400 rounded-md uppercase tracking-wider">
+                        Soon
+                      </span>
+                    )}
+                  </div>
                   <span className="text-[10px] text-gray-400 dark:text-zinc-500 font-medium">{item.sub}</span>
                 </div>
               </label>
@@ -132,97 +100,6 @@ const AdvancedSettings = () => {
           })}
         </div>
       </div>
-
-      {/* SEKSYON 4: LYEN, KONTAK AK REZO SOSYAL */}
-      <div className="space-y-3">
-        <div>
-          <h3 className="text-xs font-bold text-gray-800 dark:text-zinc-200 flex items-center gap-1.5">
-            <Globe size={14} className="text-orange-500" />
-            Lyen Piblik, Kontak & Rezo Sosyal
-          </h3>
-          <p className="text-[11px] text-gray-400 dark:text-zinc-500">Mete lyen kote kliyan yo ka swiv pwofil nou oswa jwenn sipò.</p>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {/* WhatsApp */}
-          <div className="flex flex-col gap-1.5">
-            <label className="text-[11px] font-bold text-gray-500 dark:text-zinc-400 uppercase tracking-wider flex items-center gap-1">
-              <Smartphone size={12} className="text-emerald-500" /> WhatsApp Sipò
-            </label>
-            <input 
-              type="text" 
-              value={whatsapp} 
-              onChange={(e) => setWhatsapp(e.target.value)}
-              placeholder="Egz: +509 3700-0000"
-              className="w-full px-4 py-3 bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-xl text-xs font-bold text-gray-800 dark:text-zinc-200 focus:outline-none focus:bg-white dark:focus:bg-zinc-900 focus:border-orange-500 dark:focus:border-orange-500 transition-all"
-            />
-          </div>
-
-          {/* Sit Web */}
-          <div className="flex flex-col gap-1.5">
-            <label className="text-[11px] font-bold text-gray-500 dark:text-zinc-400 uppercase tracking-wider flex items-center gap-1">
-              <Landmark size={12} className="text-blue-500" /> Sit Web (Opsyonèl)
-            </label>
-            <input 
-              type="text" 
-              value={website} 
-              onChange={(e) => setWebsite(e.target.value)}
-              placeholder="Egz: www.restoranou.com"
-              className="w-full px-4 py-3 bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-xl text-xs font-bold text-gray-800 dark:text-zinc-200 focus:outline-none focus:bg-white dark:focus:bg-zinc-900 focus:border-orange-500 dark:focus:border-orange-500 transition-all"
-            />
-          </div>
-
-          {/* Instagram */}
-          <div className="flex flex-col gap-1.5">
-            <label className="text-[11px] font-bold text-gray-500 dark:text-zinc-400 uppercase tracking-wider flex items-center gap-1">
-              <BsInstagram size={12} className="text-pink-500" /> Instagram Username
-            </label>
-            <div className="relative">
-              <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 dark:text-zinc-500 text-xs font-bold">@</span>
-              <input 
-                type="text" 
-                value={instagram} 
-                onChange={(e) => setInstagram(e.target.value)}
-                placeholder="username_restoran"
-                className="w-full pl-8 pr-4 py-3 bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-xl text-xs font-bold text-gray-800 dark:text-zinc-200 focus:outline-none focus:bg-white dark:focus:bg-zinc-900 focus:border-orange-500 dark:focus:border-orange-500 transition-all"
-              />
-            </div>
-          </div>
-
-          {/* Facebook */}
-          <div className="flex flex-col gap-1.5">
-            <label className="text-[11px] font-bold text-gray-500 dark:text-zinc-400 uppercase tracking-wider flex items-center gap-1">
-              <FaFacebook size={12} className="text-blue-600" /> Facebook Page ID
-            </label>
-            <input 
-              type="text" 
-              value={facebook} 
-              onChange={(e) => setFacebook(e.target.value)}
-              placeholder="Egz: paj_restoran"
-              className="w-full px-4 py-3 bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-xl text-xs font-bold text-gray-800 dark:text-zinc-200 focus:outline-none focus:bg-white dark:focus:bg-zinc-900 focus:border-orange-500 dark:focus:border-orange-500 transition-all"
-            />
-          </div>
-
-          {/* 🚀 NOUVO: TikTok Input */}
-          <div className="flex flex-col gap-1.5 sm:col-span-2">
-            <label className="text-[11px] font-bold text-gray-500 dark:text-zinc-400 uppercase tracking-wider flex items-center gap-1">
-              <Video size={12} className="text-cyan-500" /> TikTok Username
-            </label>
-            <div className="relative">
-              <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 dark:text-zinc-500 text-xs font-bold">@</span>
-              <input 
-                type="text" 
-                value={tiktok} 
-                onChange={(e) => setTiktok(e.target.value)}
-                placeholder="username_tiktok"
-                className="w-full pl-8 pr-4 py-3 bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-xl text-xs font-bold text-gray-800 dark:text-zinc-200 focus:outline-none focus:bg-white dark:focus:bg-zinc-900 focus:border-orange-500 dark:focus:border-orange-500 transition-all"
-              />
-            </div>
-          </div>
-
-        </div>
-      </div>
-
     </div>
   );
 };

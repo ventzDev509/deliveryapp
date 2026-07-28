@@ -31,7 +31,7 @@ const Login = ({ onToggle }: LoginProps) => {
             setNotification({ message: "Byenveni!", type: 'success' });
         } catch (error: any) {
             setNotification({
-                message: error.message || "Imèl oswa modpas mal.",
+                message: error.message || "Imèl oswa modpas la pa bon.",
                 type: 'error'
             });
         } finally {

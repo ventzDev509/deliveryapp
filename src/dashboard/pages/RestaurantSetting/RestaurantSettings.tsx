@@ -1,13 +1,11 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Store, Clock, MapPin, Save, ShieldCheck,  } from 'lucide-react';
+import { Store, Clock, Save, ShieldCheck,  } from 'lucide-react';
 
 import AdvancedSettings from './AdvancedSettings';
 import UpdateProfile from './components/UpdateProfile';
 import ProfileBanner from './components/ProfileBanner';
 import HouseOfWork from './components/HoursOfWork';
-import Settings from './components/Settings';
-
 
 const RestaurantSettings = () => {
     const [activeTab, setActiveTab] = useState<'profile' | 'hours' | 'delivery' | 'advanced'>('profile');
@@ -17,7 +15,7 @@ const RestaurantSettings = () => {
     };
 
     return (
-        <div className="w-full max-w-4xl mx-auto flex flex-col gap-6 pb-12 transition-colors duration-300">
+        <div className="w-full  mx-auto flex flex-col gap-6 pb-12 transition-colors duration-300">
 
             {/* 1. TÈT PAJ LA */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -43,7 +41,6 @@ const RestaurantSettings = () => {
                 {[
                     { id: 'profile', label: 'Pwofil Jeneral', icon: Store },
                     { id: 'hours', label: 'Orè Travay', icon: Clock },
-                    { id: 'delivery', label: 'Zòn Livrezon', icon: MapPin },
                     { id: 'advanced', label: 'Avanse & Peman', icon: ShieldCheck },
                 ].map((tab) => {
                     const Icon = tab.icon;
@@ -84,11 +81,7 @@ const RestaurantSettings = () => {
                             <HouseOfWork />
                         )}
 
-                        {/* TAB 3: DELIVERY PARAMETERS */}
-                        {activeTab === 'delivery' && (
-                            <Settings />
-                        )}
-
+                        
                         {/* TAB 4: ADVANCED SETTINGS */}
                         {activeTab === 'advanced' && (
                             <motion.div

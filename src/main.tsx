@@ -6,6 +6,8 @@ import { AuthProvider } from './Contexts/AuthContext.tsx'
 import { AdminProvider } from './Contexts/AdminContext.tsx'
 import { DriverProvider } from './Contexts/DriverContext.tsx'
 import { ProfileProvider } from './Contexts/ProfileContext.tsx'
+import { RestaurantProvider } from './Contexts/RestaurantContext.tsx'
+import { CategoryProvider } from './Contexts/CategoryContext.tsx'
 
 
 createRoot(document.getElementById('root')!).render(
@@ -13,9 +15,13 @@ createRoot(document.getElementById('root')!).render(
     <AuthProvider>
       <AdminProvider>
         <ProfileProvider>
-          <DriverProvider>
-            <App />
-          </DriverProvider>
+          <RestaurantProvider>
+            <CategoryProvider>
+            <DriverProvider>
+              <App />
+            </DriverProvider>
+            </CategoryProvider>
+          </RestaurantProvider>
         </ProfileProvider>
       </AdminProvider>
     </AuthProvider>

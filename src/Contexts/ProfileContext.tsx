@@ -5,7 +5,6 @@ import type { Profile, ProfileContextType } from '../types/profileType';
 
 const ProfileContext = createContext<ProfileContextType | undefined>(undefined);
 
-// Fonksyon pou kapte ak fòmate tout mesaj erè ki soti nan backend
 const showApiErrors = (error: any) => {
     if (error.response?.data?.message) {
         const data = error.response.data.message;
@@ -35,18 +34,65 @@ export const ProfileProvider = ({ children }: { children: ReactNode }) => {
         }
     };
 
-    //  Mizajou pwofil la
+    // 2. Mizajou pwofil la (Tèks / Enfòmasyon)
     const updateProfile = async (userId: string, data: any): Promise<any> => {
         setLoading(true);
         try {
             const response = await api.patch(`/profiles/${userId}`, data);
             setProfile(response.data);
-           
-            toast.success("Pwofil la mete ajou ak siksè!");
-            return response;
-        } catch (error:any) {
-             throw error.response?.data || { message: error.message || "Erè ajou wòl itilizatè." };
 
+            toast.success("Pwofil la mete ajou ak siksè!");
+            return response.data;
+        } catch (error: any) {
+            showApiErrors(error);
+            throw error.response?.data || { message: error.message || "Erè ajou pwofil." };
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    // 3. Mizajou foto pwofil ak banyè (Banner)
+    const updateProfileImages = async (userId: string, profileImage?: File, bannerImage?: File): Promise<any> => {
+        setLoading(true);
+        try {
+            const formData = new FormData();
+
+            if (profileImage) {
+                formData.append('profileImage', profileImage);
+            }
+            if (bannerImage) {
+                formData.append('bannerImage', bannerImage);
+            }
+
+            const response = await api.put(`/profiles/upload-images`, formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            });
+
+            setProfile(response.data);
+            toast.success("Foto yo mete ajou ak siksè!");
+            return response.data;
+        } catch (error: any) {
+            showApiErrors(error);
+            throw error.response?.data || { message: error.message || "Erè nan chajman foto yo." };
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    // 4. NOUVO: Mizajou orè operasyon yo (WorkingHours nan fòma 12h)
+    const updateWorkingHours = async (hours: Array<{ day: string; isOpen: boolean; openTime: string; closeTime: string }>): Promise<any> => {
+        setLoading(true);
+        try {
+            const response = await api.put('/profiles/working-hours', { hours });
+            
+            setProfile(response.data);
+            toast.success("Orè operasyon yo mete ajou ak siksè!");
+            return response.data;
+        } catch (error: any) {
+            showApiErrors(error);
+            throw error.response?.data || { message: error.message || "Erè nan Mizajou orè yo." };
         } finally {
             setLoading(false);
         }
@@ -58,6 +104,8 @@ export const ProfileProvider = ({ children }: { children: ReactNode }) => {
             loading,
             fetchProfile,
             updateProfile,
+            updateProfileImages,
+            updateWorkingHours, 
             setProfile
         }}>
             {children}

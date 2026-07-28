@@ -14,7 +14,7 @@ export const Notification = ({ message, type, onClose, duration = 5000 }: Notifi
             initial={{ opacity: 0, y: -50, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -50, scale: 0.95 }}
-            className={`fixed top-6 -6 w-auto overflow-hidden rounded-2xl border backdrop-blur-xl shadow-2xl z-[100] ${
+            className={`fixed top-6  w-auto m-auto overflow-hidden rounded-2xl border backdrop-blur-xl shadow-2xl z-[100] ${
                 type === 'error' 
                     ? 'bg-red-500/90 border-orange-400/50' 
                     : 'bg-emerald-600/90 border-emerald-500/50'
