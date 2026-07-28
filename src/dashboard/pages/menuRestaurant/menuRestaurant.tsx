@@ -122,41 +122,7 @@ const MenuPage = () => {
       </div>
 
     {/* 2. FILTRE KATEGORI */}
-      <div className="w-full max-w-[calc(100vw-2rem)] sm:max-w-none overflow-x-auto scrollbar-none pb-2 border-b border-gray-100 dark:border-zinc-800/60">
-        <div className="flex items-center gap-2 w-max">
-          {/* Bouton Tout */}
-          <button
-            onClick={() => setActiveCategory('All')}
-            className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 border whitespace-nowrap flex-shrink-0 ${
-              activeCategory === 'All'
-                ? 'bg-gray-950 text-white border-gray-950 shadow-lg shadow-gray-950/10 dark:bg-zinc-100 dark:text-zinc-950 dark:border-zinc-100'
-                : 'bg-white text-gray-500 border-gray-100 dark:bg-zinc-900 dark:text-zinc-400 dark:border-zinc-800'
-            }`}
-          >
-            <Utensils size={14} className={activeCategory === 'All' ? "text-orange-500" : "text-gray-400 dark:text-zinc-500"} />
-            Tout
-          </button>
-
-          {/* Kategori ki soti nan Baz Done / Kontèks la */}
-          {categories.map((cat) => {
-            const isSelected = activeCategory === cat.id;
-            return (
-              <button
-                key={cat.id}
-                onClick={() => setActiveCategory(cat.id)}
-                className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 border whitespace-nowrap flex-shrink-0 ${
-                  isSelected
-                    ? 'bg-gray-950 text-white border-gray-950 shadow-lg shadow-gray-950/10 dark:bg-zinc-100 dark:text-zinc-950 dark:border-zinc-100'
-                    : 'bg-white text-gray-500 border-gray-100 dark:bg-zinc-900 dark:text-zinc-400 dark:border-zinc-800'
-                }`}
-              >
-                <span className={`w-2 h-2 rounded-full ${isSelected ? 'bg-orange-500' : 'bg-gray-300 dark:bg-zinc-700'}`} />
-                {cat.name}
-              </button>
-            );
-          })}
-        </div>
-      </div>
+     
 
       {/* 3. GRID LIS PLAT YO */}
       {loading && dishes.length === 0 ? (
