@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Auth from './Auth/Auth'; // Paj Login/Register ou an
 import EmailVerification from './Auth/EmailVerification';
 import "./App.css"
+import "./index.css"
 import VerificationSuccess from './Auth/VerificationSuccess';
 import ForgotPassword from './Auth/ForgotPassword';
 import ResetPassword from './Auth/ResetPassword';

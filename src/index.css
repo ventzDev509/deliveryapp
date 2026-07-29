@@ -1,7 +1,4 @@
-/* ==========================================
-   TRICK RADIKAL POU TOUYE DEZÒD GRI TELEFÒN NAN
-   ========================================== */
-
+/* Fòse baz la nwa solid pou evite nenpòt defo */
 html {
     background-color: #09090b !important;
 }
@@ -25,7 +22,7 @@ body {
 }
 
 /* ==========================================
-   KOREKSYON BOTTOM NAV LA
+   KOREKSYON BOTTOM NAV LA (Pwoteksyon anba)
    ========================================== */
 .bottom-nav {
     position: fixed;
@@ -33,26 +30,18 @@ body {
     left: 0;
     right: 0;
     z-index: 50;
-    /* Nou itilize env() pou jere zòn jès telefòn nan byen */
     padding-bottom: env(safe-area-inset-bottom, 0px);
+    background-color: #09090b !important;
 }
 
-/* Trick radikal: Nou kreye yon blòk nwa solid ki kole anba nèt ki p'ap janm kite koulè gri a pase */
+/* Trick pou kenbe zòn jès telefòn nan nwa nèt san l pa tounen gri */
 .bottom-nav::after {
     content: "";
     position: absolute;
-    bottom: -50px; /* L ap desann byen ba anba ekran an */
+    bottom: -60px;
     left: 0;
     right: 0;
-    height: 50px;
-    background-color: inherit; /* L ap pran menm koulè nwa ak menu a */
+    height: 60px;
+    background-color: #09090b !important;
     z-index: -1;
-}
-@media (prefers-color-scheme: dark) {
-    .bottom-nav {
-        /* Dark Mòd: Nou mete l egzakteman menm nwa ak bg nan menu an (#121214) 
-           oswa nou met background menu an menm koulè ak sa a (#09090b) */
-        background-color: #09090b !important;
-        box-shadow: 0 100px 0 0 #09090b !important;
-    }
 }
