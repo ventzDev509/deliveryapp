@@ -18,22 +18,20 @@ import AdminValidations from './dashboard/Admin/MainAdmin';
 
 import Home from './Home/Home';
 function App() {
+  
   useEffect(() => {
-    // 1. Nou kreye yon detektè pou n koute sistèm telefòn nan
-    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    const updateThemeColor = () => {
+      // Nou tcheke si tag <html> la gen klas "dark" OUBEN si sistèm telefòn nan an dark mòd
+      const isDark =
+        document.documentElement.classList.contains('dark') ||
+        window.matchMedia('(prefers-color-scheme: dark)').matches;
 
-    // 2. Fonksyon ki pral chanje koulè ba a dinamikman
-    const updateThemeColor = (e: MediaQueryListEvent | MediaQueryList) => {
-      // Si telefòn nan an dark mòd, n ap mete Zinc-950 (#09090b), si se light, n ap met blan (#ffffff)
-      const color = e.matches ? '#09090b' : '#ffffff';
+      const color = isDark ? '#09090b' : '#ffffff';
 
-      // N ap chèche tag meta theme-color ki nan index.html la
       let metaTag = document.querySelector('meta[name="theme-color"]');
-
       if (metaTag) {
         metaTag.setAttribute('content', color);
       } else {
-        // Si tag la pa t egziste pou kèk rezon, nou kreye l ak JS
         metaTag = document.createElement('meta');
         metaTag.setAttribute('name', 'theme-color');
         metaTag.setAttribute('content', color);
@@ -41,13 +39,13 @@ function App() {
       }
     };
 
-    // 3. Nou kouri fonksyon an yon premye fwa lè paj la loded
-    updateThemeColor(mediaQuery);
+    // Kouri l depi w antre
+    updateThemeColor();
 
-    // 4. Nou di l rete koute si sistèm telefòn nan ta chanje pandan l sou aplikasyon an
+    // Si se sèlman sou sistèm nan ou te vle l rete koute:
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
     mediaQuery.addEventListener('change', updateThemeColor);
 
-    // 5. Netwayaj (Cleanup) lè konpozan an unmount
     return () => mediaQuery.removeEventListener('change', updateThemeColor);
   }, []);
   return (

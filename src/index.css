@@ -8,7 +8,10 @@
 html {
     background-color: #09090b !important;
 }
-
+::-webkit-scrollbar{
+    width: 0;
+    height: 0;
+}
 /* 2. Kounye a, nou jere koulè reyèl itilizatè a ap wè a sou BODY a */
 body {
     margin: 0;
