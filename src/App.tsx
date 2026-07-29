@@ -13,7 +13,7 @@ import MainMenu from './dashboard/pages/menuRestaurant/MainMenuRestaurant';
 import MainRestaurantSetting from './dashboard/pages/RestaurantSetting/MainRSettings';
 import MainDriver from './dashboard/pages/DriverPage/MainDriver';
 import BecomeSellerPage from './Auth/BecomeSellerPage';
-import { useEffect } from 'react';
+// import { useEffect } from 'react';
 import AdminValidations from './dashboard/Admin/MainAdmin';
 // import TrackingDeliveryMap from './LiveTrackingMap/LiveTrackingMap';
 
