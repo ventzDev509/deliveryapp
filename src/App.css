@@ -6,6 +6,10 @@
     color-scheme: light dark;
 }
 
+::-webkit-scrollbar{
+    width: 0;
+    height: 0;
+}
 
 /* Light mode default */
 html,
