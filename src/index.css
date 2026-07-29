@@ -33,12 +33,21 @@ body {
     left: 0;
     right: 0;
     z-index: 50;
-    padding-bottom: env(safe-area-inset-bottom, 12px);
-    
-    /* Light Mòd: Lonbraj la blan */
-    box-shadow: 0 100px 0 0 #ffffff !important;
+    /* Nou itilize env() pou jere zòn jès telefòn nan byen */
+    padding-bottom: env(safe-area-inset-bottom, 0px);
 }
 
+/* Trick radikal: Nou kreye yon blòk nwa solid ki kole anba nèt ki p'ap janm kite koulè gri a pase */
+.bottom-nav::after {
+    content: "";
+    position: absolute;
+    bottom: -50px; /* L ap desann byen ba anba ekran an */
+    left: 0;
+    right: 0;
+    height: 50px;
+    background-color: inherit; /* L ap pran menm koulè nwa ak menu a */
+    z-index: -1;
+}
 @media (prefers-color-scheme: dark) {
     .bottom-nav {
         /* Dark Mòd: Nou mete l egzakteman menm nwa ak bg nan menu an (#121214) 
