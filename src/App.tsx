@@ -20,33 +20,57 @@ import Home from './Home/Home';
 function App() {
   
   useEffect(() => {
-    const updateThemeColor = () => {
-      // Nou tcheke si tag <html> la gen klas "dark" OUBEN si sistèm telefòn nan an dark mòd
+    const updateThemeAndColors = () => {
+      // 1. Tcheke si n an dark mòd (swa via klas 'dark' sou html la, oswa via sistèm telefòn nan)
       const isDark =
         document.documentElement.classList.contains('dark') ||
         window.matchMedia('(prefers-color-scheme: dark)').matches;
 
-      const color = isDark ? '#09090b' : '#ffffff';
+      // Chwazi koulè yo (Egzanp: #09090b pou dark, #ffffff pou light)
+      const bgColor = isDark ? '#09090b' : '#ffffff';
 
+      // 2. Fòse background body a ak html la pran bon koulè a pou evite zòn gri/blan nan telefòn nan
+      document.documentElement.style.backgroundColor = bgColor;
+      document.body.style.backgroundColor = bgColor;
+
+      // 3. Mete ajou meta theme-color pou ba navigasyon anlè/anba telefòn nan
       let metaTag = document.querySelector('meta[name="theme-color"]');
       if (metaTag) {
-        metaTag.setAttribute('content', color);
+        metaTag.setAttribute('content', bgColor);
       } else {
         metaTag = document.createElement('meta');
         metaTag.setAttribute('name', 'theme-color');
-        metaTag.setAttribute('content', color);
+        metaTag.setAttribute('content', bgColor);
         document.head.appendChild(metaTag);
       }
     };
 
-    // Kouri l depi w antre
-    updateThemeColor();
+    // Kouri l depi app a chaje
+    updateThemeAndColors();
 
-    // Si se sèlman sou sistèm nan ou te vle l rete koute:
+    // Koute chanjman sou sistèm telefòn nan
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-    mediaQuery.addEventListener('change', updateThemeColor);
+    mediaQuery.addEventListener('change', updateThemeAndColors);
 
-    return () => mediaQuery.removeEventListener('change', updateThemeColor);
+    // Koute chanjman si aplikasyon an chanje tèm nan dinamikman (klas 'dark' sou html)
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        if (mutation.attributeName === 'class') {
+          updateThemeAndColors();
+        }
+      });
+    });
+
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['class'],
+    });
+
+    // Netwayaj lè app a unmount
+    return () => {
+      mediaQuery.removeEventListener('change', updateThemeAndColors);
+      observer.disconnect();
+    };
   }, []);
   return (
     <Router>

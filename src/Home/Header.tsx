@@ -6,7 +6,7 @@ export default function Header() {
 
     return (
         <>
-            <header className="sticky top-0 z-50 bg-[#121214]/90 backdrop-blur-md text-white border-b border-gray-800 transition-all">
+            <header className="sticky top-0 z-50 bg-[#121214]/90 backdrop-blur-md text-white border-b border-gray-700 transition-all">
                 <div className="max-w-7xl mx-auto px-5 pt-4 pb-4">
 
                     {/* TOP SECTION */}

@@ -2,31 +2,22 @@
    TRICK RADIKAL POU TOUYE DEZÒD GRI TELEFÒN NAN
    ========================================== */
 
-/* 1. Nou fòse baz HTML la TOUJOURS nwa nèt. 
-   Konsa, si navigatè a ap chèche yon koulè pou l mete anba ba navigasyon telefòn nan, 
-   l ap jwenn nwa Zinc la obligatwarman. */
 html {
     background-color: #09090b !important;
 }
-::-webkit-scrollbar{
+
+::-webkit-scrollbar {
     width: 0;
     height: 0;
 }
-/* 2. Kounye a, nou jere koulè reyèl itilizatè a ap wè a sou BODY a */
+
 body {
     margin: 0;
     padding: 0;
     width: 100%;
-    /* Pa defo, si se nan Light mòd li ye, Body a ap vin blan pa anlè HTML la */
     background-color: #ffffff !important; 
 }
 
-/* 3. Lè telefòn nan pase nan Dark Mòd otomatikman */
-@media (prefers-color-scheme: dark) {
-    body {
-        background-color: #09090b !important;
-    }
-}
 
 /* ==========================================
    KOREKSYON BOTTOM NAV LA
@@ -39,13 +30,7 @@ body {
     z-index: 50;
     padding-bottom: env(safe-area-inset-bottom, 12px);
     
-    /* Light Mòd: Lonbraj la blan pou kouvri espas vid la */
+    /* Light Mòd: Lonbraj la blan */
     box-shadow: 0 100px 0 0 #ffffff !important;
 }
 
-@media (prefers-color-scheme: dark) {
-    .bottom-nav {
-        /* Dark Mòd: Lonbraj la nwa */
-        box-shadow: 0 100px 0 0 #09090b !important;
-    }
-}
