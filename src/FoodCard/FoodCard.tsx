@@ -40,7 +40,7 @@ export default function FoodCard({
     <motion.article
       whileHover={{ y: -4 }}
       transition={{ duration: .2 }}
-      className="group w-full mx-5 overflow-hidden rounded-3xl border border-gray-200 dark:border-zinc-800 bg-white dark:bg-[#18181B] shadow-sm hover:shadow-xl"
+      className="group w-full mx-4 overflow-hidden rounded-3xl border border-gray-200 dark:border-zinc-800 bg-white dark:bg-[#18181B] shadow-sm hover:shadow-xl"
     >
       {/* Diminye wotè imaj la pou kat la pa long anpil (h-36 olye de aspect-square) */}
       <div className="relative h-36 w-full overflow-hidden">

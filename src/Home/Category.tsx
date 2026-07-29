@@ -10,73 +10,38 @@ import {
 } from "lucide-react";
 
 const categories = [
-    {
-        id: "all",
-        name: "Popular",
-        icon: Flame,
-    },
-    {
-        id: "burger",
-        name: "Burger",
-        icon: Sandwich,
-    },
-    {
-        id: "pizza",
-        name: "Pizza",
-        icon: Pizza,
-    },
-    {
-        id: "drinks",
-        name: "Drinks",
-        icon: CupSoda,
-    },
-    {
-        id: "dessert",
-        name: "Dessert",
-        icon: IceCreamCone,
-    },
-    {
-        id: "taco",
-        name: "Tacos",
-        icon: Beef,
-    },
-    {
-        id: "sushi",
-        name: "Sushi",
-        icon: Fish,
-    },
+    { id: "all", name: "Popular", icon: Flame },
+    { id: "burger", name: "Burger", icon: Sandwich },
+    { id: "pizza", name: "Pizza", icon: Pizza },
+    { id: "drinks", name: "Drinks", icon: CupSoda },
+    { id: "dessert", name: "Dessert", icon: IceCreamCone },
+    { id: "taco", name: "Tacos", icon: Beef },
+    { id: "sushi", name: "Sushi", icon: Fish },
 ];
 
 export default function CategorySlider() {
     const [selectedCategory, setSelectedCategory] = useState("all");
 
     return (
-        <section className="max-w-7xl mx-auto  mt-8">
-
+        <section className="max-w-7xl mx-auto mt-6">
             {/* HEADER */}
-
-            <div className="flex px-5 items-center justify-between mb-5">
-
+            <div className="flex px-5 items-center justify-between mb-3">
                 <div>
-                    <h2 className="text-xl font-bold text-gray-900 dark:text-white">
+                    <h2 className="text-lg font-bold text-gray-900 dark:text-white">
                         Categories
                     </h2>
-
-                    <p className="text-sm text-gray-500 dark:text-zinc-400 mt-1">
+                    <p className="text-xs text-gray-500 dark:text-zinc-400">
                         Discover your favorite meals
                     </p>
                 </div>
 
-                <button className="text-sm font-semibold text-amber-500 hover:text-amber-400 transition">
+                <button className="text-xs font-semibold text-amber-500 hover:text-amber-400 transition">
                     See All
                 </button>
-
             </div>
 
-            {/* CATEGORY LIST */}
-
-            <div className="flex px-5 gap-4 overflow-x-auto no-scrollbar pb-3">
-
+            {/* CATEGORY LIST (Chips style) */}
+            <div className="flex px-5 gap-2.5 overflow-x-auto no-scrollbar py-1">
                 {categories.map((category) => {
                     const Icon = category.icon;
                     const active = selectedCategory === category.id;
@@ -86,63 +51,25 @@ export default function CategorySlider() {
                             key={category.id}
                             onClick={() => setSelectedCategory(category.id)}
                             className={`
-                                group
-                                min-w-[88px]
-                                rounded-3xl
-                                p-4
-                                flex
-                                flex-col
-                                items-center
-                                gap-3
-                                transition-all
-                                duration-300
+                                flex items-center gap-2
+                                px-3.5 py-2
+                                rounded-2xl
+                                whitespace-nowrap
+                                text-xs sm:text-sm font-semibold
+                                transition-all duration-200
                                 border
                                 ${
                                     active
-                                        ? "bg-amber-400 border-amber-400 shadow-xl shadow-amber-400/30 scale-105"
-                                        : "bg-white dark:bg-[#1c1c22] border-gray-200 dark:border-zinc-800 hover:border-amber-400/40 hover:-translate-y-1"
+                                        ? "bg-amber-400 border-amber-400 text-black shadow-md shadow-amber-400/20"
+                                        : "bg-white dark:bg-[#1c1c22] border-gray-200 dark:border-zinc-800 text-gray-600 dark:text-zinc-300 hover:border-amber-400/40"
                                 }
                             `}
                         >
-
-                            {/* ICON */}
-
-                            <div
-                                className={`
-                                    h-14
-                                    w-14
-                                    rounded-2xl
-                                    flex
-                                    items-center
-                                    justify-center
-                                    transition-all
-                                    ${
-                                        active
-                                            ? "bg-white text-amber-500"
-                                            : "bg-gray-100 dark:bg-zinc-900 text-gray-700 dark:text-zinc-300 group-hover:bg-amber-100 dark:group-hover:bg-amber-400/10"
-                                    }
-                                `}
-                            >
-                                <Icon size={26} />
-                            </div>
-
-                            {/* NAME */}
-
-                            <span
-                                className={`
-                                    text-sm
-                                    font-semibold
-                                    transition-colors
-                                    ${
-                                        active
-                                            ? "text-black"
-                                            : "text-gray-700 dark:text-zinc-200"
-                                    }
-                                `}
-                            >
-                                {category.name}
-                            </span>
-
+                            <Icon
+                                size={18}
+                                className={active ? "text-black" : "text-amber-500"}
+                            />
+                            <span>{category.name}</span>
                         </button>
                     );
                 })}
