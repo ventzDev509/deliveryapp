@@ -18,6 +18,11 @@ body {
     background-color: #ffffff !important; 
 }
 
+@media (prefers-color-scheme: dark) {
+    body {
+        background-color: #09090b !important;
+    }
+}
 
 /* ==========================================
    KOREKSYON BOTTOM NAV LA
@@ -34,3 +39,11 @@ body {
     box-shadow: 0 100px 0 0 #ffffff !important;
 }
 
+@media (prefers-color-scheme: dark) {
+    .bottom-nav {
+        /* Dark Mòd: Nou mete l egzakteman menm nwa ak bg nan menu an (#121214) 
+           oswa nou met background menu an menm koulè ak sa a (#09090b) */
+        background-color: #09090b !important;
+        box-shadow: 0 100px 0 0 #09090b !important;
+    }
+}
