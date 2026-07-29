@@ -58,7 +58,7 @@ const getStatusStyles = (status: string) => {
     case 'New':
       return 'bg-blue-50 text-blue-700 border-blue-100 dark:bg-blue-500/10 dark:text-blue-400 dark:border-blue-500/20';
     case 'Preparing':
-      return 'bg-orange-50 text-orange-700 border-orange-100 dark:bg-orange-500/10 dark:text-orange-400 dark:border-orange-500/20';
+      return 'bg-orange-50 text-orange-700 border-orange-100 dark:bg-amber-500/10 dark:text-amber-400 dark:border-amber-500/20';
     case 'Dispatched':
       return 'bg-purple-50 text-purple-700 border-purple-100 dark:bg-purple-500/10 dark:text-purple-400 dark:border-purple-500/20';
     case 'Delivered':
@@ -82,7 +82,7 @@ const RecentOrdersTable = () => {
           <h2 className="text-lg font-bold text-gray-900 tracking-tight dark:text-zinc-50">Dènye Kòmand yo</h2>
           <p className="text-xs text-gray-400 mt-0.5 dark:text-zinc-500">Jere ak verifye dènye lavant magazen an fè.</p>
         </div>
-        <button className="text-xs font-semibold text-orange-500 hover:text-orange-600 flex items-center gap-1 transition-colors dark:text-orange-400 dark:hover:text-orange-300">
+        <button className="text-xs font-semibold text-amber-500 hover:text-orange-600 flex items-center gap-1 transition-colors dark:text-amber-400 dark:hover:text-orange-300">
           Tout kòmand <ArrowUpRight size={14} />
         </button>
       </div>
@@ -117,7 +117,7 @@ const RecentOrdersTable = () => {
                 {/* User Info & Detay Manje a */}
                 <td className="py-3.5 pr-4">
                   <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-full bg-orange-50 border border-orange-100 text-orange-600 flex items-center justify-center font-bold text-xs flex-shrink-0 dark:bg-orange-500/10 dark:border-orange-500/20 dark:text-orange-400">
+                    <div className="w-8 h-8 rounded-full bg-orange-50 border border-orange-100 text-orange-600 flex items-center justify-center font-bold text-xs flex-shrink-0 dark:bg-amber-500/10 dark:border-amber-500/20 dark:text-amber-400">
                       {order.avatar}
                     </div>
                     <div className="flex flex-col min-w-0">
@@ -132,7 +132,7 @@ const RecentOrdersTable = () => {
                 {/* Chofè / Tip Livrezon */}
                 <td className="py-3.5 pr-4">
                   <div className="flex items-center gap-1.5 text-xs text-gray-600 dark:text-zinc-300 font-medium">
-                    {order.type === 'Delivery' ? <Bike size={13} className="text-orange-500" /> : <Clock size={13} className="text-blue-500" />}
+                    {order.type === 'Delivery' ? <Bike size={13} className="text-amber-500" /> : <Clock size={13} className="text-blue-500" />}
                     <span className="truncate max-w-[130px]">{order.driver}</span>
                   </div>
                 </td>
@@ -157,7 +157,7 @@ const RecentOrdersTable = () => {
                 {/* Actions */}
                 <td className="py-3.5 text-right pr-4 pl-2">
                   <div className="inline-flex items-center gap-1 bg-white p-1 rounded-xl border border-gray-100 dark:bg-zinc-950 dark:border-zinc-800 shadow-sm">
-                    <button className="p-1.5 hover:bg-gray-50 rounded-lg text-gray-500 hover:text-orange-500 transition-all active:scale-95 dark:hover:bg-zinc-800 dark:text-zinc-400 dark:hover:text-orange-400">
+                    <button className="p-1.5 hover:bg-gray-50 rounded-lg text-gray-500 hover:text-amber-500 transition-all active:scale-95 dark:hover:bg-zinc-800 dark:text-zinc-400 dark:hover:text-amber-400">
                       <Eye size={15} />
                     </button>
                     <button className="p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-50 rounded-lg transition-all active:scale-95 dark:text-zinc-500 dark:hover:text-zinc-300 dark:hover:bg-zinc-800">

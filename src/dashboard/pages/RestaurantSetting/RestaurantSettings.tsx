@@ -38,7 +38,7 @@ const RestaurantSettings = () => {
                         <button
                             key={tab.id}
                             onClick={() => setActiveTab(tab.id as any)}
-                            className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 relative whitespace-nowrap ${isSelected ? 'text-orange-600 dark:text-orange-500' : 'text-gray-400 hover:text-gray-600 dark:hover:text-zinc-300'
+                            className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 relative whitespace-nowrap ${isSelected ? 'text-orange-600 dark:text-amber-500' : 'text-gray-400 hover:text-gray-600 dark:hover:text-zinc-300'
                                 }`}
                         >
                             <Icon size={14} />
@@ -46,7 +46,7 @@ const RestaurantSettings = () => {
                             {isSelected && (
                                 <motion.div
                                     layoutId="activeTabIndicator"
-                                    className="absolute bottom-0 left-0 right-0 h-0.5 bg-orange-500 rounded-full"
+                                    className="absolute bottom-0 left-0 right-0 h-0.5 bg-amber-500 rounded-full"
                                     transition={{ type: "spring", stiffness: 300, damping: 30 }}
                                 />
                             )}

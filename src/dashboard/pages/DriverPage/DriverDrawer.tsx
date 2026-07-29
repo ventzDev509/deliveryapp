@@ -96,8 +96,8 @@ export const DriverForm = ({ onClose, driverToEdit }: DriverFormProps) => {
         <div className="space-y-4">
           <h3 className="text-[10px] font-black uppercase tracking-widest text-zinc-400 dark:text-zinc-600">Administrasyon & Veyikil</h3>
 
-          <label className="flex items-center gap-3 p-3 bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl cursor-pointer hover:border-orange-500 transition-colors">
-            <input type="checkbox" checked={formData.isVerified} onChange={(e) => setFormData({ ...formData, isVerified: e.target.checked })} className="accent-orange-500" />
+          <label className="flex items-center gap-3 p-3 bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl cursor-pointer hover:border-amber-500 transition-colors">
+            <input type="checkbox" checked={formData.isVerified} onChange={(e) => setFormData({ ...formData, isVerified: e.target.checked })} className="accent-amber-500" />
             <span className="text-sm font-bold flex items-center gap-2"><ShieldCheck size={16} className="text-blue-500" /> Chofè verifye</span>
           </label>
 
@@ -119,7 +119,7 @@ export const DriverForm = ({ onClose, driverToEdit }: DriverFormProps) => {
             <div className="grid grid-cols-3 gap-2">
               {['AVAILABLE', 'ON_DELIVERY', 'BROKEN_DOWN', 'IN_TRAFFIC', 'OFFLINE', 'SUSPENDED'].map((s) => (
                 <button key={s} type="button" onClick={() => setFormData({ ...formData, status: s as any })}
-                  className={`py-2 text-[10px] font-bold border rounded-lg transition-all ${formData.status === s ? 'border-orange-500 bg-orange-500/10 text-orange-600' : 'border-zinc-200 dark:border-zinc-800'}`}>
+                  className={`py-2 text-[10px] font-bold border rounded-lg transition-all ${formData.status === s ? 'border-amber-500 bg-amber-500/10 text-orange-600' : 'border-zinc-200 dark:border-zinc-800'}`}>
                   {s.replace('_', ' ')}
                 </button>
               ))}
@@ -129,7 +129,7 @@ export const DriverForm = ({ onClose, driverToEdit }: DriverFormProps) => {
       </form>
 
       <div className="p-6 border-t border-zinc-100 dark:border-zinc-800">
-        <button type="submit" onClick={handleSubmit} disabled={loading} className="w-full py-3 rounded-xl bg-zinc-900 dark:bg-orange-500 text-white font-bold flex justify-center gap-2 hover:opacity-90 transition-opacity">
+        <button type="submit" onClick={handleSubmit} disabled={loading} className="w-full py-3 rounded-xl bg-zinc-900 dark:bg-amber-500 text-white font-bold flex justify-center gap-2 hover:opacity-90 transition-opacity">
           {loading ? <WhiteLoader size={24} /> : <><Save size={16} /> Sove Enfòmasyon yo</>}
         </button>
       </div>

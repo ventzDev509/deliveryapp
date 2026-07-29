@@ -151,11 +151,11 @@ const BecomeSeller = ({ onSuccessClose }: BecomeSellerProps) => {
 
             <div className="w-full max-w-4xl grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
                 <div className="hidden md:flex justify-center relative group">
-                    <div className="absolute inset-0 bg-orange-500/10 dark:bg-orange-500/5 rounded-full blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                    <div className="absolute inset-0 bg-amber-500/10 dark:bg-amber-500/5 rounded-full blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                     <img src={imgAuth} alt="Become Seller" className="w-80 h-80 object-contain relative z-10" />
                 </div>
                 
-                <div className="flex justify-center w-36 h-36 m-auto p-4 bg-orange-400 dark:bg-orange-500/90 rounded-full md:hidden mb-2 shadow-lg shadow-orange-500/20">
+                <div className="flex justify-center w-36 h-36 m-auto p-4 bg-amber-400 dark:bg-amber-500/90 rounded-full md:hidden mb-2 shadow-lg shadow-amber-500/20">
                     <img src={imgAuth} alt="Logo" className="object-contain" />
                 </div>
 
@@ -177,7 +177,7 @@ const BecomeSeller = ({ onSuccessClose }: BecomeSellerProps) => {
                             value={formData.username}
                             onChange={handleChange}
                             required
-                            className="w-full bg-gray-50 border border-gray-200 text-gray-900 p-4 rounded-xl focus:outline-none focus:border-orange-400 focus:ring-1 focus:ring-orange-400 transition-all dark:bg-zinc-900 dark:border-zinc-800/80 dark:text-zinc-100 dark:placeholder-zinc-500 dark:focus:border-orange-500 dark:focus:ring-orange-500"
+                            className="w-full bg-gray-50 border border-gray-200 text-gray-900 p-4 rounded-xl focus:outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400 transition-all dark:bg-zinc-900 dark:border-zinc-800/80 dark:text-zinc-100 dark:placeholder-zinc-500 dark:focus:border-amber-500 dark:focus:ring-amber-500"
                         />
 
                         <textarea
@@ -186,7 +186,7 @@ const BecomeSeller = ({ onSuccessClose }: BecomeSellerProps) => {
                             value={formData.bio}
                             onChange={handleChange}
                             rows={2}
-                            className="w-full bg-gray-50 border border-gray-200 text-gray-900 p-4 rounded-xl focus:outline-none focus:border-orange-400 focus:ring-1 focus:ring-orange-400 transition-all resize-none dark:bg-zinc-900 dark:border-zinc-800/80 dark:text-zinc-100 dark:placeholder-zinc-500 dark:focus:border-orange-500 dark:focus:ring-orange-500"
+                            className="w-full bg-gray-50 border border-gray-200 text-gray-900 p-4 rounded-xl focus:outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400 transition-all resize-none dark:bg-zinc-900 dark:border-zinc-800/80 dark:text-zinc-100 dark:placeholder-zinc-500 dark:focus:border-amber-500 dark:focus:ring-amber-500"
                         />
 
                         <div className="grid grid-cols-2 gap-4">
@@ -197,7 +197,7 @@ const BecomeSeller = ({ onSuccessClose }: BecomeSellerProps) => {
                                 value={formData.phone}
                                 onChange={handleChange}
                                 required
-                                className="w-full bg-gray-50 border border-gray-200 text-gray-900 p-4 rounded-xl focus:outline-none focus:border-orange-400 focus:ring-1 focus:ring-orange-400 transition-all dark:bg-zinc-900 dark:border-zinc-800/80 dark:text-zinc-100 dark:placeholder-zinc-500 dark:focus:border-orange-500 dark:focus:ring-orange-500"
+                                className="w-full bg-gray-50 border border-gray-200 text-gray-900 p-4 rounded-xl focus:outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400 transition-all dark:bg-zinc-900 dark:border-zinc-800/80 dark:text-zinc-100 dark:placeholder-zinc-500 dark:focus:border-amber-500 dark:focus:ring-amber-500"
                             />
                             <input
                                 type="text"
@@ -206,7 +206,7 @@ const BecomeSeller = ({ onSuccessClose }: BecomeSellerProps) => {
                                 value={formData.location}
                                 onChange={handleChange}
                                 required
-                                className="w-full bg-gray-50 border border-gray-200 text-gray-900 p-4 rounded-xl focus:outline-none focus:border-orange-400 focus:ring-1 focus:ring-orange-400 transition-all dark:bg-zinc-900 dark:border-zinc-800/80 dark:text-zinc-100 dark:placeholder-zinc-500 dark:focus:border-orange-500 dark:focus:ring-orange-500"
+                                className="w-full bg-gray-50 border border-gray-200 text-gray-900 p-4 rounded-xl focus:outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400 transition-all dark:bg-zinc-900 dark:border-zinc-800/80 dark:text-zinc-100 dark:placeholder-zinc-500 dark:focus:border-amber-500 dark:focus:ring-amber-500"
                             />
                         </div>
 
@@ -249,7 +249,7 @@ const BecomeSeller = ({ onSuccessClose }: BecomeSellerProps) => {
                                     type="button"
                                     onClick={handleGetLocation}
                                     disabled={loadingLocation}
-                                    className="text-xs bg-orange-400 dark:bg-orange-500 text-white font-bold py-1.5 px-3 rounded-lg hover:bg-orange-500 dark:hover:bg-orange-600 transition-all disabled:opacity-50 shadow-sm shadow-orange-500/10"
+                                    className="text-xs bg-amber-400 dark:bg-amber-500 text-white font-bold py-1.5 px-3 rounded-lg hover:bg-amber-500 dark:hover:bg-orange-600 transition-all disabled:opacity-50 shadow-sm shadow-amber-500/10"
                                 >
                                     {loadingLocation ? 'Ap chache...' : '🎯 Pran Lokasyon m'}
                                 </button>
@@ -262,7 +262,7 @@ const BecomeSeller = ({ onSuccessClose }: BecomeSellerProps) => {
                                     value={formData.lat}
                                     onChange={handleChange}
                                     required
-                                    className="w-full bg-white border border-gray-200 text-gray-900 p-3 rounded-xl text-sm focus:outline-none focus:border-orange-400 transition-all dark:bg-zinc-900 dark:border-zinc-800 dark:text-zinc-100 dark:focus:border-orange-500"
+                                    className="w-full bg-white border border-gray-200 text-gray-900 p-3 rounded-xl text-sm focus:outline-none focus:border-amber-400 transition-all dark:bg-zinc-900 dark:border-zinc-800 dark:text-zinc-100 dark:focus:border-amber-500"
                                 />
                                 <input
                                     type="text"
@@ -271,7 +271,7 @@ const BecomeSeller = ({ onSuccessClose }: BecomeSellerProps) => {
                                     value={formData.lng}
                                     onChange={handleChange}
                                     required
-                                    className="w-full bg-white border border-gray-200 text-gray-900 p-3 rounded-xl text-sm focus:outline-none focus:border-orange-400 transition-all dark:bg-zinc-900 dark:border-zinc-800 dark:text-zinc-100 dark:focus:border-orange-500"
+                                    className="w-full bg-white border border-gray-200 text-gray-900 p-3 rounded-xl text-sm focus:outline-none focus:border-amber-400 transition-all dark:bg-zinc-900 dark:border-zinc-800 dark:text-zinc-100 dark:focus:border-amber-500"
                                 />
                             </div>
                         </div>
@@ -279,7 +279,7 @@ const BecomeSeller = ({ onSuccessClose }: BecomeSellerProps) => {
                         <button
                             type="submit"
                             disabled={loading || selectedFiles.length === 0}
-                            className="w-full bg-orange-400 dark:bg-orange-500 text-white font-bold py-4 rounded-xl hover:bg-orange-500 dark:hover:bg-orange-600 transition-all shadow-md shadow-orange-500/10 dark:shadow-orange-500/20 disabled:opacity-70 flex items-center justify-center mt-2"
+                            className="w-full bg-amber-400 dark:bg-amber-500 text-white font-bold py-4 rounded-xl hover:bg-amber-500 dark:hover:bg-orange-600 transition-all shadow-md shadow-amber-500/10 dark:shadow-amber-500/20 disabled:opacity-70 flex items-center justify-center mt-2"
                         >
                             {loading ? <WhiteLoader size={24} /> : 'Voye Demand Verifikasyon'}
                         </button>

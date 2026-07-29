@@ -17,7 +17,7 @@ const TopBar = ({ storeName = "Delivery Store" }: TopBarProps) => {
         
         {/* Bò gòch: Enfòmasyon sou Magazen an */}
         <div className="flex items-center gap-3 min-w-0">
-          <div className="w-10 h-10 md:w-12 md:h-12 bg-orange-50 rounded-xl md:rounded-2xl flex items-center justify-center text-orange-500 border border-orange-100 flex-shrink-0 dark:bg-orange-500/10 dark:border-orange-500/20 dark:text-orange-400">
+          <div className="w-10 h-10 md:w-12 md:h-12 bg-orange-50 rounded-xl md:rounded-2xl flex items-center justify-center text-amber-500 border border-orange-100 flex-shrink-0 dark:bg-amber-500/10 dark:border-amber-500/20 dark:text-amber-400">
             <Store className="w-5 h-5 md:w-6 md:h-6" />
           </div>
           <div className="min-w-0">
@@ -44,14 +44,14 @@ const TopBar = ({ storeName = "Delivery Store" }: TopBarProps) => {
           <div className="relative flex-1 group hidden md:block">
             <Search 
               size={18} 
-              className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-orange-500 transition-colors dark:text-zinc-500 dark:group-focus-within:text-orange-400" 
+              className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-amber-500 transition-colors dark:text-zinc-500 dark:group-focus-within:text-amber-400" 
             />
             <input
               type="text"
               placeholder="Rechèch kòmand, pwodwi, kliyan..."
-              className="w-full bg-gray-50 border border-gray-100 text-gray-900 pl-11 pr-11 py-2.5 rounded-xl text-sm focus:outline-none focus:border-orange-400 focus:ring-1 focus:ring-orange-400 focus:bg-white transition-all shadow-inner dark:bg-zinc-900 dark:border-zinc-700 dark:text-zinc-100 dark:placeholder-zinc-500 dark:focus:border-orange-500 dark:focus:ring-orange-500 dark:focus:bg-zinc-900"
+              className="w-full bg-gray-50 border border-gray-100 text-gray-900 pl-11 pr-11 py-2.5 rounded-xl text-sm focus:outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400 focus:bg-white transition-all shadow-inner dark:bg-zinc-900 dark:border-zinc-700 dark:text-zinc-100 dark:placeholder-zinc-500 dark:focus:border-amber-500 dark:focus:ring-amber-500 dark:focus:bg-zinc-900"
             />
-            <button className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-orange-500 transition-colors dark:text-zinc-500 dark:hover:text-orange-400">
+            <button className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-amber-500 transition-colors dark:text-zinc-500 dark:hover:text-amber-400">
               <SlidersHorizontal size={16} />
             </button>
           </div>
@@ -65,9 +65,9 @@ const TopBar = ({ storeName = "Delivery Store" }: TopBarProps) => {
           </button>
 
           {/* 2. Bouton Notifikasyon Lavant */}
-          <button className="relative w-10 h-10 md:w-12 md:h-12 bg-gray-50 border border-gray-100 rounded-xl md:rounded-2xl flex items-center justify-center text-gray-600 hover:bg-orange-50 hover:text-orange-600 transition-all shadow-sm active:scale-95 flex-shrink-0 dark:bg-zinc-800 dark:border-zinc-800 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-orange-400">
+          <button className="relative w-10 h-10 md:w-12 md:h-12 bg-gray-50 border border-gray-100 rounded-xl md:rounded-2xl flex items-center justify-center text-gray-600 hover:bg-orange-50 hover:text-orange-600 transition-all shadow-sm active:scale-95 flex-shrink-0 dark:bg-zinc-800 dark:border-zinc-800 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-amber-400">
             <Bell className="w-4 h-4 md:w-5 md:h-5" />
-            <span className="absolute -top-1 -right-1 bg-orange-500 text-white text-[9px] md:text-[10px] font-bold w-4 h-4 md:w-5 md:h-5 rounded-full flex items-center justify-center border-2 border-white shadow dark:border-zinc-800">
+            <span className="absolute -top-1 -right-1 bg-amber-500 text-white text-[9px] md:text-[10px] font-bold w-4 h-4 md:w-5 md:h-5 rounded-full flex items-center justify-center border-2 border-white shadow dark:border-zinc-800">
               3
             </span>
           </button>
@@ -86,12 +86,12 @@ const TopBar = ({ storeName = "Delivery Store" }: TopBarProps) => {
             className="absolute inset-0 w-full bg-white rounded-2xl p-4 border border-gray-100 shadow-lg flex items-center gap-2 md:hidden dark:bg-zinc-950 dark:border-zinc-900"
           >
             <div className="relative flex-1">
-              <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-orange-500 dark:text-orange-400" />
+              <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-amber-500 dark:text-amber-400" />
               <input
                 type="text"
                 autoFocus
                 placeholder="Rechèch kòmand, pwodwi..."
-                className="w-full bg-gray-50 border border-orange-100 text-gray-900 pl-10 pr-4 py-2 rounded-xl text-sm focus:outline-none focus:ring-1 focus:ring-orange-400 focus:bg-white transition-all shadow-inner dark:bg-zinc-900 dark:border-zinc-800 dark:text-zinc-100 dark:placeholder-zinc-500 dark:focus:ring-orange-500 dark:focus:bg-zinc-900"
+                className="w-full bg-gray-50 border border-orange-100 text-gray-900 pl-10 pr-4 py-2 rounded-xl text-sm focus:outline-none focus:ring-1 focus:ring-amber-400 focus:bg-white transition-all shadow-inner dark:bg-zinc-900 dark:border-zinc-800 dark:text-zinc-100 dark:placeholder-zinc-500 dark:focus:ring-amber-500 dark:focus:bg-zinc-900"
               />
             </div>
             <button 

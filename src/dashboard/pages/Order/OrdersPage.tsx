@@ -100,7 +100,7 @@ const OrdersPage = () => {
   const getStatusBadge = (status: OrderStatus) => {
     switch (status) {
       case 'New': return 'bg-blue-50 text-blue-700 border-blue-100 dark:bg-blue-950/40 dark:text-blue-400 dark:border-blue-900/50';
-      case 'Preparing': return 'bg-orange-50 text-orange-700 border-orange-100 dark:bg-orange-950/40 dark:text-orange-400 dark:border-orange-900/50';
+      case 'Preparing': return 'bg-orange-50 text-orange-700 border-orange-100 dark:bg-orange-950/40 dark:text-amber-400 dark:border-orange-900/50';
       case 'Dispatched': return 'bg-purple-50 text-purple-700 border-purple-100 dark:bg-purple-950/40 dark:text-purple-400 dark:border-purple-900/50';
       case 'Delivered': return 'bg-emerald-50 text-emerald-700 border-emerald-100 dark:bg-emerald-950/40 dark:text-emerald-400 dark:border-emerald-900/50';
       default: return 'bg-gray-50 text-gray-700 border-gray-100 dark:bg-zinc-800 dark:text-zinc-300 dark:border-zinc-700';
@@ -147,10 +147,10 @@ const OrdersPage = () => {
               placeholder="Chache ID, non kliyan..." 
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2.5 bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-2xl text-xs font-medium text-gray-900 dark:text-zinc-100 focus:outline-none focus:border-orange-500 dark:focus:border-orange-500 transition-colors shadow-sm"
+              className="w-full pl-10 pr-4 py-2.5 bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-2xl text-xs font-medium text-gray-900 dark:text-zinc-100 focus:outline-none focus:border-amber-500 dark:focus:border-amber-500 transition-colors shadow-sm"
             />
           </div>
-          <button className="p-2.5 bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-2xl text-gray-500 dark:text-zinc-400 hover:text-orange-500 dark:hover:text-orange-500 transition-colors shadow-sm">
+          <button className="p-2.5 bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-2xl text-gray-500 dark:text-zinc-400 hover:text-amber-500 dark:hover:text-amber-500 transition-colors shadow-sm">
             <Filter size={16} />
           </button>
         </div>
@@ -175,7 +175,7 @@ const OrdersPage = () => {
             onClick={() => setActiveTab(tab.id)}
             className={`px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap flex items-center gap-2 ${
               activeTab === tab.id 
-                ? 'bg-orange-500 text-white shadow-md shadow-orange-500/10' 
+                ? 'bg-amber-500 text-white shadow-md shadow-amber-500/10' 
                 : 'bg-white dark:bg-zinc-900 text-gray-500 dark:text-zinc-400 hover:bg-gray-50 dark:hover:bg-zinc-800/50 border border-gray-100 dark:border-zinc-800'
             }`}
           >
@@ -245,7 +245,7 @@ const OrdersPage = () => {
                       {/* CHOFÈ / TIP */}
                       <td className="p-4">
                         <div className="flex items-center gap-1.5 text-xs text-gray-600 dark:text-zinc-300 font-medium">
-                          {order.type === 'Delivery' ? <Bike size={13} className="text-orange-500" /> : <Clock size={13} className="text-blue-500" />}
+                          {order.type === 'Delivery' ? <Bike size={13} className="text-amber-500" /> : <Clock size={13} className="text-blue-500" />}
                           <span>{order.driver}</span>
                         </div>
                       </td>
@@ -276,7 +276,7 @@ const OrdersPage = () => {
                           {order.status !== 'Delivered' && (
                             <button 
                               onClick={() => handleNextStatus(order.id, order.status)}
-                              className="p-2 bg-orange-500 hover:bg-orange-600 text-white rounded-xl font-bold text-xs flex items-center gap-1 transition-all shadow-sm shadow-orange-500/10 active:scale-95 pl-3 pr-2.5"
+                              className="p-2 bg-amber-500 hover:bg-orange-600 text-white rounded-xl font-bold text-xs flex items-center gap-1 transition-all shadow-sm shadow-amber-500/10 active:scale-95 pl-3 pr-2.5"
                             >
                               <span>
                                 {order.status === 'New' && 'Ap Kwit'}

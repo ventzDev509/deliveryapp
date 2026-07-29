@@ -93,7 +93,7 @@ const CategoryDrawer = ({
                         {/* Tèt Drawer */}
                         <div className="p-6 border-b border-gray-100 dark:border-[#24242b] flex items-center justify-between">
                             <div className="flex items-center gap-2.5">
-                                <div className="p-2 bg-orange-50 dark:bg-orange-950/40 text-orange-600 dark:text-orange-400 rounded-xl">
+                                <div className="p-2 bg-orange-50 dark:bg-orange-950/40 text-orange-600 dark:text-amber-400 rounded-xl">
                                     <Layers size={18} />
                                 </div>
                                 <div>
@@ -122,7 +122,7 @@ const CategoryDrawer = ({
                                     value={selectedCategory.name}
                                     onChange={(e) => onChangeCategory({ ...selectedCategory, name: e.target.value })}
                                     placeholder="Egz: Griyaj ak Fritay"
-                                    className="w-full px-4 py-3 bg-gray-50 dark:bg-[#0c0c0e] border border-gray-200 dark:border-[#24242b] rounded-xl text-xs font-bold text-gray-800 dark:text-gray-200 focus:outline-none focus:bg-white dark:focus:bg-[#16161a] focus:border-orange-500 dark:focus:border-orange-500 transition-all"
+                                    className="w-full px-4 py-3 bg-gray-50 dark:bg-[#0c0c0e] border border-gray-200 dark:border-[#24242b] rounded-xl text-xs font-bold text-gray-800 dark:text-gray-200 focus:outline-none focus:bg-white dark:focus:bg-[#16161a] focus:border-amber-500 dark:focus:border-amber-500 transition-all"
                                 />
                             </div>
                         </form>
@@ -152,7 +152,7 @@ const CategoryDrawer = ({
                                 type="submit"
                                 form="category-form"
                                 disabled={loading}
-                                className="flex-1 py-3 bg-orange-500 hover:bg-orange-600 disabled:opacity-50 text-white text-xs font-bold rounded-xl transition-all flex items-center justify-center gap-2 shadow-md shadow-orange-500/10 active:scale-95"
+                                className="flex-1 py-3 bg-amber-500 hover:bg-orange-600 disabled:opacity-50 text-white text-xs font-bold rounded-xl transition-all flex items-center justify-center gap-2 shadow-md shadow-amber-500/10 active:scale-95"
                             >
                                 {loading ? (
                                     <Loader2 size={14} className="animate-spin" />

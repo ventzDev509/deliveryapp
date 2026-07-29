@@ -101,7 +101,7 @@ export default function HouseOfWork() {
                     onClick={handleSave}
                     disabled={loading}
                     type="button"
-                    className="px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-md shadow-orange-500/20 transition-all disabled:opacity-50 cursor-pointer"
+                    className="px-4 py-2 bg-amber-500 hover:bg-orange-600 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-md shadow-amber-500/20 transition-all disabled:opacity-50 cursor-pointer"
                 >
                     {loading ? <Loader2 size={14} className="animate-spin" /> : <Check size={14} />}
                     <span>Sove Orè yo</span>

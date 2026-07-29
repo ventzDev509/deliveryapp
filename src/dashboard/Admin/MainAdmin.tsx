@@ -71,7 +71,7 @@ const AdminValidations = () => {
                         </div>
                         <button 
                             onClick={() => handleOpenCategoryDrawer()} 
-                            className="flex items-center gap-2 px-4 py-2.5 bg-orange-500 text-white rounded-2xl text-xs font-bold transition-all shadow-md shadow-orange-500/10 active:scale-95 hover:bg-orange-600"
+                            className="flex items-center gap-2 px-4 py-2.5 bg-amber-500 text-white rounded-2xl text-xs font-bold transition-all shadow-md shadow-amber-500/10 active:scale-95 hover:bg-orange-600"
                         >
                             <Plus size={16} />
                             <span>Nouvo Kategori</span>
@@ -84,10 +84,10 @@ const AdminValidations = () => {
                             <div 
                                 key={cat.id} 
                                 onClick={() => handleOpenCategoryDrawer(cat)}
-                                className="p-4 bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-2xl cursor-pointer hover:border-orange-500 dark:hover:border-orange-500 transition-all flex justify-between items-center shadow-sm"
+                                className="p-4 bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-2xl cursor-pointer hover:border-amber-500 dark:hover:border-amber-500 transition-all flex justify-between items-center shadow-sm"
                             >
                                 <div className="flex items-center gap-3">
-                                    <div className="p-2 bg-orange-50 dark:bg-orange-950/40 text-orange-600 dark:text-orange-400 rounded-xl">
+                                    <div className="p-2 bg-orange-50 dark:bg-orange-950/40 text-orange-600 dark:text-amber-400 rounded-xl">
                                         <Layers size={16} />
                                     </div>
                                     <span className="text-xs font-bold">{cat.name}</span>

@@ -18,7 +18,7 @@ const topDishes = [
     orders: "142 fwa",
     revenue: "$1,988.00",
     image: "🍛",
-    bg: "bg-orange-50 text-orange-600 dark:bg-orange-500/10 dark:text-orange-400"
+    bg: "bg-orange-50 text-orange-600 dark:bg-amber-500/10 dark:text-amber-400"
   },
   {
     id: 3,
@@ -62,7 +62,7 @@ const RightSidebarDelivery = () => {
         <div className="grid grid-cols-3 gap-2">
           {/* Kwit */}
           <div className="bg-neutral-900/40 p-2.5 rounded-xl border border-neutral-800/40 text-center">
-            <div className="w-6 h-6 mx-auto rounded-lg bg-orange-500/10 text-orange-400 flex items-center justify-center mb-1">
+            <div className="w-6 h-6 mx-auto rounded-lg bg-amber-500/10 text-amber-400 flex items-center justify-center mb-1">
               <ChefHat size={12} />
             </div>
             <span className="block text-base font-black text-white">4</span>
@@ -99,10 +99,10 @@ const RightSidebarDelivery = () => {
         <div className="flex items-center justify-between mb-4">
           <div>
             <h3 className="text-xs font-bold text-gray-900 tracking-tight flex items-center gap-1 dark:text-zinc-50">
-              <Flame size={14} className="text-orange-500 fill-orange-500" /> Plat ki pi Cho yo
+              <Flame size={14} className="text-amber-500 fill-amber-500" /> Plat ki pi Cho yo
             </h3>
           </div>
-          <button className="text-[10px] font-bold text-orange-500 hover:text-orange-600 flex items-center gap-0.5 transition-colors dark:text-orange-400 dark:hover:text-orange-300">
+          <button className="text-[10px] font-bold text-amber-500 hover:text-orange-600 flex items-center gap-0.5 transition-colors dark:text-amber-400 dark:hover:text-orange-300">
             Meni <ArrowUpRight size={10} />
           </button>
         </div>

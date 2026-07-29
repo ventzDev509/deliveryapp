@@ -111,10 +111,10 @@ const MenuPage = () => {
               placeholder="Chache yon manje..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2.5 bg-white border border-gray-200 rounded-2xl text-xs font-medium focus:outline-none focus:border-orange-500 transition-colors shadow-sm dark:bg-zinc-900 dark:border-zinc-800 dark:text-zinc-100 dark:focus:border-orange-500"
+              className="w-full pl-10 pr-4 py-2.5 bg-white border border-gray-200 rounded-2xl text-xs font-medium focus:outline-none focus:border-amber-500 transition-colors shadow-sm dark:bg-zinc-900 dark:border-zinc-800 dark:text-zinc-100 dark:focus:border-amber-500"
             />
           </div>
-          <button onClick={() => handleOpenDrawer(null)} className="flex items-center gap-2 px-4 py-2.5 bg-orange-500 text-white rounded-2xl text-xs font-bold transition-all shadow-md shadow-orange-500/10 active:scale-95 hover:bg-orange-600 whitespace-nowrap">
+          <button onClick={() => handleOpenDrawer(null)} className="flex items-center gap-2 px-4 py-2.5 bg-amber-500 text-white rounded-2xl text-xs font-bold transition-all shadow-md shadow-amber-500/10 active:scale-95 hover:bg-orange-600 whitespace-nowrap">
             <Plus size={16} />
             <span className="hidden xs:inline">Nouvo Plat</span>
           </button>
@@ -133,7 +133,7 @@ const MenuPage = () => {
                 : 'bg-white text-gray-500 border-gray-100 dark:bg-zinc-900 dark:text-zinc-400 dark:border-zinc-800'
             }`}
           >
-            <Utensils size={14} className={activeCategory === 'All' ? "text-orange-500" : "text-gray-400 dark:text-zinc-500"} />
+            <Utensils size={14} className={activeCategory === 'All' ? "text-amber-500" : "text-gray-400 dark:text-zinc-500"} />
             Tout
           </button>
 
@@ -150,7 +150,7 @@ const MenuPage = () => {
                     : 'bg-white text-gray-500 border-gray-100 dark:bg-zinc-900 dark:text-zinc-400 dark:border-zinc-800'
                 }`}
               >
-                <span className={`w-2 h-2 rounded-full ${isSelected ? 'bg-orange-500' : 'bg-gray-300 dark:bg-zinc-700'}`} />
+                <span className={`w-2 h-2 rounded-full ${isSelected ? 'bg-amber-500' : 'bg-gray-300 dark:bg-zinc-700'}`} />
                 {cat.name}
               </button>
             );
@@ -161,7 +161,7 @@ const MenuPage = () => {
       {/* 3. GRID LIS PLAT YO */}
       {loading && dishes.length === 0 ? (
         <div className="flex items-center justify-center py-20">
-          <Loader2 size={32} className="animate-spin text-orange-500" />
+          <Loader2 size={32} className="animate-spin text-amber-500" />
         </div>
       ) : (
         <motion.div layout="position" transition={springTransition} className="grid grid-cols-1 lg:grid-cols-2 gap-4">
@@ -196,7 +196,7 @@ const MenuPage = () => {
                   <div className="flex-1 min-w-0 flex flex-col justify-between h-full">
                     <div className="flex items-start justify-between gap-2">
                       <h3 className="text-xs sm:text-sm font-black text-gray-900 dark:text-zinc-50 truncate">{dish.name}</h3>
-                      <span className="text-[11px] sm:text-xs font-black text-orange-600 bg-orange-50 dark:bg-orange-950/40 dark:text-orange-400 px-2 py-0.5 rounded-lg whitespace-nowrap">
+                      <span className="text-[11px] sm:text-xs font-black text-orange-600 bg-orange-50 dark:bg-orange-950/40 dark:text-amber-400 px-2 py-0.5 rounded-lg whitespace-nowrap">
                         {dish.price.toFixed(2)} gds
                       </span>
                     </div>

@@ -10,7 +10,7 @@ import { DriverForm } from './DriverDrawer';
 // Fonksyon pou jenere koulè vif pou chak chofè
 const getAvatarColor = (name: string) => {
     const colors = [
-        "bg-red-500", "bg-orange-500", "bg-amber-500",
+        "bg-red-500", "bg-amber-500", "bg-amber-500",
         "bg-emerald-500", "bg-blue-500", "bg-indigo-500", "bg-purple-500"
     ];
     const index = name.length % colors.length;
@@ -92,7 +92,7 @@ export default function DriverCard() {
                             <div className="bg-zinc-50 dark:bg-zinc-900 rounded-xl p-3 mb-4 text-[11px] text-zinc-700 dark:text-zinc-300">
                                 <div className="flex justify-between items-center">
                                     <span className="flex items-center gap-1.5 font-bold">
-                                        {driver.vehicleType === 'MOTORCYCLE' && <Bike size={14} className="text-orange-500" />}
+                                        {driver.vehicleType === 'MOTORCYCLE' && <Bike size={14} className="text-amber-500" />}
                                         {driver.vehicleType === 'CAR' && <Car size={14} className="text-blue-500" />}
                                         {driver.vehicleType === 'BICYCLE' && <Footprints size={14} className="text-green-500" />}
                                         {driver.vehicleType}

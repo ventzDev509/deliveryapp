@@ -76,7 +76,7 @@ const Register = ({ onToggle }: RegisterProps) => {
             >
                 {/* Imaj bò gòch ak efè refleksyon (Glow) pou Dark Mode */}
                 <div className="hidden md:flex justify-center relative group">
-                    <div className="absolute inset-0 bg-orange-500/10 dark:bg-orange-500/5 rounded-full blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                    <div className="absolute inset-0 bg-amber-500/10 dark:bg-amber-500/5 rounded-full blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                     <motion.img
                         initial={{ x: -50, opacity: 0 }}
                         animate={{ x: 0, opacity: 1 }}
@@ -88,7 +88,7 @@ const Register = ({ onToggle }: RegisterProps) => {
                 </div>
 
                 {/* Imaj pou telefòn */}
-                <div className="flex justify-center w-36 h-36 m-auto p-4 bg-orange-400 dark:bg-orange-500/90 rounded-full md:hidden mb-2 shadow-lg shadow-orange-500/20">
+                <div className="flex justify-center w-36 h-36 m-auto p-4 bg-amber-400 dark:bg-amber-500/90 rounded-full md:hidden mb-2 shadow-lg shadow-amber-500/20">
                     <img
                         src={imgAuth}
                         alt="Delivery Logo"
@@ -121,7 +121,7 @@ const Register = ({ onToggle }: RegisterProps) => {
                             value={formData.name} 
                             onChange={handleChange} 
                             required 
-                            className="w-full bg-gray-50 border border-gray-200 text-gray-900 p-4 rounded-xl focus:outline-none focus:border-orange-400 focus:ring-1 focus:ring-orange-400 transition-all dark:bg-zinc-900 dark:border-zinc-800/80 dark:text-zinc-100 dark:placeholder-zinc-500 dark:focus:border-orange-500 dark:focus:ring-orange-500" 
+                            className="w-full bg-gray-50 border border-gray-200 text-gray-900 p-4 rounded-xl focus:outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400 transition-all dark:bg-zinc-900 dark:border-zinc-800/80 dark:text-zinc-100 dark:placeholder-zinc-500 dark:focus:border-amber-500 dark:focus:ring-amber-500" 
                         />
                         <input 
                             type="email" 
@@ -130,7 +130,7 @@ const Register = ({ onToggle }: RegisterProps) => {
                             value={formData.email} 
                             onChange={handleChange} 
                             required 
-                            className="w-full bg-gray-50 border border-gray-200 text-gray-900 p-4 rounded-xl focus:outline-none focus:border-orange-400 focus:ring-1 focus:ring-orange-400 transition-all dark:bg-zinc-900 dark:border-zinc-800/80 dark:text-zinc-100 dark:placeholder-zinc-500 dark:focus:border-orange-500 dark:focus:ring-orange-500" 
+                            className="w-full bg-gray-50 border border-gray-200 text-gray-900 p-4 rounded-xl focus:outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400 transition-all dark:bg-zinc-900 dark:border-zinc-800/80 dark:text-zinc-100 dark:placeholder-zinc-500 dark:focus:border-amber-500 dark:focus:ring-amber-500" 
                         />
                         <input 
                             type="password" 
@@ -139,14 +139,14 @@ const Register = ({ onToggle }: RegisterProps) => {
                             value={formData.password} 
                             onChange={handleChange} 
                             required 
-                            className="w-full bg-gray-50 border border-gray-200 text-gray-900 p-4 rounded-xl focus:outline-none focus:border-orange-400 focus:ring-1 focus:ring-orange-400 transition-all dark:bg-zinc-900 dark:border-zinc-800/80 dark:text-zinc-100 dark:placeholder-zinc-500 dark:focus:border-orange-500 dark:focus:ring-orange-500" 
+                            className="w-full bg-gray-50 border border-gray-200 text-gray-900 p-4 rounded-xl focus:outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400 transition-all dark:bg-zinc-900 dark:border-zinc-800/80 dark:text-zinc-100 dark:placeholder-zinc-500 dark:focus:border-amber-500 dark:focus:ring-amber-500" 
                         />
 
                         {/* Bouton Enskri */}
                         <button
                             type="submit"
                             disabled={loading}
-                            className="w-full bg-orange-400 dark:bg-orange-500 text-white font-bold py-4 rounded-xl hover:bg-orange-500 dark:hover:bg-orange-600 transition-all shadow-md shadow-orange-500/10 dark:shadow-orange-500/20 disabled:opacity-70 flex items-center justify-center"
+                            className="w-full bg-amber-400 dark:bg-amber-500 text-white font-bold py-4 rounded-xl hover:bg-amber-500 dark:hover:bg-orange-600 transition-all shadow-md shadow-amber-500/10 dark:shadow-amber-500/20 disabled:opacity-70 flex items-center justify-center"
                         >
                             {loading ? <WhiteLoader size={24} /> : 'Enskri'}
                         </button>
@@ -170,7 +170,7 @@ const Register = ({ onToggle }: RegisterProps) => {
                     {/* Lyen retounen nan Login */}
                     <p className="text-center md:text-left text-gray-500 dark:text-zinc-400 text-sm">
                         Èske w deja gen yon kont?
-                        <button onClick={onToggle} className="text-orange-400 dark:text-orange-400 font-bold hover:underline ml-1">
+                        <button onClick={onToggle} className="text-amber-400 dark:text-amber-400 font-bold hover:underline ml-1">
                             Konekte
                         </button>
                     </p>

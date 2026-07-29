@@ -105,7 +105,7 @@ const AdminValidation = () => {
 
                 {loading ? (
                     <div className="flex justify-center items-center h-64">
-                        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500"></div>
+                        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-amber-500"></div>
                     </div>
                 ) : requests.length === 0 ? (
                     <div className="bg-white dark:bg-[#16161a] rounded-xl p-12 text-center border border-gray-100 dark:border-[#24242b] shadow-sm">
@@ -145,7 +145,7 @@ const AdminValidation = () => {
                                     <div className="mt-2">
                                         <button
                                             onClick={() => handleOpenCarousel(req.documentUrl)}
-                                            className="w-full text-center text-xs bg-orange-50 dark:bg-orange-950/20 text-orange-600 dark:text-orange-400 font-bold px-3 py-2.5 rounded-lg hover:bg-orange-100 dark:hover:bg-orange-950/40 transition-all border border-orange-200/50 dark:border-orange-900/30"
+                                            className="w-full text-center text-xs bg-orange-50 dark:bg-orange-950/20 text-orange-600 dark:text-amber-400 font-bold px-3 py-2.5 rounded-lg hover:bg-orange-100 dark:hover:bg-orange-950/40 transition-all border border-orange-200/50 dark:border-orange-900/30"
                                         >
                                             👁️ Gade Dokiman ({Array.isArray(req.documentUrl) ? req.documentUrl.length : 1})
                                         </button>
@@ -199,7 +199,7 @@ const AdminValidation = () => {
                                                 <td className="p-4">
                                                     <button
                                                         onClick={() => handleOpenCarousel(req.documentUrl)}
-                                                        className="text-xs bg-orange-50 dark:bg-orange-950/20 text-orange-600 dark:text-orange-400 font-bold px-3 py-1.5 rounded hover:bg-orange-100 dark:hover:bg-orange-950/40 transition-all border border-orange-200/50 dark:border-orange-900/30"
+                                                        className="text-xs bg-orange-50 dark:bg-orange-950/20 text-orange-600 dark:text-amber-400 font-bold px-3 py-1.5 rounded hover:bg-orange-100 dark:hover:bg-orange-950/40 transition-all border border-orange-200/50 dark:border-orange-900/30"
                                                     >
                                                         Gade Pyès yo ({Array.isArray(req.documentUrl) ? req.documentUrl.length : 1})
                                                     </button>
@@ -311,7 +311,7 @@ const AdminValidation = () => {
                                         <button
                                             key={idx}
                                             onClick={() => setCurrentDocIndex(idx)}
-                                            className={`h-2 rounded-full transition-all duration-200 ${idx === currentDocIndex ? 'w-6 bg-orange-500' : 'w-2 bg-gray-300 dark:bg-gray-700'}`}
+                                            className={`h-2 rounded-full transition-all duration-200 ${idx === currentDocIndex ? 'w-6 bg-amber-500' : 'w-2 bg-gray-300 dark:bg-gray-700'}`}
                                         />
                                     ))}
                                 </div>
@@ -342,7 +342,7 @@ const AdminValidation = () => {
                                     onChange={(e) => setRejectReason(e.target.value)}
                                     placeholder="Egzanp: Foto CIN lan pa klè ditou / Dokiman Patant lan ekspire..."
                                     rows={3}
-                                    className="w-full bg-gray-50 dark:bg-[#0c0c0e] border border-gray-200 dark:border-[#24242b] rounded-lg p-3 text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:border-orange-400 focus:ring-1 focus:ring-orange-400 resize-none"
+                                    className="w-full bg-gray-50 dark:bg-[#0c0c0e] border border-gray-200 dark:border-[#24242b] rounded-lg p-3 text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400 resize-none"
                                 />
                                 <div className="flex justify-end gap-2 text-xs font-bold mt-1">
                                     <button 

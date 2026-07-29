@@ -12,14 +12,14 @@ const EmailVerification = () => {
                 className="max-w-md w-full bg-white/70 border border-gray-300 dark:bg-zinc-900/40 dark:border-zinc-800/80 backdrop-blur-xl rounded-[2.5rem] p-10 text-center"
             >
                 {/* Ikon ak efè "Sparkle" ak lonbraj adapte pou dark mode */}
-                <div className="relative w-24 h-24 bg-gradient-to-tr from-orange-400 to-orange-600 rounded-3xl flex items-center justify-center mx-auto mb-8 shadow-lg shadow-orange-500/30 dark:shadow-orange-500/10">
+                <div className="relative w-24 h-24 bg-gradient-to-tr from-amber-400 to-orange-600 rounded-3xl flex items-center justify-center mx-auto mb-8 shadow-lg shadow-amber-500/30 dark:shadow-amber-500/10">
                     <Mail className="text-white" size={40} strokeWidth={1.5} />
                     <motion.div 
                         animate={{ rotate: [0, 10, -10, 0] }}
                         transition={{ repeat: Infinity, duration: 3 }}
                         className="absolute -top-2 -right-2 bg-white dark:bg-zinc-900 p-1 rounded-full shadow-md border dark:border-zinc-800"
                     >
-                        <Sparkles size={16} className="text-orange-500" />
+                        <Sparkles size={16} className="text-amber-500" />
                     </motion.div>
                 </div>
 
@@ -28,7 +28,7 @@ const EmailVerification = () => {
                     Verifikasyon Imèl
                 </h1>
                 <p className="text-gray-600 dark:text-zinc-400 mb-10 leading-relaxed font-medium">
-                    Nou voye yon lyen majik nan adrès <span className="font-bold text-orange-500 dark:text-orange-400 underline decoration-orange-200 dark:decoration-orange-500/30 underline-offset-4">ou antre a</span>. 
+                    Nou voye yon lyen majik nan adrès <span className="font-bold text-amber-500 dark:text-amber-400 underline decoration-orange-200 dark:decoration-amber-500/30 underline-offset-4">ou antre a</span>. 
                     Tanpri tcheke bwat lèt ou pou aktive kont ou.
                 </p>
 
@@ -44,7 +44,7 @@ const EmailVerification = () => {
                     </button>
                     
                     {/* Bouton Renvoye Imèl */}
-                    <button className="text-gray-400 dark:text-zinc-500 text-sm font-bold hover:text-orange-500 dark:hover:text-orange-400 transition-colors flex items-center justify-center gap-2 mt-2">
+                    <button className="text-gray-400 dark:text-zinc-500 text-sm font-bold hover:text-amber-500 dark:hover:text-amber-400 transition-colors flex items-center justify-center gap-2 mt-2">
                         <RefreshCcw size={14} /> Mwen pa resevwa imèl la
                     </button>
                 </div>

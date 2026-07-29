@@ -51,7 +51,7 @@ const ResetPassword = () => {
                         </p>
                         <Link 
                             to="/auth" 
-                            className="block w-full bg-orange-400 dark:bg-orange-500 text-white font-bold py-4 rounded-xl hover:bg-orange-500 dark:hover:bg-orange-600 transition-all shadow-md shadow-orange-500/10 dark:shadow-orange-500/20"
+                            className="block w-full bg-amber-400 dark:bg-amber-500 text-white font-bold py-4 rounded-xl hover:bg-amber-500 dark:hover:bg-orange-600 transition-all shadow-md shadow-amber-500/10 dark:shadow-amber-500/20"
                         >
                             Konekte
                         </Link>
@@ -59,8 +59,8 @@ const ResetPassword = () => {
                 ) : (
                     <>
                         <div className="flex justify-center mb-6 relative group">
-                            <div className="absolute inset-0 bg-orange-500/10 dark:bg-orange-500/5 rounded-full blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                            <div className="w-20 h-20 bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-2xl flex items-center justify-center text-orange-400 relative z-10 shadow-sm">
+                            <div className="absolute inset-0 bg-amber-500/10 dark:bg-amber-500/5 rounded-full blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                            <div className="w-20 h-20 bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-2xl flex items-center justify-center text-amber-400 relative z-10 shadow-sm">
                                 <Lock size={36} strokeWidth={1.5} />
                             </div>
                         </div>
@@ -79,7 +79,7 @@ const ResetPassword = () => {
                                     type="password"
                                     required
                                     placeholder="••••••••"
-                                    className="w-full pl-12 pr-4 py-4 bg-gray-50 border border-gray-200 text-gray-900 rounded-xl focus:outline-none focus:border-orange-400 focus:ring-1 focus:ring-orange-400 transition-all dark:bg-zinc-900 dark:border-zinc-800/80 dark:text-zinc-100 dark:placeholder-zinc-500 dark:focus:border-orange-500 dark:focus:ring-orange-500"
+                                    className="w-full pl-12 pr-4 py-4 bg-gray-50 border border-gray-200 text-gray-900 rounded-xl focus:outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400 transition-all dark:bg-zinc-900 dark:border-zinc-800/80 dark:text-zinc-100 dark:placeholder-zinc-500 dark:focus:border-amber-500 dark:focus:ring-amber-500"
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
                                 />
@@ -99,7 +99,7 @@ const ResetPassword = () => {
                             <button
                                 type="submit"
                                 disabled={status === 'loading'}
-                                className="w-full bg-orange-400 dark:bg-orange-500 text-white font-bold py-4 rounded-xl hover:bg-orange-500 dark:hover:bg-orange-600 transition-all shadow-md shadow-orange-500/10 dark:shadow-orange-500/20 disabled:opacity-70 flex items-center justify-center"
+                                className="w-full bg-amber-400 dark:bg-amber-500 text-white font-bold py-4 rounded-xl hover:bg-amber-500 dark:hover:bg-orange-600 transition-all shadow-md shadow-amber-500/10 dark:shadow-amber-500/20 disabled:opacity-70 flex items-center justify-center"
                             >
                                 {status === 'loading' ? <WhiteLoader size={24} /> : 'Chanje modpas'}
                             </button>

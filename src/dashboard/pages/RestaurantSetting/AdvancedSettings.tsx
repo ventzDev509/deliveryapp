@@ -51,7 +51,7 @@ const AdvancedSettings = () => {
       <div className="space-y-3">
         <div>
           <h3 className="text-xs font-bold text-gray-800 dark:text-zinc-200 flex items-center gap-1.5">
-            <Wallet size={14} className="text-orange-500" />
+            <Wallet size={14} className="text-amber-500" />
             Metòd Peman yo Aksepte
           </h3>
           <p className="text-[11px] text-gray-400 dark:text-zinc-500">Chwazi kijan kliyan yo ka peye pou manje a.</p>
@@ -73,7 +73,7 @@ const AdvancedSettings = () => {
                   item.disabled 
                     ? 'opacity-60 bg-gray-100/50 dark:bg-zinc-900/30 border-gray-200 dark:border-zinc-800 cursor-not-allowed'
                     : isChecked 
-                      ? 'bg-white dark:bg-zinc-900 border-orange-500 shadow-sm cursor-pointer' 
+                      ? 'bg-white dark:bg-zinc-900 border-amber-500 shadow-sm cursor-pointer' 
                       : 'bg-gray-50/30 dark:bg-zinc-900/10 border-gray-100 dark:border-zinc-800 cursor-pointer'
                 }`}
               >
@@ -82,13 +82,13 @@ const AdvancedSettings = () => {
                   checked={isChecked}
                   disabled={item.disabled}
                   onChange={() => !item.disabled && setPayments({ ...payments, [item.id]: !isChecked })}
-                  className="mt-0.5 h-3.5 w-3.5 rounded-md border-gray-300 dark:border-zinc-700 text-orange-500 focus:ring-orange-500 accent-orange-500 cursor-pointer"
+                  className="mt-0.5 h-3.5 w-3.5 rounded-md border-gray-300 dark:border-zinc-700 text-amber-500 focus:ring-amber-500 accent-amber-500 cursor-pointer"
                 />
                 <div className="flex flex-col flex-1">
                   <div className="flex items-center justify-between">
                     <span className="text-xs font-bold text-gray-800 dark:text-zinc-200">{item.label}</span>
                     {item.disabled && (
-                      <span className="text-[9px] font-extrabold px-1.5 py-0.5 bg-orange-100 dark:bg-orange-950/50 text-orange-600 dark:text-orange-400 rounded-md uppercase tracking-wider">
+                      <span className="text-[9px] font-extrabold px-1.5 py-0.5 bg-orange-100 dark:bg-orange-950/50 text-orange-600 dark:text-amber-400 rounded-md uppercase tracking-wider">
                         Soon
                       </span>
                     )}

@@ -122,7 +122,7 @@ export default function UpdateProfile() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="flex flex-col gap-1.5">
                     <label className="text-[11px] font-bold text-gray-500 dark:text-zinc-400 uppercase tracking-wider flex items-center gap-1">
-                        <User size={12} className="text-orange-500" /> Non Restoran an
+                        <User size={12} className="text-amber-500" /> Non Restoran an
                     </label>
                     <input
                         type="text"
@@ -130,7 +130,7 @@ export default function UpdateProfile() {
                         value={formData.username}
                         onChange={handleChange}
                         placeholder="Non restoran an"
-                        className="w-full px-4 py-3 bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-xl text-xs font-bold text-gray-800 dark:text-zinc-200 focus:outline-none focus:bg-white dark:focus:bg-zinc-900 focus:border-orange-500 dark:focus:border-orange-500 transition-all"
+                        className="w-full px-4 py-3 bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-xl text-xs font-bold text-gray-800 dark:text-zinc-200 focus:outline-none focus:bg-white dark:focus:bg-zinc-900 focus:border-amber-500 dark:focus:border-amber-500 transition-all"
                     />
                 </div>
 
@@ -144,7 +144,7 @@ export default function UpdateProfile() {
                         value={formData.phone}
                         onChange={handleChange}
                         placeholder="Egz: +509 3700-0000"
-                        className="w-full px-4 py-3 bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-xl text-xs font-bold text-gray-800 dark:text-zinc-200 focus:outline-none focus:bg-white dark:focus:bg-zinc-900 focus:border-orange-500 dark:focus:border-orange-500 transition-all"
+                        className="w-full px-4 py-3 bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-xl text-xs font-bold text-gray-800 dark:text-zinc-200 focus:outline-none focus:bg-white dark:focus:bg-zinc-900 focus:border-amber-500 dark:focus:border-amber-500 transition-all"
                     />
                 </div>
             </div>
@@ -160,7 +160,7 @@ export default function UpdateProfile() {
                         value={formData.bio}
                         onChange={handleChange}
                         placeholder="Deskripsyon kout"
-                        className="w-full px-4 py-3 bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-xl text-xs font-bold text-gray-800 dark:text-zinc-200 focus:outline-none focus:bg-white dark:focus:bg-zinc-900 focus:border-orange-500 dark:focus:border-orange-500 transition-all"
+                        className="w-full px-4 py-3 bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-xl text-xs font-bold text-gray-800 dark:text-zinc-200 focus:outline-none focus:bg-white dark:focus:bg-zinc-900 focus:border-amber-500 dark:focus:border-amber-500 transition-all"
                     />
                 </div>
 
@@ -174,7 +174,7 @@ export default function UpdateProfile() {
                         value={formData.location}
                         onChange={handleChange}
                         placeholder="Lokasyon"
-                        className="w-full px-4 py-3 bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-xl text-xs font-bold text-gray-800 dark:text-zinc-200 focus:outline-none focus:bg-white dark:focus:bg-zinc-900 focus:border-orange-500 dark:focus:border-orange-500 transition-all"
+                        className="w-full px-4 py-3 bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-xl text-xs font-bold text-gray-800 dark:text-zinc-200 focus:outline-none focus:bg-white dark:focus:bg-zinc-900 focus:border-amber-500 dark:focus:border-amber-500 transition-all"
                     />
                 </div>
             </div>
@@ -182,13 +182,13 @@ export default function UpdateProfile() {
             {/* Seksyon Estati Restoran an (Store Status) */}
             <div className="flex flex-col gap-1.5">
                 <label className="text-[11px] font-bold text-gray-500 dark:text-zinc-400 uppercase tracking-wider flex items-center gap-1">
-                    <Power size={12} className="text-orange-500" /> Estati Restoran an
+                    <Power size={12} className="text-amber-500" /> Estati Restoran an
                 </label>
                 <select
                     name="storeStatus"
                     value={formData.storeStatus}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-xl text-xs font-bold text-gray-800 dark:text-zinc-200 focus:outline-none focus:bg-white dark:focus:bg-zinc-900 focus:border-orange-500 dark:focus:border-orange-500 transition-all appearance-none cursor-pointer"
+                    className="w-full px-4 py-3 bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-xl text-xs font-bold text-gray-800 dark:text-zinc-200 focus:outline-none focus:bg-white dark:focus:bg-zinc-900 focus:border-amber-500 dark:focus:border-amber-500 transition-all appearance-none cursor-pointer"
                 >
                     <option value="OPEN">LOUVRI (OPEN)</option>
                     <option value="BUSY">OKIPE / ANBACHAJ (BUSY)</option>
@@ -200,7 +200,7 @@ export default function UpdateProfile() {
             <div className="space-y-3 pt-2">
                 <div>
                     <h3 className="text-xs font-bold text-gray-800 dark:text-zinc-200 flex items-center gap-1.5">
-                        <Globe size={14} className="text-orange-500" /> Rezo Sosyal yo
+                        <Globe size={14} className="text-amber-500" /> Rezo Sosyal yo
                     </h3>
                     <p className="text-[11px] text-gray-400 dark:text-zinc-500">Mete non itilizatè (username) rezo sosyal restoran an.</p>
                 </div>
@@ -219,7 +219,7 @@ export default function UpdateProfile() {
                                 value={formData.socialLinks.instagram}
                                 onChange={handleSocialChange}
                                 placeholder="username_restoran"
-                                className="w-full pl-8 pr-4 py-3 bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-xl text-xs font-bold text-gray-800 dark:text-zinc-200 focus:outline-none focus:bg-white dark:focus:bg-zinc-900 focus:border-orange-500 dark:focus:border-orange-500 transition-all"
+                                className="w-full pl-8 pr-4 py-3 bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-xl text-xs font-bold text-gray-800 dark:text-zinc-200 focus:outline-none focus:bg-white dark:focus:bg-zinc-900 focus:border-amber-500 dark:focus:border-amber-500 transition-all"
                             />
                         </div>
                     </div>
@@ -235,7 +235,7 @@ export default function UpdateProfile() {
                             value={formData.socialLinks.facebook}
                             onChange={handleSocialChange}
                             placeholder="Egz: paj_restoran"
-                            className="w-full px-4 py-3 bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-xl text-xs font-bold text-gray-800 dark:text-zinc-200 focus:outline-none focus:bg-white dark:focus:bg-zinc-900 focus:border-orange-500 dark:focus:border-orange-500 transition-all"
+                            className="w-full px-4 py-3 bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-xl text-xs font-bold text-gray-800 dark:text-zinc-200 focus:outline-none focus:bg-white dark:focus:bg-zinc-900 focus:border-amber-500 dark:focus:border-amber-500 transition-all"
                         />
                     </div>
 
@@ -252,7 +252,7 @@ export default function UpdateProfile() {
                                 value={formData.socialLinks.tiktok}
                                 onChange={handleSocialChange}
                                 placeholder="username_tiktok"
-                                className="w-full pl-8 pr-4 py-3 bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-xl text-xs font-bold text-gray-800 dark:text-zinc-200 focus:outline-none focus:bg-white dark:focus:bg-zinc-900 focus:border-orange-500 dark:focus:border-orange-500 transition-all"
+                                className="w-full pl-8 pr-4 py-3 bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-xl text-xs font-bold text-gray-800 dark:text-zinc-200 focus:outline-none focus:bg-white dark:focus:bg-zinc-900 focus:border-amber-500 dark:focus:border-amber-500 transition-all"
                             />
                         </div>
                     </div>
@@ -268,7 +268,7 @@ export default function UpdateProfile() {
                             value={formData.socialLinks.youtube}
                             onChange={handleSocialChange}
                             placeholder="YouTube channel name"
-                            className="w-full px-4 py-3 bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-xl text-xs font-bold text-gray-800 dark:text-zinc-200 focus:outline-none focus:bg-white dark:focus:bg-zinc-900 focus:border-orange-500 dark:focus:border-orange-500 transition-all"
+                            className="w-full px-4 py-3 bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-xl text-xs font-bold text-gray-800 dark:text-zinc-200 focus:outline-none focus:bg-white dark:focus:bg-zinc-900 focus:border-amber-500 dark:focus:border-amber-500 transition-all"
                         />
                     </div>
                 </div>
@@ -279,7 +279,7 @@ export default function UpdateProfile() {
                 <button
                     type="submit"
                     disabled={loading}
-                    className="px-6 py-3 bg-orange-500 hover:bg-orange-600 text-white rounded-xl text-xs font-bold transition-all shadow-lg shadow-orange-500/20 disabled:opacity-50 cursor-pointer flex items-center justify-center min-w-[100px]"
+                    className="px-6 py-3 bg-amber-500 hover:bg-orange-600 text-white rounded-xl text-xs font-bold transition-all shadow-lg shadow-amber-500/20 disabled:opacity-50 cursor-pointer flex items-center justify-center min-w-[100px]"
                 >
                     {!loading ? 'Anrejistre' : <WhiteLoader size={20} />}
                 </button>

@@ -65,7 +65,7 @@ const VerificationSuccess = () => {
                 {/* ETAP 1: LOADING STATUS */}
                 {status === 'loading' && (
                     <div className="flex flex-col items-center py-4">
-                        <Loader2 className="animate-spin text-orange-400 dark:text-orange-500 mb-6" size={44} strokeWidth={2} />
+                        <Loader2 className="animate-spin text-amber-400 dark:text-amber-500 mb-6" size={44} strokeWidth={2} />
                         <h1 className="text-2xl font-extrabold text-gray-900 dark:text-zinc-50 tracking-tight mb-2">Tanpri tann...</h1>
                         <p className="text-gray-500 dark:text-zinc-400 font-medium">{message}</p>
                     </div>
@@ -84,7 +84,7 @@ const VerificationSuccess = () => {
                         {!localStorage.getItem('token') && (
                             <Link 
                                 to="/auth" 
-                                className="block w-full bg-orange-400 dark:bg-orange-500 text-white font-bold py-4 rounded-xl hover:bg-orange-500 dark:hover:bg-orange-600 transition-all shadow-md shadow-orange-500/10 dark:shadow-orange-500/20"
+                                className="block w-full bg-amber-400 dark:bg-amber-500 text-white font-bold py-4 rounded-xl hover:bg-amber-500 dark:hover:bg-orange-600 transition-all shadow-md shadow-amber-500/10 dark:shadow-amber-500/20"
                             >
                                 Konekte koulye a
                             </Link>

@@ -37,7 +37,7 @@ export default function HoursRow({
                     className="active:scale-90 transition-transform cursor-pointer"
                 >
                     {isOpen ? (
-                        <ToggleRight className="text-orange-500" size={24} />
+                        <ToggleRight className="text-amber-500" size={24} />
                     ) : (
                         <ToggleLeft className="text-gray-300 dark:text-zinc-600" size={24} />
                     )}
@@ -57,7 +57,7 @@ export default function HoursRow({
                             value={openTime}
                             onChange={(e) => onChange({ isOpen, openTime: e.target.value, closeTime })}
                             placeholder="08:00 AM"
-                            className="w-full sm:w-28 px-2.5 py-1.5 bg-gray-50 dark:bg-zinc-950 border border-gray-200 dark:border-zinc-800 rounded-lg text-xs text-gray-800 dark:text-zinc-100 focus:outline-none focus:ring-1 focus:ring-orange-500 font-medium text-center"
+                            className="w-full sm:w-28 px-2.5 py-1.5 bg-gray-50 dark:bg-zinc-950 border border-gray-200 dark:border-zinc-800 rounded-lg text-xs text-gray-800 dark:text-zinc-100 focus:outline-none focus:ring-1 focus:ring-amber-500 font-medium text-center"
                         />
 
                         <span className="text-xs text-gray-400 shrink-0">a</span>
@@ -67,7 +67,7 @@ export default function HoursRow({
                             value={closeTime}
                             onChange={(e) => onChange({ isOpen, openTime, closeTime: e.target.value })}
                             placeholder="05:00 PM"
-                            className="w-full sm:w-28 px-2.5 py-1.5 bg-gray-50 dark:bg-zinc-950 border border-gray-200 dark:border-zinc-800 rounded-lg text-xs text-gray-800 dark:text-zinc-100 focus:outline-none focus:ring-1 focus:ring-orange-500 font-medium text-center"
+                            className="w-full sm:w-28 px-2.5 py-1.5 bg-gray-50 dark:bg-zinc-950 border border-gray-200 dark:border-zinc-800 rounded-lg text-xs text-gray-800 dark:text-zinc-100 focus:outline-none focus:ring-1 focus:ring-amber-500 font-medium text-center"
                         />
                     </motion.div>
                 ) : (

@@ -123,7 +123,7 @@ export default function ProfileBanner() {
 
             {/* Banner */}
             <div
-                className="h-32 md:h-44 bg-gradient-to-r from-orange-400 to-amber-500 relative group bg-cover  bg-center transition-all"
+                className="h-32 md:h-44 bg-gradient-to-r from-amber-400 to-amber-500 relative group bg-cover  bg-center transition-all"
                 style={bannerPreview ? { backgroundImage: `url(${bannerPreview}) `,backgroundRepeat:"no-repeat",backgroundSize:"cover" } : {backgroundRepeat:"no-repeat",backgroundSize:"cover"}}
             >
                 <div className="absolute inset-0 bg-black/20 backdrop-blur-[0.5px]" />
@@ -180,7 +180,7 @@ export default function ProfileBanner() {
                             onClick={handleSave}
                             disabled={loading}
                             type="button"
-                            className="px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-md shadow-orange-500/20 transition-all disabled:opacity-50"
+                            className="px-4 py-2 bg-amber-500 hover:bg-orange-600 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-md shadow-amber-500/20 transition-all disabled:opacity-50"
                         >
                             {loading ? (
                                 <Loader2 size={14} className="animate-spin" />

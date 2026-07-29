@@ -226,7 +226,7 @@ const MenuDrawer = ({
                     value={selectedDish.name}
                     onChange={(e) => onChangeDish({ ...selectedDish, name: e.target.value })}
                     placeholder="Egz: Griot ak Bannann Peze"
-                    className="w-full px-4 py-3 bg-gray-50 dark:bg-[#0c0c0e] border border-gray-200 dark:border-[#24242b] rounded-xl text-xs font-bold text-gray-800 dark:text-gray-200 focus:outline-none focus:bg-white dark:focus:bg-[#16161a] focus:border-orange-500 dark:focus:border-orange-500 transition-all"
+                    className="w-full px-4 py-3 bg-gray-50 dark:bg-[#0c0c0e] border border-gray-200 dark:border-[#24242b] rounded-xl text-xs font-bold text-gray-800 dark:text-gray-200 focus:outline-none focus:bg-white dark:focus:bg-[#16161a] focus:border-amber-500 dark:focus:border-amber-500 transition-all"
                   />
                 </div>
 
@@ -240,7 +240,7 @@ const MenuDrawer = ({
                       value={selectedDish.price || ''}
                       onChange={(e) => onChangeDish({ ...selectedDish, price: parseFloat(e.target.value) || 0 })}
                       placeholder="0.00"
-                      className="w-full px-4 py-3 bg-gray-50 dark:bg-[#0c0c0e] border border-gray-200 dark:border-[#24242b] rounded-xl text-xs font-bold text-gray-800 dark:text-gray-200 focus:outline-none focus:bg-white dark:focus:bg-[#16161a] focus:border-orange-500 dark:focus:border-orange-500 transition-all"
+                      className="w-full px-4 py-3 bg-gray-50 dark:bg-[#0c0c0e] border border-gray-200 dark:border-[#24242b] rounded-xl text-xs font-bold text-gray-800 dark:text-gray-200 focus:outline-none focus:bg-white dark:focus:bg-[#16161a] focus:border-amber-500 dark:focus:border-amber-500 transition-all"
                     />
                   </div>
 
@@ -249,7 +249,7 @@ const MenuDrawer = ({
                     <select
                       value={selectedDish.category}
                       onChange={(e) => onChangeDish({ ...selectedDish, category: e.target.value })}
-                      className="w-full px-4 py-3 bg-gray-50 dark:bg-[#0c0c0e] border border-gray-200 dark:border-[#24242b] rounded-xl text-xs font-bold text-gray-800 dark:text-gray-200 focus:outline-none focus:bg-white dark:focus:bg-[#16161a] focus:border-orange-500 dark:focus:border-orange-500 transition-all appearance-none"
+                      className="w-full px-4 py-3 bg-gray-50 dark:bg-[#0c0c0e] border border-gray-200 dark:border-[#24242b] rounded-xl text-xs font-bold text-gray-800 dark:text-gray-200 focus:outline-none focus:bg-white dark:focus:bg-[#16161a] focus:border-amber-500 dark:focus:border-amber-500 transition-all appearance-none"
                     >
                       <option value="" disabled>Chwazi yon kategori</option>
                       {categories.map((cat) => (
@@ -263,7 +263,7 @@ const MenuDrawer = ({
 
                 <div className="flex flex-col gap-1.5">
                   <label className="text-[11px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider flex items-center gap-1">
-                    <Clock size={12} className="text-orange-500" /> Tan Preparasyon (Minit)
+                    <Clock size={12} className="text-amber-500" /> Tan Preparasyon (Minit)
                   </label>
                   <div className="relative">
                     <input
@@ -274,7 +274,7 @@ const MenuDrawer = ({
                       value={selectedDish.prepTime || ''}
                       onChange={(e) => onChangeDish({ ...selectedDish, prepTime: parseInt(e.target.value) || 0 })}
                       placeholder="Egz: 25"
-                      className="w-full pl-4 pr-12 py-3 bg-gray-50 dark:bg-[#0c0c0e] border border-gray-200 dark:border-[#24242b] rounded-xl text-xs font-bold text-gray-800 dark:text-gray-200 focus:outline-none focus:bg-white dark:focus:bg-[#16161a] focus:border-orange-500 dark:focus:border-orange-500 transition-all"
+                      className="w-full pl-4 pr-12 py-3 bg-gray-50 dark:bg-[#0c0c0e] border border-gray-200 dark:border-[#24242b] rounded-xl text-xs font-bold text-gray-800 dark:text-gray-200 focus:outline-none focus:bg-white dark:focus:bg-[#16161a] focus:border-amber-500 dark:focus:border-amber-500 transition-all"
                     />
                     <span className="absolute right-4 top-1/2 -translate-y-1/2 text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase">min</span>
                   </div>
@@ -287,7 +287,7 @@ const MenuDrawer = ({
                     value={selectedDish.description}
                     onChange={(e) => onChangeDish({ ...selectedDish, description: e.target.value })}
                     placeholder="Mete engredyan yo..."
-                    className="w-full px-4 py-3 bg-gray-50 dark:bg-[#0c0c0e] border border-gray-200 dark:border-[#24242b] rounded-xl text-xs font-medium text-gray-700 dark:text-gray-300 focus:outline-none focus:bg-white dark:focus:bg-[#16161a] focus:border-orange-500 dark:focus:border-orange-500 transition-all resize-none leading-relaxed"
+                    className="w-full px-4 py-3 bg-gray-50 dark:bg-[#0c0c0e] border border-gray-200 dark:border-[#24242b] rounded-xl text-xs font-medium text-gray-700 dark:text-gray-300 focus:outline-none focus:bg-white dark:focus:bg-[#16161a] focus:border-amber-500 dark:focus:border-amber-500 transition-all resize-none leading-relaxed"
                   />
                 </div>
               </form>
@@ -317,7 +317,7 @@ const MenuDrawer = ({
                   type="submit"
                   form="menu-dish-form"
                   disabled={loading}
-                  className="flex-1 py-3 bg-orange-500 hover:bg-orange-600 disabled:opacity-50 text-white text-xs font-bold rounded-xl transition-all flex items-center justify-center gap-2 shadow-md shadow-orange-500/10 active:scale-95"
+                  className="flex-1 py-3 bg-amber-500 hover:bg-orange-600 disabled:opacity-50 text-white text-xs font-bold rounded-xl transition-all flex items-center justify-center gap-2 shadow-md shadow-amber-500/10 active:scale-95"
                 >
                   {loading ? (
                     <Loader2 size={14} className="animate-spin" />

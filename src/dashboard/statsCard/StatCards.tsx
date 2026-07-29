@@ -9,9 +9,9 @@ const statsData = [
         change: "+12.5%",
         isPositive: true,
         icon: DollarSign,
-        color: "from-orange-500 to-amber-500",
-        bgLight: "bg-orange-50/60 dark:bg-orange-500/10",
-        textLight: "text-orange-500 dark:text-orange-400",
+        color: "from-amber-500 to-amber-500",
+        bgLight: "bg-orange-50/60 dark:bg-amber-500/10",
+        textLight: "text-amber-500 dark:text-amber-400",
     },
     {
         title: "Nouvo Kòmand",
