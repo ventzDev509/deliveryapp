@@ -1,19 +1,12 @@
 import { useState } from "react";
 import {
     Flame,
-    Utensils,
-    Pizza,
-    Sandwich,
-    CupSoda,
-    IceCreamCone,
-    Beef,
-    Fish,
     Loader2
 } from "lucide-react";
 import { useCategory } from "../Contexts/CategoryContext";
 
 // Yon lis ikon pa defo pou w ka reitilize lè nou ap map kategori yo
-const defaultIcons = [Utensils, Pizza, Sandwich, CupSoda, IceCreamCone, Beef, Fish];
+// const defaultIcons = [Utensils, Pizza, Sandwich, CupSoda, IceCreamCone, Beef, Fish];
 
 export default function CategorySlider() {
     const { categories, loading } = useCategory();
@@ -66,9 +59,9 @@ export default function CategorySlider() {
                     </button>
 
                     {/* Lòt kategori yo ki soti nan Baz Done a */}
-                    {categories.map((category, index) => {
+                    {categories.map((category, _) => {
                         // Chwazi yon ikon pa defo an wotasyon nan lis la
-                        const IconComponent = defaultIcons[index % defaultIcons.length];
+                        // const IconComponent = defaultIcons[index % defaultIcons.length];
                         const active = selectedCategory === category.id;
 
                         return (
