@@ -1,3 +1,5 @@
+import { useEffect } from "react";
+import { useProfile } from "../Contexts/ProfileContext";
 import FoodCard from "../FoodCard/FoodCard";
 import PopularRestaurantCard from "../FoodCard/PopularRestaurantCard";
 import BannerSlider from "./BannerSlide";
@@ -51,37 +53,22 @@ const foodItems = [
     }
 ];
 
-// Nou kreye yon array pou restoran yo tou
-const restaurants = [
-    {
-        id: "1",
-        name: "Burger House & Grill",
-        image: "https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&w=600&q=80",
-        cuisine: "Fast Food, Burgers, American",
-        rating: 4.8,
-        deliveryTime: "20-30 min",
-        priceRange: "$$"
-    },
-    {
-        id: "2",
-        name: "Sushi Master Tokyo",
-        image: "https://images.unsplash.com/photo-1579871494447-9811cf80d66c?auto=format&fit=crop&w=600&q=80",
-        cuisine: "Japanese, Sushi, Seafood",
-        rating: 4.9,
-        deliveryTime: "30-40 min",
-        priceRange: "$$$"
-    }
-];
-
 export default function Home() {
+    // Nou depafini sou `profiles` (an pliryèl) olye de profile sèlman
+    const { profiles, fetchProfiles, loading } = useProfile();
+
+    useEffect(() => {
+        fetchProfiles();
+    }, []);
+
     return (
         <div className="pb-28">
             <Header />
             <BannerSlider />
             <CategorySlider />
-            
+
             {/* SEKSYON POPULAR FOODS */}
-            <div className="max-w-7xl mx-auto ">
+            <div className="max-w-7xl mx-auto">
                 <div className="flex px-5 justify-between items-center mb-4">
                     <h3 className="text-white font-bold text-lg tracking-wide">
                         Popular Foods
@@ -90,11 +77,11 @@ export default function Home() {
                         See All
                     </button>
                 </div>
-                
-                <div className="flex items-center gap-4 overflow-x-auto no-scrollbar pb-3 pt-1">
+
+                <div className="flex items-center gap-4 overflow-x-auto no-scrollbar pb-3 pt-1 ">
                     {foodItems.map((food) => (
                         <div key={food.id} className="w-[240px] sm:w-[270px] flex-shrink-0">
-                            <FoodCard 
+                            <FoodCard
                                 title={food.title}
                                 category={food.category}
                                 price={food.price}
@@ -109,7 +96,7 @@ export default function Home() {
                 </div>
             </div>
 
-            {/* SEKSYON POPULAR RESTAURANTS */}
+            {/* SEKSYON POPULAR RESTAURANTS (PROFILES) */}
             <div className="max-w-7xl mx-auto mt-8">
                 <div className="flex px-5 justify-between items-center mb-4">
                     <h3 className="text-white font-bold text-lg tracking-wide">
@@ -119,22 +106,23 @@ export default function Home() {
                         See All
                     </button>
                 </div>
-                
-                <div className="flex items-center gap-4 overflow-x-auto no-scrollbar pb-3 pt-1 px-5">
-                    {restaurants.map((restaurant) => (
-                        <div key={restaurant.id} className="w-[260px] sm:w-[290px] flex-shrink-0">
-                            <PopularRestaurantCard 
-                                id={restaurant.id}
-                                name={restaurant.name}
-                                image={restaurant.image}
-                                cuisine={restaurant.cuisine}
-                                rating={restaurant.rating}
-                                deliveryTime={restaurant.deliveryTime}
-                                priceRange={restaurant.priceRange}
-                            />
-                        </div>
-                    ))}
-                </div>
+
+                {loading ? (
+                    <div className="px-5 text-zinc-400 text-sm">Ap chaje restoran yo...</div>
+                ) : (
+                    <div className="flex items-center gap-4 overflow-x-auto no-scrollbar pb-3 pt-1 px-5">
+                        {profiles && profiles.length > 0 ? (
+                            profiles.map((restaurantProfile) => (
+                                <PopularRestaurantCard
+                                    key={restaurantProfile.id}
+                                    restaurant={restaurantProfile}
+                                />
+                            ))
+                        ) : (
+                            <div className="px-5 text-zinc-500 text-xs">Pa gen restoran disponib kounye a.</div>
+                        )}
+                    </div>
+                )}
             </div>
         </div>
     );

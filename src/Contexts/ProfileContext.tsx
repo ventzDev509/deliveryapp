@@ -20,7 +20,7 @@ const showApiErrors = (error: any) => {
 export const ProfileProvider = ({ children }: { children: ReactNode }) => {
     const [profile, setProfile] = useState<Profile | null>(null);
     const [loading, setLoading] = useState(false);
-
+const [profiles, setProfiles] = useState<Profile[]>([]);
     // 1. Jwenn pwofil yon itilizatè an patikilye
     const fetchProfile = async (userId: string) => {
         setLoading(true);
@@ -33,6 +33,17 @@ export const ProfileProvider = ({ children }: { children: ReactNode }) => {
             setLoading(false);
         }
     };
+    const fetchProfiles = async () => {
+    setLoading(true);
+    try {
+        const response = await api.get<Profile[]>(`/profiles`); // Asire w API a retounen yon etalaj pwofil
+        setProfiles(response.data); // Nou mete l nan state profiles la
+    } catch (error) {
+        showApiErrors(error);
+    } finally {
+        setLoading(false);
+    }
+};
 
     // 2. Mizajou pwofil la (Tèks / Enfòmasyon)
     const updateProfile = async (userId: string, data: any): Promise<any> => {
@@ -101,8 +112,10 @@ export const ProfileProvider = ({ children }: { children: ReactNode }) => {
     return (
         <ProfileContext.Provider value={{
             profile,
+            profiles,
             loading,
             fetchProfile,
+            fetchProfiles,
             updateProfile,
             updateProfileImages,
             updateWorkingHours, 

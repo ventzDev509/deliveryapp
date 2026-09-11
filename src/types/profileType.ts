@@ -22,8 +22,10 @@ export interface Profile {
 
 export interface ProfileContextType {
   profile: Profile | null;
+  profiles: Profile[] | null;
   loading: boolean;
   fetchProfile: (userId: string) => Promise<void>;
+  fetchProfiles: () => Promise<void>;
   updateProfile: (userId: string, data: any) => Promise<any>;
   updateProfileImages: (userId: string, profileImage?: File, bannerImage?: File) => Promise<any>;
   updateWorkingHours: (hours: Array<{ day: string; isOpen: boolean; openTime: string; closeTime: string }>) => Promise<any>; // <--- Ajoute sa a
