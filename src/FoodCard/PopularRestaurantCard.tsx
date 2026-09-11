@@ -9,7 +9,7 @@ interface RestaurantProps {
 
 export default function PopularRestaurantCard({
     restaurant,
-    priceRange = "$$"
+    // priceRange = "$$"
 }: RestaurantProps) {
     const { id, username, bio, avatarUrl, bannerUrl } = restaurant;
     
