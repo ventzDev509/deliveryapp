@@ -72,10 +72,10 @@ export default function PopularRestaurantCard({
                     <h3 className="text-base font-bold text-zinc-100 group-hover:text-amber-400 transition-colors line-clamp-1">
                         {displayName}
                     </h3>
-                    <span className="text-xs font-semibold text-zinc-400">{priceRange}</span>
+                    {/* <span className="text-xs font-semibold text-zinc-400">{priceRange}</span> */}
                 </div>
 
-                <p className="text-xs text-zinc-400 mt-0.5 line-clamp-1">
+                <p className="text-xs text-zinc-400 mt-0.5 line-clamp-2">
                     {displayDescription}
                 </p>
 
