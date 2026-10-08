@@ -1,9 +1,13 @@
 import { Link } from 'react-router-dom';
-import { useProfile } from '../Contexts/ProfileContext';
-import type { Profile } from '../types/profileType';
+import fallbackRestaurantImage from '../assets/food-delivery.png';
 
 interface RestaurantProps {
-    restaurant: Profile;
+    restaurant: {
+        id: string;
+        name: string;
+        description?: string | null;
+        owner?: { profile?: { username?: string | null; avatarUrl?: string | null; bannerUrl?: string | null } | null };
+    };
     priceRange?: string;
 }
 
@@ -11,30 +15,13 @@ export default function PopularRestaurantCard({
     restaurant,
     // priceRange = "$$"
 }: RestaurantProps) {
-    const { id, username, bio, avatarUrl, bannerUrl } = restaurant;
-    
-    // Nou itilize loading ki soti nan ProfileContext la
-    const { loading } = useProfile();
+    const { id, name, description, owner } = restaurant;
+    const profile = owner?.profile;
+    const restaurantImage = profile?.avatarUrl || profile?.bannerUrl || fallbackRestaurantImage;
+    const displayName = name || profile?.username || "Restoran Popilè";
+    const displayDescription = description || "Manje gou ak espesyalite lakay";
 
-    const restaurantImage = avatarUrl || bannerUrl || 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&q=80&w=600';
-    const displayName = username || "Restoran Popilè";
-    const displayDescription = bio || "Manje gou ak espesyalite lakay";
-    
-    const rating = 4.8;
     const deliveryTime = "20-30 min";
-
-    // Si aplikasyon an ap chaje tout pwofil yo an jeneral, nou ka afiche yon ti efè (skeleton/opacity) sou kat la
-    if (loading) {
-        return (
-            <div className="w-[280px] sm:w-[320px] h-[320px] bg-zinc-900/50 border border-zinc-800 rounded-2xl animate-pulse flex-shrink-0 p-4 flex flex-col justify-between">
-                <div className="h-44 bg-zinc-800 rounded-xl w-full"></div>
-                <div className="space-y-2 mt-3">
-                    <div className="h-4 bg-zinc-800 rounded w-3/4"></div>
-                    <div className="h-3 bg-zinc-800 rounded w-1/2"></div>
-                </div>
-            </div>
-        );
-    }
 
     return (
         <Link
@@ -57,12 +44,12 @@ export default function PopularRestaurantCard({
                     <svg className="w-3.5 h-3.5 text-amber-400 fill-amber-400" viewBox="0 0 24 24">
                         <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
                     </svg>
-                    <span className="text-xs font-bold text-zinc-100">{rating}</span>
+                    <span className="text-xs font-bold text-zinc-100">Meni</span>
                 </div>
 
                 {/* Tag Popular anba adwat sou imaj la */}
                 <span className="absolute bottom-3 left-3 bg-amber-400 text-zinc-950 text-[10px] font-extrabold px-2.5 py-0.5 rounded-full uppercase tracking-wider">
-                    Popular
+                    LOKAL
                 </span>
             </div>
 

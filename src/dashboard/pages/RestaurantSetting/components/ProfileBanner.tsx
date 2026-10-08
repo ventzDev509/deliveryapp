@@ -4,6 +4,7 @@ import { useProfile } from "../../../../Contexts/ProfileContext";
 import { useAuth } from "../../../../Contexts/AuthContext";
 import { AnimatePresence } from "framer-motion";
 import { Notification } from "../../../../notification/Notification";
+import fallbackProfileImage from "../../../../assets/food-delivery.png";
 
 export default function ProfileBanner() {
     const { profile, fetchProfile, updateProfileImages, loading } = useProfile();
@@ -146,7 +147,7 @@ export default function ProfileBanner() {
                     className="absolute -top-12 left-6 w-24 h-24 rounded-2xl border-4 border-white dark:border-zinc-900 bg-gray-100 dark:bg-zinc-800 shadow-md overflow-hidden group cursor-pointer"
                 >
                     <img
-                        src={profilePreview || "https://images.unsplash.com/photo-1514933651103-005eec06c04b?auto=format&fit=crop&q=80&w=200"}
+                        src={profilePreview || fallbackProfileImage}
                         alt="Logo Pwofil"
                         className="w-full h-full object-cover"
                     />

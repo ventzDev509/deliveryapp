@@ -8,6 +8,7 @@ import { DriverProvider } from './Contexts/DriverContext.tsx'
 import { ProfileProvider } from './Contexts/ProfileContext.tsx'
 import { RestaurantProvider } from './Contexts/RestaurantContext.tsx'
 import { CategoryProvider } from './Contexts/CategoryContext.tsx'
+import { CartProvider } from './Contexts/CartContext.tsx'
 
 
 createRoot(document.getElementById('root')!).render(
@@ -18,7 +19,9 @@ createRoot(document.getElementById('root')!).render(
           <RestaurantProvider>
             <CategoryProvider>
             <DriverProvider>
-              <App />
+              <CartProvider>
+                <App />
+              </CartProvider>
             </DriverProvider>
             </CategoryProvider>
           </RestaurantProvider>

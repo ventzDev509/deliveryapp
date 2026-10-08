@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
-import { type User, type AuthContextType, type AuthResponse, type BecomeSellerPayload } from '../types/auth.types';
+import { type User, type AuthContextType, type AuthResponse, type BecomeSellerPayload, type DriverLoginCredentials } from '../types/auth.types';
 import api from './api/axios';
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -38,6 +38,19 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             return res.data;
         } catch (error: any) {
             throw error.response?.data || { message: "Erè pandan koneksyon an." };
+        }
+    };
+
+    const loginDriver = async (credentials: DriverLoginCredentials): Promise<AuthResponse> => {
+        try {
+            const res = await api.post<AuthResponse>('/drivers/login', credentials);
+            if (res.data.token && res.data.user) {
+                localStorage.setItem('lky', res.data.token);
+                setUser(res.data.user);
+            }
+            return res.data;
+        } catch (error: any) {
+            throw error.response?.data || { message: 'Imèl oswa nimewo telefòn chofè a pa kòrèk.' };
         }
     };
 
@@ -123,14 +136,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             }
             console.log(Object.fromEntries(formData.entries()));
             // 4. Voye requet la bay backend la ak Headers multipart/form-data
-            const res = await api.patch<User>('/auth/become-seller', formData, {
+            await api.patch('/auth/become-seller', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },
             });
 
-            // 5. Mete eta user a ajou ak nouvo pwofil la
-            setUser(res.data);
+            // Rechaje kont lan ak wòl aktyèl la epi pwofil seller la.
+            await fetchProfile();
 
         } catch (error: any) {
             throw error.response?.data || { message: error.message || "Erè ajou wòl itilizatè." };
@@ -138,9 +151,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     };
 
     const logout = () => {
-        // localStorage.removeItem('lky');
-        // setUser(null);
-        // window.location.href = '/auth';
+        localStorage.removeItem('lky');
+        setUser(null);
     };
 
     return (
@@ -148,6 +160,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             user,
             loading,
             login,
+            loginDriver,
             register,
             logout,
             becomeSeller,

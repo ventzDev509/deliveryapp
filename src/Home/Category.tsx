@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
     Flame,
     Loader2
@@ -8,9 +8,19 @@ import { useCategory } from "../Contexts/CategoryContext";
 // Yon lis ikon pa defo pou w ka reitilize lè nou ap map kategori yo
 // const defaultIcons = [Utensils, Pizza, Sandwich, CupSoda, IceCreamCone, Beef, Fish];
 
-export default function CategorySlider() {
+export default function CategorySlider({
+    onSelect,
+    selectedCategoryId,
+}: {
+    onSelect?: (categoryId: string) => void;
+    selectedCategoryId?: string;
+}) {
     const { categories, loading } = useCategory();
     const [selectedCategory, setSelectedCategory] = useState("all");
+
+    useEffect(() => {
+        if (selectedCategoryId) setSelectedCategory(selectedCategoryId);
+    }, [selectedCategoryId]);
 
     return (
         <section className="max-w-7xl mx-auto mt-6">
@@ -25,7 +35,7 @@ export default function CategorySlider() {
                     </p>
                 </div>
 
-                <button className="text-xs font-semibold text-amber-500 hover:text-amber-400 transition">
+                <button onClick={() => document.getElementById('popular-foods')?.scrollIntoView({ behavior: 'smooth' })} className="text-xs font-semibold text-amber-500 hover:text-amber-400 transition">
                     See All
                 </button>
             </div>
@@ -35,7 +45,7 @@ export default function CategorySlider() {
                 <div className="flex px-5 gap-2.5 w-max">
                     {/* Bouton "All / Popular" kòm premye opsyon fiks */}
                     <button
-                        onClick={() => setSelectedCategory("all")}
+                        onClick={() => { setSelectedCategory("all"); onSelect?.("all"); }}
                         className={`
                             flex items-center gap-2
                             px-3.5 py-2
@@ -67,7 +77,7 @@ export default function CategorySlider() {
                         return (
                             <button
                                 key={category.id}
-                                onClick={() => setSelectedCategory(category.id)}
+                                onClick={() => { setSelectedCategory(category.id); onSelect?.(category.id); }}
                                 className={`
                                     flex items-center gap-2
                                     px-3.5 py-2

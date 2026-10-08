@@ -2,6 +2,7 @@ import { Search } from 'lucide-react';
 import { useState } from 'react';
 import { Drawer } from './Drawer';
 import { DriverForm } from './DriverDrawer';
+import { useAuth } from '../../../Contexts/AuthContext';
 
 interface FilterProps {
   search: string;
@@ -12,6 +13,7 @@ interface FilterProps {
 
 export const DriverFilter = ({ search, setSearch, statusFilter, setStatusFilter }: FilterProps) => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const { user } = useAuth();
   return (
     <div className="flex flex-col sm:flex-row gap-3 p-4">
       {/* Search Bar */}
@@ -38,14 +40,14 @@ export const DriverFilter = ({ search, setSearch, statusFilter, setStatusFilter 
         <option value="OFFLINE">Deploge</option>
       </select>
 
-      <div>
+      {user?.role === 'ADMIN' && <div>
         <button className='bg-amber-500 text-black px-1  py-2 rounded-xl font-semibold' onClick={() => setIsDrawerOpen(true)}>Ajoute Chofè</button>
 
         {/* Itilizasyon Drawer + Form */}
         <Drawer isOpen={isDrawerOpen} onClose={() => setIsDrawerOpen(false)}>
           <DriverForm onClose={() => setIsDrawerOpen(false)} />
         </Drawer>
-      </div>
+      </div>}
     </div>
   );
 };

@@ -1,5 +1,6 @@
 import  { useState, useEffect, useRef } from 'react';
 import { io, Socket } from 'socket.io-client';
+import api from '../Contexts/api/axios';
 
 // --- INTERFACES ---
 interface Coords { lat: number; lng: number; }
@@ -18,8 +19,7 @@ const MAP_BOUNDS = {
   minLng: -72.700, maxLng: -72.650
 };
 
-// const SOCKET_URL = 'http://localhost:3000';
-const SOCKET_URL = 'https://backenddelivery-t22i.onrender.com';
+const SOCKET_URL = api.defaults.baseURL || 'http://localhost:3000';
 
 export default function TrackingDeliveryMap() {
   const [drivers, setDrivers] = useState<Driver[]>([]);
@@ -59,8 +59,8 @@ export default function TrackingDeliveryMap() {
   };
 
   useEffect(() => {
-    fetch(`${SOCKET_URL}/drivers`)
-      .then(res => res.json())
+    api.get('/drivers')
+      .then(res => res.data)
       .then(data => {
         const formatted = data.map((d: any) => ({
           ...d,
@@ -71,39 +71,12 @@ export default function TrackingDeliveryMap() {
         setDrivers(formatted);
       });
 
-    socketRef.current?.on('driverMoved', (data: { driverId: string, lat: number, lng: number }) => {
-      console.log("Mesaj resevwa nan socket:", data); // SI SA PA PARÈT, PWÒBLÈM LAN SE NAN BACKEND LA
-      setDrivers(prev => prev.map(d =>
-        d.id === data.driverId
-          ? { ...d, currentCoords: { lat: data.lat, lng: data.lng } }
-          : d
-      ));
-    });
-
-    return () => { socketRef.current?.disconnect(); };
-
   }, []);
 
   useEffect(() => {
-    // 1. Inisyalize koneksyon an
-    socketRef.current = io(SOCKET_URL);
-
-    // 2. Koute evènman 'connect' la pou asire socket la pare
-    socketRef.current.on('connect', () => {
-      console.log("✅ Konekte ak sèvè! Socket ID:", socketRef.current?.id);
-
-      // Koulye a, li an sekirite pou emèt
-      socketRef.current?.emit('updateLocation', {
-        driverId: '74067122-7c52-4e0d-9569-c26a10288c4d',
-        lat: 19.460,
-        lng: -72.67
-      });
-      console.log("🚀 Mesaj updateLocation voye!");
-    });
-
-    // 3. Koute mizajou (driverMoved)
+    const socket = io(SOCKET_URL, { auth: (callback) => callback({ token: localStorage.getItem('lky') }) });
+    socketRef.current = socket;
     socketRef.current.on('driverMoved', (data: { driverId: string, lat: number, lng: number }) => {
-      console.log("📥 Mesaj resevwa nan socket:", data);
       setDrivers(prev => prev.map(d =>
         d.id === data.driverId
           ? { ...d, currentCoords: { lat: data.lat, lng: data.lng } }
@@ -111,11 +84,8 @@ export default function TrackingDeliveryMap() {
       ));
     });
 
-    // Netwayaj lè paj la fèmen
-    return () => {
-      socketRef.current?.disconnect();
-    };
-  }, []); // [] sa a dwe rete la pou kòd la kouri yon sèl fwa
+    return () => { socket.disconnect(); };
+  }, []);
   // --------------------------------seller-----------------------------------
 
   return (

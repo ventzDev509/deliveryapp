@@ -1,129 +1,166 @@
-import { useEffect } from "react";
-import { useProfile } from "../Contexts/ProfileContext";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import api from "../Contexts/api/axios";
+import type { Restaurant } from "../Contexts/RestaurantContext";
+import { useCart } from "../Contexts/CartContext";
+import toast from "react-hot-toast";
 import FoodCard from "../FoodCard/FoodCard";
 import PopularRestaurantCard from "../FoodCard/PopularRestaurantCard";
 import BannerSlider from "./BannerSlide";
 import CategorySlider from "./Category";
 import Header from "./Header";
 
-const foodItems = [
-    {
-        id: 1,
-        title: "Classic Cheeseburger",
-        category: "Burger",
-        price: 12.99,
-        rating: 4.8,
-        image: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?q=80&w=1200&auto=format&fit=crop",
-        deliveryTime: "20-30 min",
-        discount: 20,
-        isPopular: true
-    },
-    {
-        id: 2,
-        title: "Pepperoni Supreme Pizza",
-        category: "Pizza",
-        price: 15.50,
-        rating: 4.9,
-        image: "https://images.unsplash.com/photo-1513104890138-7c749659a591?q=80&w=1200&auto=format&fit=crop",
-        deliveryTime: "25-35 min",
-        discount: 15,
-        isPopular: true
-    },
-    {
-        id: 3,
-        title: "Crispy Fried Chicken",
-        category: "Chicken",
-        price: 10.99,
-        rating: 4.7,
-        image: "https://images.unsplash.com/photo-1626645738196-c2a7c87a8f58?q=80&w=1200&auto=format&fit=crop",
-        deliveryTime: "15-25 min",
-        discount: 0,
-        isPopular: false
-    },
-    {
-        id: 4,
-        title: "Fresh Salmon Sushi",
-        category: "Sushi",
-        price: 18.99,
-        rating: 4.9,
-        image: "https://images.unsplash.com/photo-1579871494447-9811cf80d66c?q=80&w=1200&auto=format&fit=crop",
-        deliveryTime: "30-40 min",
-        discount: 10,
-        isPopular: true
-    }
-];
+type PopularFood = {
+    id: string;
+    name: string;
+    description: string;
+    price: number;
+    image: string | null;
+    isAvailable: boolean | null;
+    salesCount: number | null;
+    prepTime: number | null;
+    category: { id: string; name: string } | null;
+    restaurant: {
+        id: string;
+        name: string;
+        owner: { profile: { username?: string | null } | null };
+        reviews: { rating: number }[];
+    };
+};
 
 export default function Home() {
-    // Nou depafini sou `profiles` (an pliryèl) olye de profile sèlman
-    const { profiles, fetchProfiles, loading } = useProfile();
+    const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
+    const [restaurantsLoading, setRestaurantsLoading] = useState(true);
+    const [foods, setFoods] = useState<PopularFood[]>([]);
+    const [foodsLoading, setFoodsLoading] = useState(true);
+    const [foodsError, setFoodsError] = useState(false);
+    const [selectedCategory, setSelectedCategory] = useState("all");
+    const [searchQuery, setSearchQuery] = useState("");
+    const { addItem } = useCart();
+
+    const loadFoods = useCallback(async () => {
+        setFoodsLoading(true);
+        setFoodsError(false);
+        try {
+            const response = await api.get<PopularFood[]>("/restaurants/popular-foods?limit=20");
+            setFoods(response.data);
+        } catch {
+            setFoodsError(true);
+        } finally {
+            setFoodsLoading(false);
+        }
+    }, []);
+
+    const loadRestaurants = useCallback(async () => {
+        setRestaurantsLoading(true);
+        try {
+            const response = await api.get<Restaurant[]>("/restaurants");
+            setRestaurants(response.data);
+        } catch {
+            setRestaurants([]);
+        } finally {
+            setRestaurantsLoading(false);
+        }
+    }, []);
 
     useEffect(() => {
-        fetchProfiles();
-    }, []);
+        void loadFoods();
+        void loadRestaurants();
+    }, [loadFoods, loadRestaurants]);
+
+    const filteredFoods = useMemo(() => {
+        const query = searchQuery.trim().toLocaleLowerCase();
+        return foods.filter((food) => {
+            const matchesCategory = selectedCategory === "all" || food.category?.id === selectedCategory;
+            const matchesSearch = !query || [food.name, food.description, food.category?.name, food.restaurant.name]
+                .some((value) => value?.toLocaleLowerCase().includes(query));
+            return matchesCategory && matchesSearch;
+        });
+    }, [foods, searchQuery, selectedCategory]);
+
+    const scrollTo = (id: string) => document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
 
     return (
         <div className="pb-28">
-            <Header />
-            <BannerSlider />
-            <CategorySlider />
-
-            {/* SEKSYON POPULAR FOODS */}
-            <div className="max-w-7xl mx-auto">
-                <div className="flex px-5 justify-between items-center mb-4">
-                    <h3 className="text-white font-bold text-lg tracking-wide">
-                        Popular Foods
-                    </h3>
-                    <button className="text-xs font-semibold text-amber-400 hover:text-amber-300 transition-colors">
-                        See All
-                    </button>
-                </div>
-
-                <div className="flex items-center gap-4 overflow-x-auto no-scrollbar pb-3 pt-1 ">
-                    {foodItems.map((food) => (
-                        <div key={food.id} className="w-[240px] sm:w-[270px] flex-shrink-0">
-                            <FoodCard
-                                title={food.title}
-                                category={food.category}
-                                price={food.price}
-                                rating={food.rating}
-                                image={food.image}
-                                deliveryTime={food.deliveryTime}
-                                discount={food.discount}
-                                isPopular={food.isPopular}
-                            />
-                        </div>
-                    ))}
-                </div>
+            <Header onSearch={setSearchQuery} />
+            <BannerSlider onOrderNow={() => scrollTo("popular-foods")} />
+            <div id="home-categories">
+                <CategorySlider selectedCategoryId={selectedCategory} onSelect={setSelectedCategory} />
             </div>
 
-            {/* SEKSYON POPULAR RESTAURANTS (PROFILES) */}
-            <div className="max-w-7xl mx-auto mt-8">
+            <section id="popular-foods" className="max-w-7xl mx-auto mt-7 scroll-mt-24">
                 <div className="flex px-5 justify-between items-center mb-4">
-                    <h3 className="text-white font-bold text-lg tracking-wide">
-                        Popular Restaurants
-                    </h3>
-                    <button className="text-xs font-semibold text-amber-400 hover:text-amber-300 transition-colors">
-                        See All
-                    </button>
-                </div>
-
-                {loading ? (
-                    <div className="px-5 text-zinc-400 text-sm">Ap chaje restoran yo...</div>
-                ) : (
-                    <div className="flex items-center gap-4 overflow-x-auto no-scrollbar pb-3 pt-1 px-5">
-                        {profiles && profiles.length > 0 ? (
-                            profiles.map((restaurantProfile) => (
-                                <PopularRestaurantCard
-                                    key={restaurantProfile.id}
-                                    restaurant={restaurantProfile}
-                                />
-                            ))
-                        ) : (
-                            <div className="px-5 text-zinc-500 text-xs">Pa gen restoran disponib kounye a.</div>
-                        )}
+                    <div>
+                        <h2 className="text-white font-bold text-lg tracking-wide">Popular Foods</h2>
+                        <p className="text-xs text-zinc-400 mt-1">Manje popilè restoran lokal yo</p>
                     </div>
+                    <button onClick={() => { setSelectedCategory("all"); setSearchQuery(""); }} className="text-xs font-semibold text-amber-400 hover:text-amber-300 transition-colors">Wè tout</button>
+                </div>
+
+                {foodsLoading ? (
+                    <div className="px-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                        {[1, 2, 3, 4].map((item) => <div key={item} className="h-72 rounded-3xl bg-zinc-900 animate-pulse" />)}
+                    </div>
+                ) : foodsError ? (
+                    <div className="px-5 text-sm text-zinc-400">
+                        Nou pa rive chaje manje yo.
+                        <button onClick={() => void loadFoods()} className="ml-2 text-amber-400 underline">Eseye ankò</button>
+                    </div>
+                ) : filteredFoods.length ? (
+                    <div className="flex items-stretch gap-4 overflow-x-auto no-scrollbar pb-3 pt-1 px-5">
+                        {filteredFoods.map((food) => {
+                            const ratings = food.restaurant.reviews.map((review) => review.rating);
+                            const rating = ratings.length ? ratings.reduce((sum, value) => sum + value, 0) / ratings.length : null;
+                            return (
+                                <div key={food.id} className="w-[240px] sm:w-[270px] flex-shrink-0">
+                                    <FoodCard
+                                        restaurantId={food.restaurant.id}
+                                        title={food.name}
+                                        category={food.category?.name || "Plat lokal"}
+                                        price={Number(food.price)}
+                                        rating={rating ?? undefined}
+                                        image={food.image || undefined}
+                                        deliveryTime={food.prepTime ? `${food.prepTime} min` : "Tan an poko disponib"}
+                                        isPopular={Boolean(food.salesCount)}
+                                        onAddToCart={() => {
+                                            const wasAdded = addItem({
+                                                id: food.id,
+                                                restaurantId: food.restaurant.id,
+                                                restaurantName: food.restaurant.name,
+                                                name: food.name,
+                                                price: Number(food.price),
+                                                image: food.image,
+                                            });
+                                            if (wasAdded) toast.success(`${food.name} ajoute nan panyen an`);
+                                            else toast.error('Panyen an gen manje yon lòt restoran deja. Fini kòmand sa a anvan.');
+                                        }}
+                                    />
+                                </div>
+                            );
+                        })}
+                    </div>
+                ) : (
+                    <p className="px-5 text-sm text-zinc-400">Pa gen manje ki koresponn ak rechèch sa a pou kounye a.</p>
                 )}
-            </div>
+            </section>
+
+            <section id="popular-restaurants" className="max-w-7xl mx-auto mt-9 scroll-mt-24">
+                <div className="flex px-5 justify-between items-center mb-4">
+                    <div>
+                        <h2 className="text-white font-bold text-lg tracking-wide">Popular Restaurants</h2>
+                        <p className="text-xs text-zinc-400 mt-1">Dekouvri restoran ki disponib yo</p>
+                    </div>
+                    <button onClick={() => scrollTo("popular-restaurants")} className="text-xs font-semibold text-amber-400 hover:text-amber-300">Wè restoran yo</button>
+                </div>
+                {restaurantsLoading ? (
+                    <p className="px-5 text-sm text-zinc-400">Ap chaje restoran yo...</p>
+                ) : restaurants.length ? (
+                    <div className="flex items-stretch gap-4 overflow-x-auto no-scrollbar pb-3 pt-1 px-5">
+                        {restaurants.map((restaurant) => <PopularRestaurantCard key={restaurant.id} restaurant={restaurant} />)}
+                    </div>
+                ) : (
+                    <p className="px-5 text-sm text-zinc-400">Pa gen restoran disponib kounye a.</p>
+                )}
+            </section>
         </div>
     );
 }

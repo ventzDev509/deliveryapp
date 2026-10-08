@@ -152,6 +152,9 @@ const Login = ({ onToggle }: LoginProps) => {
                             Enskri
                         </button>
                     </p>
+                    <p className="text-center md:text-left text-sm text-gray-500 dark:text-zinc-400">
+                        Ou se chofè? <Link to="/driver-login" className="font-bold text-amber-500 hover:underline">Konekte pou livrezon</Link>
+                    </p>
                 </div>
             </div>
         </motion.div>

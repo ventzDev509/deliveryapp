@@ -1,5 +1,7 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import type { ReactNode } from 'react';
 import Auth from './Auth/Auth'; // Paj Login/Register ou an
+import DriverLoginPage from './Auth/DriverLoginPage';
 import EmailVerification from './Auth/EmailVerification';
 import "./App.css"
 import "./index.css"
@@ -18,6 +20,21 @@ import AdminValidations from './dashboard/Admin/MainAdmin';
 // import TrackingDeliveryMap from './LiveTrackingMap/LiveTrackingMap';
 
 import Home from './Home/Home';
+import RestaurantPage from './Home/RestaurantPage';
+import CartPage from './Home/CartPage';
+import MyOrdersPage from './Home/MyOrdersPage';
+import AccountPage from './Home/AccountPage';
+import { useAuth } from './Contexts/AuthContext';
+import { Toaster } from 'react-hot-toast';
+import LiveTrackingMap from './LiveTrackingMap/m';
+import DriverDeliveriesPage from './dashboard/pages/DriverPage/DriverDeliveriesPage';
+
+function RequireRole({ roles, children, loginPath = '/auth' }: { roles: string[]; children: ReactNode; loginPath?: string }) {
+  const { user } = useAuth();
+  if (!user) return <Navigate to={loginPath} replace />;
+  if (!roles.includes(user.role)) return <Navigate to="/" replace />;
+  return <>{children}</>;
+}
 function App() {
   
   // useEffect(() => {
@@ -75,12 +92,18 @@ function App() {
   // }, []);
   return (
     <Router>
+      <Toaster position="top-right" />
       <Routes>
 
         {/* Home */}
         <Route path="/" element={<Home />} />
+        <Route path="/restaurant/:id" element={<RestaurantPage />} />
+        <Route path="/cart" element={<CartPage />} />
+        <Route path="/my-orders" element={<MyOrdersPage />} />
+        <Route path="/account" element={<AccountPage />} />
         {/* Authentification path  */}
         <Route path="/auth" element={<Auth />} />
+        <Route path="/driver-login" element={<DriverLoginPage />} />
         <Route path="/verify-email" element={<EmailVerification />} />
         <Route path="/request-email-confirmation" element={<RequestEmailConfimation />} />
         <Route path="/verify-success" element={<VerificationSuccess />} />
@@ -90,14 +113,17 @@ function App() {
 
 
         {/* Dashboard path  */}
-        <Route path="/dashboard" element={<MainLayout />} />
-        <Route path="/orders" element={<MainOrder />} />
-        <Route path="/restaurants" element={<MainMenu />} />
-        <Route path="/settings" element={<MainRestaurantSetting />} />
-        <Route path="/driver" element={<MainDriver />} />
+        <Route path="/dashboard" element={<RequireRole roles={['RESTAURANT_OWNER', 'ADMIN']}><MainLayout /></RequireRole>} />
+        <Route path="/orders" element={<RequireRole roles={['RESTAURANT_OWNER', 'ADMIN']}><MainOrder /></RequireRole>} />
+        <Route path="/restaurants" element={<RequireRole roles={['RESTAURANT_OWNER', 'ADMIN']}><MainMenu /></RequireRole>} />
+        <Route path="/settings" element={<RequireRole roles={['RESTAURANT_OWNER', 'ADMIN']}><MainRestaurantSetting /></RequireRole>} />
+        <Route path="/driver" element={<RequireRole roles={['DRIVER', 'ADMIN']} loginPath="/driver-login"><MainDriver /></RequireRole>} />
+        <Route path="/my-deliveries" element={<RequireRole roles={['DRIVER', 'ADMIN']} loginPath="/driver-login"><MainLayout><DriverDeliveriesPage /></MainLayout></RequireRole>} />
+        <Route path="/tracking" element={<RequireRole roles={['DRIVER', 'ADMIN']} loginPath="/driver-login"><LiveTrackingMap /></RequireRole>} />
 
         {/* Admin */}
-        <Route path="/admin-validation" element={<AdminValidations />} />
+        <Route path="/admin-validation" element={<RequireRole roles={['ADMIN']}><AdminValidations /></RequireRole>} />
+        <Route path="*" element={<Navigate to="/" replace />} />
 
       </Routes>
     </Router>

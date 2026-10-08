@@ -13,7 +13,7 @@ export interface Driver {
     currentLng: number | null;
     vehicleType: 'MOTORCYCLE' | 'BICYCLE' | 'CAR' | 'TRUCK';
     vehiclePlate?: string;
-    user: { id: string; fullName: string; email: string };
+    userId: string;
 }
 
 export interface DriverContextType {

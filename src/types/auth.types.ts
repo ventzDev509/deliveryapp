@@ -6,6 +6,8 @@ export interface Profile {
     bio: string | null;
     location: string | null;
     isSeller: boolean;
+    storeStatus?: 'OPEN' | 'BUSY' | 'CLOSED';
+    sellerStatus?: 'NONE' | 'PENDING' | 'APPROVED' | 'REJECTED';
     userId: string;
     updatedAt: Date;
     lat? : string | null;
@@ -17,7 +19,7 @@ export interface User {
     id: string;
     email: string;
     name?: string;
-    role: 'CUSTOMER' | 'RESTAURANT_OWNER' | 'ADMIN';
+    role: 'CUSTOMER' | 'RESTAURANT_OWNER' | 'DRIVER' | 'ADMIN';
     isEmailConfirmed: boolean;
     profile: Profile | null;
     provider?: string | null;
@@ -31,7 +33,10 @@ export interface AuthResponse {
     message?: string;
     token?: string;
     user?: User;
+    driver?: { id: string; name: string; email: string; phone: string; isVerified: boolean };
 }
+
+export interface DriverLoginCredentials { email: string; phone: string; }
 
 export interface BecomeSellerPayload {
   username: string;
@@ -49,6 +54,7 @@ export interface AuthContextType {
     user: User | null;
     loading: boolean;
     login: (credentials: any) => Promise<AuthResponse>;
+    loginDriver: (credentials: DriverLoginCredentials) => Promise<AuthResponse>;
     register: (data: any) => Promise<AuthResponse>;
     logout: () => void;
     becomeSeller: (payload: BecomeSellerPayload) => Promise<void>;

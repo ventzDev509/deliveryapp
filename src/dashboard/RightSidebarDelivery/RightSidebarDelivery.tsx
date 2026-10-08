@@ -1,152 +1,31 @@
-import { motion } from 'framer-motion';
-import { ChefHat, Bike, CheckCircle2, Flame, ArrowUpRight, Clock } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+import api from '../../Contexts/api/axios';
+import { useAuth } from '../../Contexts/AuthContext';
+import fallbackFoodImage from '../../assets/food-delivery.png';
 
-const topDishes = [
-  {
-    id: 1,
-    name: "Griot ak Bannann Peze",
-    category: "Plat Prensipal",
-    orders: "184 fwa",
-    revenue: "$2,208.00",
-    image: "🍗",
-    bg: "bg-amber-50 text-amber-600 dark:bg-amber-500/10 dark:text-amber-400"
-  },
-  {
-    id: 2,
-    name: "Diri Kole, Sòs Poul",
-    category: "Combo Midi", 
-    orders: "142 fwa",
-    revenue: "$1,988.00",
-    image: "🍛",
-    bg: "bg-orange-50 text-orange-600 dark:bg-amber-500/10 dark:text-amber-400"
-  },
-  {
-    id: 3,
-    name: "Jus Sitwon Natirèl",
-    category: "Bwason",
-    orders: "95 fwa",
-    revenue: "$380.00",
-    image: "🍹",
-    bg: "bg-yellow-50 text-yellow-600 dark:bg-yellow-500/10 dark:text-yellow-400"
-  },
-];
+type Dish = { id: string; name: string; image?: string | null; salesCount?: number | null; price: number; category?: { name: string } | null };
+type Restaurant = { id: string; name: string; menus: Dish[] };
 
-const RightSidebarDelivery = () => {
-  return (
-    /* TRICK STICKY LA: Mwen ajoute "sticky top-6 h-fit max-h-[calc(100vh-48px)] overflow-y-auto pr-1 scrollbar-none" */
-    <div className="w-full flex flex-col gap-6 sticky top-6 h-fit max-h-[calc(100vh-48px)] overflow-y-auto pr-1 scrollbar-none">
-      
-      {/* 1. LIVE MONITOR WIDGET */}
-      <motion.div
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.4 }}
-        className="w-full bg-neutral-950 p-5 rounded-3xl text-white border border-neutral-800 shadow-sm relative overflow-hidden dark:border-zinc-900"
-      >
-        <div className="absolute -right-10 -top-10 w-32 h-32 bg-emerald-500/10 rounded-full blur-2xl" />
-
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-2">
-            <span className="flex h-1.5 w-1.5 relative">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500"></span>
-            </span>
-            <span className="text-[10px] font-bold uppercase tracking-wider text-neutral-400">Live Monitor</span>
-          </div>
-          <span className="text-[9px] bg-neutral-900 border border-neutral-800/60 px-2 py-0.5 rounded-md text-neutral-400 flex items-center gap-1 font-medium">
-            <Clock size={9} /> Kwizin
-          </span>
-        </div>
-
-        {/* Grid 3 Blòk - Optimize ak ti padding pou anfòm 1 kolòn nèt */}
-        <div className="grid grid-cols-3 gap-2">
-          {/* Kwit */}
-          <div className="bg-neutral-900/40 p-2.5 rounded-xl border border-neutral-800/40 text-center">
-            <div className="w-6 h-6 mx-auto rounded-lg bg-amber-500/10 text-amber-400 flex items-center justify-center mb-1">
-              <ChefHat size={12} />
-            </div>
-            <span className="block text-base font-black text-white">4</span>
-            <span className="text-[9px] text-neutral-400 font-medium block truncate">Ap Kwit</span>
-          </div>
-
-          {/* En Route */}
-          <div className="bg-neutral-900/40 p-2.5 rounded-xl border border-neutral-800/40 text-center">
-            <div className="w-6 h-6 mx-auto rounded-lg bg-blue-500/10 text-blue-400 flex items-center justify-center mb-1">
-              <Bike size={12} />
-            </div>
-            <span className="block text-base font-black text-white">2</span>
-            <span className="text-[9px] text-neutral-400 font-medium block truncate">En Route</span>
-          </div>
-
-          {/* Livre */}
-          <div className="bg-neutral-900/40 p-2.5 rounded-xl border border-neutral-800/40 text-center">
-            <div className="w-6 h-6 mx-auto rounded-lg bg-emerald-500/10 text-emerald-400 flex items-center justify-center mb-1">
-              <CheckCircle2 size={12} />
-            </div>
-            <span className="block text-base font-black text-emerald-400">28</span>
-            <span className="text-[9px] text-neutral-400 font-medium block truncate">Livre</span>
-          </div>
-        </div>
-      </motion.div>
-
-      {/* 2. TOP SELLING DISHES */}
-      <motion.div
-        initial={{ opacity: 0, y: 15 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4, delay: 0.15 }}
-        className="w-full bg-white rounded-3xl p-5 border border-gray-100 shadow-sm dark:bg-zinc-950 dark:border-zinc-900 transition-colors duration-300"
-      >
-        <div className="flex items-center justify-between mb-4">
-          <div>
-            <h3 className="text-xs font-bold text-gray-900 tracking-tight flex items-center gap-1 dark:text-zinc-50">
-              <Flame size={14} className="text-amber-500 fill-amber-500" /> Plat ki pi Cho yo
-            </h3>
-          </div>
-          <button className="text-[10px] font-bold text-amber-500 hover:text-orange-600 flex items-center gap-0.5 transition-colors dark:text-amber-400 dark:hover:text-orange-300">
-            Meni <ArrowUpRight size={10} />
-          </button>
-        </div>
-
-        {/* Lis Manje - Konpak ak Pwoteje kont debòdman (Truncate) */}
-        <div className="flex flex-col gap-2.5">
-          {topDishes.map((dish) => (
-            <div 
-              key={dish.id} 
-              className="flex items-center justify-between p-1.5 rounded-xl hover:bg-gray-50/60 transition-colors border border-transparent hover:border-gray-50 min-w-0 dark:hover:bg-zinc-900/40 dark:hover:border-zinc-900"
-            >
-              <div className="flex items-center gap-2.5 min-w-0 flex-1">
-                {/* Emoji / Imaj */}
-                <div className={`w-8 h-8 rounded-lg ${dish.bg} flex items-center justify-center flex-shrink-0 text-sm font-semibold shadow-sm`}>
-                  {dish.image}
-                </div>
-                
-                {/* Tèks - Pwoteje ak min-w-0 ak truncate */}
-                <div className="flex flex-col min-w-0 flex-1">
-                  <span className="text-xs font-bold text-gray-900 truncate dark:text-zinc-100">
-                    {dish.name}
-                  </span>
-                  <span className="text-[9px] text-gray-400 font-medium mt-0.5 truncate dark:text-zinc-500">
-                    {dish.category}
-                  </span>
-                </div>
-              </div>
-
-              {/* Revni ak badj */}
-              <div className="text-right flex flex-col flex-shrink-0 pl-2">
-                <span className="text-xs font-bold text-gray-900 dark:text-zinc-50">
-                  {dish.revenue}
-                </span>
-                <span className="text-[9px] text-emerald-600 font-semibold bg-emerald-50 px-1 py-0.5 rounded mt-0.5 block text-center min-w-[45px] dark:bg-emerald-500/10 dark:text-emerald-400">
-                  {dish.orders}
-                </span>
-              </div>
-            </div>
-          ))}
-        </div>
-      </motion.div>
-
-    </div>
-  );
-};
-
-export default RightSidebarDelivery;
+export default function RightSidebarDelivery() {
+  const { user } = useAuth();
+  const [restaurant, setRestaurant] = useState<Restaurant | null>(null);
+  const [orders, setOrders] = useState<{ status: string }[]>([]);
+  useEffect(() => {
+    if (!user?.id) return;
+    api.get<Restaurant>(`/restaurants/owner/${user.id}`).then((response) => setRestaurant(response.data)).catch(() => setRestaurant(null));
+    api.get<{ status: string }[]>('/orders').then((response) => setOrders(response.data)).catch(() => setOrders([]));
+  }, [user?.id]);
+  const topDishes = [...(restaurant?.menus || [])].sort((a, b) => (b.salesCount || 0) - (a.salesCount || 0)).slice(0, 5);
+  const pending = orders.filter((order) => order.status === 'PENDING').length;
+  const preparing = orders.filter((order) => order.status === 'PREPARING').length;
+  const delivered = orders.filter((order) => order.status === 'COMPLETED').length;
+  return <aside className="space-y-5">
+    <section className="rounded-3xl border border-gray-200 bg-white p-5 dark:border-zinc-800 dark:bg-zinc-950"><header className="flex items-center justify-between"><div><h2 className="font-bold">Apèsi sou kòmand</h2><p className="mt-1 text-xs text-zinc-500">Chif aktyèl yo soti nan sistèm nan</p></div><Link to="/orders" className="text-xs font-bold text-amber-500">Louvri</Link></header>
+      <div className="mt-5 grid grid-cols-3 gap-2 text-center"><div className="rounded-xl bg-blue-500/10 p-3"><b className="block text-lg text-blue-500">{pending}</b><span className="text-[10px] text-zinc-500">Nouvo</span></div><div className="rounded-xl bg-amber-500/10 p-3"><b className="block text-lg text-amber-500">{preparing}</b><span className="text-[10px] text-zinc-500">Ap prepare</span></div><div className="rounded-xl bg-emerald-500/10 p-3"><b className="block text-lg text-emerald-500">{delivered}</b><span className="text-[10px] text-zinc-500">Livre</span></div></div>
+    </section>
+    <section className="rounded-3xl border border-gray-200 bg-white p-5 dark:border-zinc-800 dark:bg-zinc-950"><header className="flex items-center justify-between"><div><h2 className="font-bold">Plat ki pi vann</h2><p className="mt-1 text-xs text-zinc-500">Dapre kantite lavant ki anrejistre</p></div><Link to="/restaurants" className="text-xs font-bold text-amber-500">Meni</Link></header>
+      {!restaurant ? <p className="mt-5 text-sm text-zinc-500">Restoran an poko disponib.</p> : !topDishes.length ? <p className="mt-5 text-sm text-zinc-500">Meni an poko gen plat.</p> : <ul className="mt-4 space-y-3">{topDishes.map((dish) => <li key={dish.id} className="flex items-center gap-3"><img src={dish.image || fallbackFoodImage} alt="" className="h-10 w-10 rounded-lg object-cover"/><div className="min-w-0 flex-1"><p className="truncate text-sm font-semibold">{dish.name}</p><p className="text-xs text-zinc-500">{dish.category?.name || 'Plat'} · {dish.salesCount || 0} vann</p></div><b className="text-sm">${Number(dish.price).toFixed(2)}</b></li>)}</ul>}
+    </section>
+  </aside>;
+}

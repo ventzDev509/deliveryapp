@@ -1,14 +1,25 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Search, Bell, SlidersHorizontal, Store, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useAuth } from '../../Contexts/AuthContext';
+import api from '../../Contexts/api/axios';
+import toast from 'react-hot-toast';
 
 interface TopBarProps {
   storeName?: string;
 }
 
 const TopBar = ({ storeName = "Delivery Store" }: TopBarProps) => {
-  const [isOpen, setIsOpen] = useState(true);
+  const { user } = useAuth();
+  const [storeStatus, setStoreStatus] = useState<'OPEN' | 'BUSY' | 'CLOSED'>(user?.profile?.storeStatus || 'CLOSED');
   const [showMobileSearch, setShowMobileSearch] = useState(false); // Kontwole ba rechèch mobil lan
+
+  useEffect(() => { setStoreStatus(user?.profile?.storeStatus || 'CLOSED'); }, [user?.profile?.storeStatus]);
+  const changeStoreStatus = async (status: 'OPEN' | 'BUSY' | 'CLOSED') => {
+    setStoreStatus(status);
+    try { await api.patch('/profiles/store-status', { status }); toast.success('Estati restoran an mete ajou.'); }
+    catch (error: any) { setStoreStatus(user?.profile?.storeStatus || 'CLOSED'); toast.error(error.response?.data?.message || 'Nou pa t ka chanje estati restoran an.'); }
+  };
 
   return (
     <header className="relative w-full mb-6 z-20">
@@ -22,18 +33,15 @@ const TopBar = ({ storeName = "Delivery Store" }: TopBarProps) => {
           </div>
           <div className="min-w-0">
             <h1 className="text-sm md:text-lg font-bold text-gray-900 tracking-tight truncate dark:text-zinc-50">
-              {storeName}
+              {user?.profile?.username || storeName}
             </h1>
             {/* Bouton Toggle pou Estati Magazen an */}
-            <button 
-              onClick={() => setIsOpen(!isOpen)}
-              className="flex items-center gap-1.5 mt-0.5 group focus:outline-none"
-            >
-              <span className={`w-1.5 h-1.5 md:w-2 md:h-2 rounded-full ${isOpen ? 'bg-green-500 animate-pulse' : 'bg-red-500'}`}></span>
-              <span className="text-[10px] md:text-xs font-medium text-gray-400 group-hover:text-gray-600 transition-colors whitespace-nowrap dark:text-zinc-500 dark:group-hover:text-zinc-400">
-                {isOpen ? 'Magazen Louvri' : 'Magazen Fèmen'}
-              </span>
-            </button>
+            <div className="mt-0.5 flex items-center gap-2">
+              <span className={`h-2 w-2 rounded-full ${storeStatus === 'OPEN' ? 'bg-green-500' : storeStatus === 'BUSY' ? 'bg-amber-500' : 'bg-red-500'}`}></span>
+              <select aria-label="Estati restoran an" value={storeStatus} onChange={(event) => void changeStoreStatus(event.target.value as 'OPEN' | 'BUSY' | 'CLOSED')} disabled={user?.role !== 'RESTAURANT_OWNER' && user?.role !== 'ADMIN'} className="bg-transparent text-[10px] font-semibold text-gray-500 outline-none disabled:cursor-default dark:text-zinc-400">
+                <option value="OPEN">Louvri</option><option value="BUSY">Okipe</option><option value="CLOSED">Fèmen</option>
+              </select>
+            </div>
           </div>
         </div>
 

@@ -1,320 +1,81 @@
-import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Search, Filter, Eye, ArrowRight, Bike, Clock, AlertCircle } from 'lucide-react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import api from '../../../Contexts/api/axios';
+import { useAuth } from '../../../Contexts/AuthContext';
+import { Bike, Loader2, Search } from 'lucide-react';
+import toast from 'react-hot-toast';
 
-// 1. Tipaj TypeScript pou done yo ka solid
-type OrderStatus = 'New' | 'Preparing' | 'Dispatched' | 'Delivered';
-
-interface Order {
-  id: string;
-  customer: string;
-  items: string;
-  type: 'Delivery' | 'Pickup';
-  driver: string;
-  payment: string;
-  amount: string;
-  status: OrderStatus;
-  time: string;
-  minutesElapsed: number;
-}
-
-const initialOrders: Order[] = [
-  {
-    id: "#ORD-9482",
-    customer: "Jean-Baptiste R.",
-    items: "1x Griot ak Bannann, 1x Jus Sitwon",
-    type: "Delivery",
-    driver: "Marius K. (Chofè)",
-    payment: "MonCash",
-    amount: "$45.50",
-    status: "New",
-    time: "Sa gen 3 min",
-    minutesElapsed: 3
-  },
-  {
-    id: "#ORD-9481",
-    customer: "Marlene Casimir",
-    items: "2x Diri Kole ak Poul Sòs",
-    type: "Delivery",
-    driver: "Tandans Chofè",
-    payment: "Cash on Delivery",
-    amount: "$120.00",
-    status: "Preparing",
-    time: "Sa gen 18 min",
-    minutesElapsed: 18
-  },
-  {
-    id: "#ORD-9480",
-    customer: "Woody Ventz",
-    items: "1x Combo Burger Pwason",
-    type: "Pickup",
-    driver: "Kliyan an ap vini",
-    payment: "Card",
-    amount: "$15.00",
-    status: "Dispatched",
-    time: "Sa gen 25 min",
-    minutesElapsed: 25
-  },
-  {
-    id: "#ORD-9479",
-    customer: "Sonia Désir",
-    items: "3x Griot ak Bannann Peze",
-    type: "Delivery",
-    driver: "Marius K. (Chofè)",
-    payment: "MonCash",
-    amount: "$135.00",
-    status: "Delivered",
-    time: "Jodi a, 11:30 AM",
-    minutesElapsed: 120
-  }
-];
-
-const OrdersPage = () => {
-  const [orders, setOrders] = useState<Order[]>(initialOrders);
-  const [activeTab, setActiveTab] = useState<string>('All');
-  const [searchQuery, setSearchQuery] = useState<string>('');
-
-  // 🔥 FONKSYON KI CHANJE ESTATI KÒMAND LAN LÈ OU KLIKE
-  const handleNextStatus = (orderId: string, currentStatus: OrderStatus) => {
-    setOrders(prevOrders => 
-      prevOrders.map(order => {
-        if (order.id !== orderId) return order;
-        
-        let nextStatus: OrderStatus = currentStatus;
-        if (currentStatus === 'New') nextStatus = 'Preparing';
-        else if (currentStatus === 'Preparing') nextStatus = 'Dispatched';
-        else if (currentStatus === 'Dispatched') nextStatus = 'Delivered';
-
-        return { ...order, status: nextStatus };
-      })
-    );
-  };
-
-  const filteredOrders = orders.filter(order => {
-    const matchesTab = activeTab === 'All' || order.status === activeTab;
-    const matchesSearch = order.customer.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                          order.id.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesTab && matchesSearch;
-  });
-
-  const getStatusBadge = (status: OrderStatus) => {
-    switch (status) {
-      case 'New': return 'bg-blue-50 text-blue-700 border-blue-100 dark:bg-blue-950/40 dark:text-blue-400 dark:border-blue-900/50';
-      case 'Preparing': return 'bg-orange-50 text-orange-700 border-orange-100 dark:bg-orange-950/40 dark:text-amber-400 dark:border-orange-900/50';
-      case 'Dispatched': return 'bg-purple-50 text-purple-700 border-purple-100 dark:bg-purple-950/40 dark:text-purple-400 dark:border-purple-900/50';
-      case 'Delivered': return 'bg-emerald-50 text-emerald-700 border-emerald-100 dark:bg-emerald-950/40 dark:text-emerald-400 dark:border-emerald-900/50';
-      default: return 'bg-gray-50 text-gray-700 border-gray-100 dark:bg-zinc-800 dark:text-zinc-300 dark:border-zinc-700';
-    }
-  };
-
-  const getTimeAlertStyles = (minutes: number, status: OrderStatus) => {
-    if (status === 'Delivered') return { textClass: 'text-gray-400 dark:text-zinc-500', isCritical: false };
-
-    if ((status === 'New' && minutes >= 10) || (status === 'Preparing' && minutes >= 15)) {
-      return { 
-        textClass: 'text-rose-600 font-bold bg-rose-50 px-1.5 py-0.5 rounded-md border border-rose-100 animate-pulse dark:bg-rose-950/30 dark:text-rose-400 dark:border-rose-900/50', 
-        isCritical: true 
-      };
-    }
-    
-    if (status === 'Preparing' && minutes >= 10) {
-      return { textClass: 'text-amber-600 dark:text-amber-400 font-semibold', isCritical: false };
-    }
-
-    return { textClass: 'text-gray-400 dark:text-zinc-400 font-medium', isCritical: false };
-  };
-
-  return (
-    <div className="w-full flex flex-col gap-6">
-      
-      {/* 1. TÈT PAJ LA & SEARCH */}
-      <motion.div 
-        initial={{ opacity: 0, y: -10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4 }}
-        className="flex flex-col sm:flex-row sm:items-center justify-between gap-4"
-      >
-        <div>
-          <h1 className="text-xl md:text-2xl font-black text-gray-900 dark:text-zinc-50 tracking-tight">Kòmand yo</h1>
-          <p className="text-xs text-gray-400 dark:text-zinc-400 mt-0.5">Swiv, prepare, epi jere livrezon yo an tan reyèl.</p>
-        </div>
-
-        <div className="flex items-center gap-2">
-          <div className="relative flex-1 sm:w-64">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 dark:text-zinc-500" size={16} />
-            <input 
-              type="text" 
-              placeholder="Chache ID, non kliyan..." 
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2.5 bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-2xl text-xs font-medium text-gray-900 dark:text-zinc-100 focus:outline-none focus:border-amber-500 dark:focus:border-amber-500 transition-colors shadow-sm"
-            />
-          </div>
-          <button className="p-2.5 bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-2xl text-gray-500 dark:text-zinc-400 hover:text-amber-500 dark:hover:text-amber-500 transition-colors shadow-sm">
-            <Filter size={16} />
-          </button>
-        </div>
-      </motion.div>
-
-      {/* 2. TABS FILTRE */}
-      <motion.div 
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.4, delay: 0.1 }}
-        className="flex items-center gap-1.5 overflow-x-auto pb-2 scrollbar-none border-b border-gray-100 dark:border-zinc-800"
-      >
-        {[
-          { id: 'All', label: 'Tout', count: orders.length },
-          { id: 'New', label: 'Nouvo', count: orders.filter(o => o.status === 'New').length },
-          { id: 'Preparing', label: 'Ap Kwit', count: orders.filter(o => o.status === 'Preparing').length },
-          { id: 'Dispatched', label: 'En Route', count: orders.filter(o => o.status === 'Dispatched').length },
-          { id: 'Delivered', label: 'Livre', count: orders.filter(o => o.status === 'Delivered').length },
-        ].map((tab) => (
-          <button
-            key={tab.id}
-            onClick={() => setActiveTab(tab.id)}
-            className={`px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap flex items-center gap-2 ${
-              activeTab === tab.id 
-                ? 'bg-amber-500 text-white shadow-md shadow-amber-500/10' 
-                : 'bg-white dark:bg-zinc-900 text-gray-500 dark:text-zinc-400 hover:bg-gray-50 dark:hover:bg-zinc-800/50 border border-gray-100 dark:border-zinc-800'
-            }`}
-          >
-            {tab.label}
-            <span className={`text-[10px] px-1.5 py-0.5 rounded-md font-black ${activeTab === tab.id ? 'bg-white/20 text-white' : 'bg-gray-100 dark:bg-zinc-800 text-gray-500 dark:text-zinc-400'}`}>
-              {tab.count}
-            </span>
-          </button>
-        ))}
-      </motion.div>
-
-      {/* 3. LIS KÒMAND YO */}
-      <motion.div 
-        initial={{ opacity: 0, y: 15 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4, delay: 0.15 }}
-        className="w-full bg-white dark:bg-zinc-900 rounded-xl border border-gray-200 dark:border-zinc-800 overflow-hidden shadow-sm"
-      >
-        <div className="w-full overflow-x-auto whitespace-nowrap scrollbar-none">
-          <table className="w-full text-left border-collapse">
-            <thead>
-              <tr className="border-b border-gray-100 dark:border-zinc-800 text-gray-400 dark:text-zinc-500 text-[11px] font-bold uppercase tracking-wider bg-gray-50/40 dark:bg-zinc-800/20">
-                <th className="p-4 pl-6">Kòmand</th>
-                <th className="p-4">Kliyan / Detay</th>
-                <th className="p-4">Livre Via</th>
-                <th className="p-4">Peman</th>
-                <th className="p-4">Montan</th>
-                <th className="p-4">Estati</th>
-                <th className="p-4 text-right pr-6">Aksyon</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-50/60 dark:divide-zinc-800/60">
-              <AnimatePresence mode="popLayout">
-                {filteredOrders.map((order) => {
-                  const timeAlert = getTimeAlertStyles(order.minutesElapsed, order.status);
-
-                  return (
-                    <motion.tr 
-                      key={order.id}
-                      layout
-                      initial={{ opacity: 0, y: 4 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, scale: 0.98 }}
-                      transition={{ type: "spring", stiffness: 500, damping: 40 }}
-                      className={`hover:bg-gray-50/30 dark:hover:bg-zinc-800/20 transition-colors ${timeAlert.isCritical ? 'bg-rose-50/10 dark:bg-rose-950/5' : ''}`}
-                    >
-                      
-                      {/* ID & LÈ */}
-                      <td className="p-4 pl-6">
-                        <div className="flex flex-col items-start">
-                          <span className="text-xs font-black text-gray-900 dark:text-zinc-100">{order.id}</span>
-                          <span className={`text-[10px] mt-1 flex items-center gap-1 transition-all ${timeAlert.textClass}`}>
-                            {timeAlert.isCritical ? <AlertCircle size={10} className="text-rose-600 dark:text-rose-400" /> : <Clock size={10} />}
-                            {order.time}
-                          </span>
-                        </div>
-                      </td>
-
-                      {/* KLIYAN AK MANJE A */}
-                      <td className="p-4 max-w-[220px]">
-                        <div className="flex flex-col min-w-0">
-                          <span className="text-xs font-bold text-gray-900 dark:text-zinc-100 truncate">{order.customer}</span>
-                          <span className="text-[11px] text-gray-500 dark:text-zinc-400 truncate mt-0.5 font-medium">{order.items}</span>
-                        </div>
-                      </td>
-
-                      {/* CHOFÈ / TIP */}
-                      <td className="p-4">
-                        <div className="flex items-center gap-1.5 text-xs text-gray-600 dark:text-zinc-300 font-medium">
-                          {order.type === 'Delivery' ? <Bike size={13} className="text-amber-500" /> : <Clock size={13} className="text-blue-500" />}
-                          <span>{order.driver}</span>
-                        </div>
-                      </td>
-
-                      {/* KALITE PEMAN */}
-                      <td className="p-4 text-xs font-bold text-gray-700 dark:text-zinc-300">{order.payment}</td>
-
-                      {/* MONTAN */}
-                      <td className="p-4 text-xs font-black text-gray-900 dark:text-zinc-100">{order.amount}</td>
-
-                      {/* BADJ ESTATI */}
-                      <td className="p-4">
-                        <span className={`inline-flex items-center px-2.5 py-1 rounded-lg text-[10px] font-bold border ${getStatusBadge(order.status)}`}>
-                          {order.status === 'New' && 'Nouvo'}
-                          {order.status === 'Preparing' && 'Ap Kwit'}
-                          {order.status === 'Dispatched' && 'En Route'}
-                          {order.status === 'Delivered' && 'Livre'}
-                        </span>
-                      </td>
-
-                      {/* AKSYON RAPID */}
-                      <td className="p-4 text-right pr-6">
-                        <div className="inline-flex items-center gap-1">
-                          <button className="p-2 bg-gray-50 dark:bg-zinc-800 hover:bg-gray-100 dark:hover:bg-zinc-700 border border-gray-100 dark:border-zinc-700 rounded-xl text-gray-500 dark:text-zinc-400 transition-colors active:scale-95">
-                            <Eye size={13} />
-                          </button>
-
-                          {order.status !== 'Delivered' && (
-                            <button 
-                              onClick={() => handleNextStatus(order.id, order.status)}
-                              className="p-2 bg-amber-500 hover:bg-orange-600 text-white rounded-xl font-bold text-xs flex items-center gap-1 transition-all shadow-sm shadow-amber-500/10 active:scale-95 pl-3 pr-2.5"
-                            >
-                              <span>
-                                {order.status === 'New' && 'Ap Kwit'}
-                                {order.status === 'Preparing' && 'Livre Chofè'}
-                                {order.status === 'Dispatched' && 'Fèmen'}
-                              </span>
-                              <ArrowRight size={12} />
-                            </button>
-                          )}
-                        </div>
-                      </td>
-
-                    </motion.tr>
-                  );
-                })}
-              </AnimatePresence>
-            </tbody>
-          </table>
-          
-          {/* Si pa gen kòmand nan filtre a */}
-          <AnimatePresence>
-            {filteredOrders.length === 0 && (
-              <motion.div 
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                className="p-12 text-center flex flex-col items-center justify-center"
-              >
-                <span className="text-2xl">🍽️</span>
-                <h3 className="text-xs font-bold text-gray-700 dark:text-zinc-300 mt-2">Pa gen okenn kòmand konsa</h3>
-                <p className="text-[10px] text-gray-400 dark:text-zinc-500 mt-0.5">Eseye chanje filtre a oswa rechèch ou an.</p>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
-      </motion.div>
-    </div>
-  );
+type OrderStatus = 'PENDING' | 'PREPARING' | 'DELIVERING' | 'COMPLETED' | 'CANCELLED';
+type Order = {
+  id: string; total: number; status: OrderStatus; paymentStatus: string; paymentMethod: string; deliveryAddress: string; createdAt: string;
+  customer: { email: string; profile?: { username?: string | null } | null };
+  restaurant: { id: string; name: string };
+  driver?: { id: string; name: string; phone: string } | null;
+  items: Array<{ quantity: number; menuItem: { name: string; price: number } }>;
 };
+type DriverOption = { id: string; name: string; status: string };
 
-export default OrdersPage;
+const statusLabel: Record<OrderStatus, string> = { PENDING: 'Nouvo', PREPARING: 'Ap prepare', DELIVERING: 'Sou wout', COMPLETED: 'Livre', CANCELLED: 'Anile' };
+
+export default function OrdersPage() {
+  const { user } = useAuth();
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [drivers, setDrivers] = useState<DriverOption[]>([]);
+  const [selectedDrivers, setSelectedDrivers] = useState<Record<string, string>>({});
+  const [statusFilter, setStatusFilter] = useState('ALL');
+  const [query, setQuery] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
+  const [busyOrder, setBusyOrder] = useState<string | null>(null);
+
+  const load = useCallback(async () => {
+    setLoading(true); setError(false);
+    try {
+      const [orderResponse, driverResponse] = await Promise.all([api.get<Order[]>('/orders'), api.get<DriverOption[]>('/drivers/available')]);
+      setOrders(orderResponse.data);
+      setDrivers(driverResponse.data);
+    } catch { setError(true); }
+    finally { setLoading(false); }
+  }, []);
+  useEffect(() => { void load(); }, [load]);
+
+  const visibleOrders = useMemo(() => orders.filter((order) => {
+    const matchesStatus = statusFilter === 'ALL' || order.status === statusFilter;
+    const search = query.trim().toLowerCase();
+    const matchesQuery = !search || [order.id, order.customer.email, order.customer.profile?.username, order.restaurant.name]
+      .some((value) => value?.toLowerCase().includes(search));
+    return matchesStatus && matchesQuery;
+  }), [orders, query, statusFilter]);
+
+  const setStatus = async (order: Order, status: OrderStatus) => {
+    setBusyOrder(order.id);
+    try { await api.patch(`/orders/${order.id}/status`, { status }); await load(); toast.success('Estati kòmand lan mete ajou.'); }
+    catch (err: any) { toast.error(err.response?.data?.message || 'Mizajou estati a echwe.'); }
+    finally { setBusyOrder(null); }
+  };
+
+  const assignDriver = async (orderId: string) => {
+    const driverId = selectedDrivers[orderId];
+    if (!driverId) return toast.error('Chwazi yon chofè anvan.');
+    setBusyOrder(orderId);
+    try { await api.patch(`/orders/${orderId}/driver`, { driverId }); await load(); toast.success('Chofè a resevwa livrezon an.'); }
+    catch (err: any) { toast.error(err.response?.data?.message || 'Nou pa t ka bay chofè a kòmand lan.'); }
+    finally { setBusyOrder(null); }
+  };
+
+  return <section className="flex w-full flex-col gap-5 text-zinc-900 dark:text-zinc-100">
+    <header className="flex flex-wrap items-end justify-between gap-4"><div><h1 className="text-2xl font-black">Kòmand restoran an</h1><p className="mt-1 text-sm text-zinc-500">Aksepte kòmand, chwazi chofè, epi mete estati livrezon an ajou.</p></div><button onClick={() => void load()} className="rounded-xl border border-zinc-200 px-4 py-2 text-sm font-bold dark:border-zinc-800">Rafrechi</button></header>
+    <div className="flex flex-wrap gap-3"><label className="relative min-w-56 flex-1"><Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400"/><input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Chèche kliyan, restoran, oswa ID" className="w-full rounded-xl border border-zinc-200 bg-white py-2.5 pl-9 pr-3 text-sm dark:border-zinc-800 dark:bg-zinc-900"/></label><select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} className="rounded-xl border border-zinc-200 bg-white px-3 py-2 text-sm dark:border-zinc-800 dark:bg-zinc-900"><option value="ALL">Tout estati</option>{Object.entries(statusLabel).map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></div>
+    {loading ? <div className="flex justify-center py-16"><Loader2 className="animate-spin text-amber-500"/></div> : error ? <div className="rounded-2xl border border-rose-500/20 p-6 text-sm">Nou pa ka chaje kòmand yo. <button onClick={() => void load()} className="text-amber-500 underline">Eseye ankò</button></div> : visibleOrders.length === 0 ? <div className="rounded-2xl border border-zinc-200 p-10 text-center text-sm text-zinc-500 dark:border-zinc-800">Pa gen kòmand ki koresponn ak filtè a.</div> : <div className="grid gap-4 xl:grid-cols-2">{visibleOrders.map((order) => <article key={order.id} className="rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm dark:border-zinc-800 dark:bg-zinc-950">
+      <div className="flex flex-wrap items-start justify-between gap-3"><div><p className="font-black">{order.restaurant.name}</p><p className="mt-1 text-xs text-zinc-500">{new Date(order.createdAt).toLocaleString()} · {order.id.slice(0, 8)}</p></div><span className="rounded-full bg-amber-400/10 px-3 py-1 text-xs font-bold text-amber-500">{statusLabel[order.status]}</span></div>
+      <p className="mt-4 text-sm font-semibold">{order.customer.profile?.username || order.customer.email}</p><p className="mt-1 text-xs text-zinc-500">{order.deliveryAddress}</p>
+      <ul className="mt-3 space-y-1 text-sm">{order.items.map((item, index) => <li key={`${order.id}-${index}`} className="flex justify-between gap-3"><span>{item.quantity} × {item.menuItem.name}</span><span>${(Number(item.menuItem.price) * item.quantity).toFixed(2)}</span></li>)}</ul>
+      <div className="mt-4 flex flex-wrap items-center justify-between gap-3 border-t border-zinc-100 pt-3 dark:border-zinc-800"><div><p className="font-black">${Number(order.total).toFixed(2)}</p><p className="text-xs text-zinc-500">{order.paymentMethod} · {order.paymentStatus}</p></div><div className="flex flex-wrap items-center gap-2">
+        {order.status === 'PENDING' && <button disabled={busyOrder === order.id} onClick={() => void setStatus(order, 'PREPARING')} className="rounded-lg bg-amber-400 px-3 py-2 text-xs font-bold text-zinc-950 disabled:opacity-50">Aksepte kòmand</button>}
+        {order.status === 'PREPARING' && <>{order.driver ? <span className="text-xs text-zinc-500"><Bike size={13} className="mr-1 inline"/>{order.driver.name}</span> : <><select value={selectedDrivers[order.id] || ''} onChange={(e) => setSelectedDrivers((current) => ({ ...current, [order.id]: e.target.value }))} className="max-w-40 rounded-lg border border-zinc-200 bg-white px-2 py-2 text-xs dark:border-zinc-800 dark:bg-zinc-900"><option value="">Chwazi chofè</option>{drivers.map((driver) => <option key={driver.id} value={driver.id}>{driver.name}</option>)}</select><button disabled={busyOrder === order.id} onClick={() => void assignDriver(order.id)} className="rounded-lg bg-blue-600 px-3 py-2 text-xs font-bold text-white disabled:opacity-50">Bay chofè</button></>}</>}
+        {order.status === 'PENDING' || order.status === 'PREPARING' ? <button disabled={busyOrder === order.id} onClick={() => void setStatus(order, 'CANCELLED')} className="rounded-lg border border-rose-300 px-3 py-2 text-xs font-bold text-rose-500 disabled:opacity-50">Anile</button> : null}
+        {busyOrder === order.id && <Loader2 size={16} className="animate-spin text-amber-500"/>}
+      </div></div>
+    </article>)}</div>}
+    {user?.role === 'ADMIN' && <p className="text-xs text-zinc-500">Ou wè tout kòmand yo kòm administratè.</p>}
+  </section>;
+}

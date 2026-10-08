@@ -4,6 +4,7 @@ import { X, Save, Image as ImageIcon, Clock, Loader2, Trash2 } from 'lucide-reac
 import { useRestaurant } from '../../../Contexts/RestaurantContext';
 import { useCategory } from '../../../Contexts/CategoryContext';
 import { Notification } from '../../../notification/Notification';
+import fallbackFoodImage from '../../../assets/food-delivery.png';
 
 interface Dish {
   id?: string;
@@ -95,7 +96,7 @@ const MenuDrawer = ({
           name: selectedDish.name,
           price: Number(selectedDish.price),
           description: selectedDish.description,
-          image: selectedDish.image || "https://images.unsplash.com/photo-1546069901-ba9599a7e63c",
+          image: selectedDish.image || fallbackFoodImage,
           categoryId: validCategoryId,
           isAvailable: selectedDish.isAvailable ?? true,
           prepTime: Number(selectedDish.prepTime) || 15,
@@ -147,7 +148,7 @@ const MenuDrawer = ({
 
   const previewImage = selectedDish.image instanceof File
     ? URL.createObjectURL(selectedDish.image)
-    : (selectedDish.image || "https://images.unsplash.com/photo-1546069901-ba9599a7e63c");
+    : (selectedDish.image || fallbackFoodImage);
 
   return (
     <>

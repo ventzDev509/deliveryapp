@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
+import { createContext, useContext, useState, type ReactNode } from 'react';
 import type { PendingSellerRequest } from '../types/admin.types';
 import api from './api/axios';
 
@@ -29,25 +29,6 @@ export const AdminProvider = ({ children }: AdminProviderProps) => {
             setRequests(response.data);
         } catch (error: any) {
             console.error("Erè lè n ap chaje demand yo nan sèvè a:", error);
-            
-            // 💡 Ti sekirite pou tès: Si API a bay erè (paske sèvè a fèmen), nou mete done simulation
-            if (requests.length === 0) {
-                const mockData: PendingSellerRequest[] = [
-                    {
-                        id: "req-101",
-                        username: "Griot Lakay",
-                        phone: "+509 3737-1234",
-                        location: "Pétion-Ville, Rue Panamericaine",
-                        lat: 18.512345,
-                        lng: -72.284567,
-                        bio: "Nou fè pi bon griot ak banann peze nan zòn lan.",
-                        documentUrl: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
-                        createdAt: "2026-07-06T14:30:00Z",
-                        user: { id: "u-99", email: "griotlakay@gmail.com", fullName: "Jean Jean" }
-                    }
-                ];
-                setRequests(mockData);
-            }
             throw error;
         } finally {
             setLoading(false);
@@ -80,11 +61,6 @@ export const AdminProvider = ({ children }: AdminProviderProps) => {
             throw error;
         }
     };
-
-    // Chaje demand yo otomatikman lè modil la monte si sa nesesè
-    useEffect(() => {
-        fetchPendingRequests().catch(() => {});
-    }, []);
 
     return (
         <AdminContext.Provider value={{ requests, loading, fetchPendingRequests, approveSeller, rejectSeller }}>

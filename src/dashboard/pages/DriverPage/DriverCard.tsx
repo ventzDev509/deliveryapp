@@ -6,6 +6,8 @@ import WhiteLoader from '../../../loader/WhiteLoader';
 import { useState } from 'react';
 import type { Driver } from '../../../types/driver.types';
 import { DriverForm } from './DriverDrawer';
+import { useAuth } from '../../../Contexts/AuthContext';
+import toast from 'react-hot-toast';
 
 // Fonksyon pou jenere koulè vif pou chak chofè
 const getAvatarColor = (name: string) => {
@@ -18,7 +20,8 @@ const getAvatarColor = (name: string) => {
 };
 
 export default function DriverCard() {
-    const { drivers, loading } = useDriver();
+    const { drivers, loading, approveDriver, updateDriverStatus } = useDriver();
+    const { user } = useAuth();
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
     const [driverToEdit, setDriverToEdit] = useState<Driver | null>(null);
     // Eta pou Filtre
@@ -112,12 +115,11 @@ export default function DriverCard() {
                                     {driver.phone}
                                 </a>
 
-                                <button
-                                    onClick={() => handleEditClick(driver)} // Ouvri drawer lè yo klike
-                                    className="px-3 py-1.5 bg-zinc-900 dark:bg-white text-white dark:text-zinc-950 text-[11px] font-bold rounded-lg"
-                                >
-                                    Profile
-                                </button>
+                                <div className="flex gap-2">
+                                    {user?.role === 'DRIVER' && driver.userId === user.id && <select aria-label="Disponiblite mwen" value={driver.status === 'AVAILABLE' ? 'AVAILABLE' : 'OFFLINE'} onChange={(event) => void updateDriverStatus(driver.id, event.target.value)} className="rounded-lg border border-zinc-200 bg-white px-2 text-[11px] dark:border-zinc-800 dark:bg-zinc-900"><option value="AVAILABLE">Disponib</option><option value="OFFLINE">Pa disponib</option></select>}
+                                    {user?.role === 'ADMIN' && !driver.isVerified && <button onClick={async () => { if (await approveDriver(driver.id)) toast.success('Chofè a verifye epi disponib.'); }} className="rounded-lg bg-emerald-600 px-3 py-1.5 text-[11px] font-bold text-white">Apwouve</button>}
+                                    {user?.role === 'ADMIN' && <button onClick={() => handleEditClick(driver)} className="rounded-lg bg-zinc-900 px-3 py-1.5 text-[11px] font-bold text-white dark:bg-white dark:text-zinc-950">Modifye</button>}
+                                </div>
                             </div>
                         </motion.div>
                     ))}

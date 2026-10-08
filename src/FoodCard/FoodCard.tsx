@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
+import fallbackFoodImage from "../assets/food-delivery.png";
 import {
   Heart,
   Star,
@@ -20,19 +22,21 @@ export interface FoodCardProps {
   discount?: number;
   isPopular?: boolean;
   onAddToCart?: () => void;
+  restaurantId?: string;
 }
 
 export default function FoodCard({
   title = "Classic Cheeseburger",
   category = "Burger",
-  image = "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?q=80&w=1200&auto=format&fit=crop",
+  image = fallbackFoodImage,
   price = 12.99,
   rating = 4.8,
 //   reviews = 128,
   deliveryTime = "20-30 min",
-  discount = 20,
+  discount = 0,
   isPopular = true,
   onAddToCart,
+  restaurantId,
 }: FoodCardProps) {
   const [favorite, setFavorite] = useState(false);
 
@@ -76,10 +80,10 @@ export default function FoodCard({
           />
         </button>
 
-        <div className="absolute right-2.5 bottom-2.5 rounded-full bg-white px-2 py-1 flex items-center gap-1 shadow-md">
+        {rating !== undefined && <div className="absolute right-2.5 bottom-2.5 rounded-full bg-white px-2 py-1 flex items-center gap-1 shadow-md">
           <Star size={13} className="fill-amber-400 text-amber-400"/>
-          <span className="font-bold text-xs">{rating}</span>
-        </div>
+          <span className="font-bold text-xs">{rating.toFixed(1)}</span>
+        </div>}
       </div>
 
       {/* Kontni an pi sere pou l pa pran twòp espas anwo desann */}
@@ -108,14 +112,18 @@ export default function FoodCard({
             </h3>
           </div>
 
-          <motion.button
+          {onAddToCart ? <motion.button
             whileTap={{ scale: .9 }}
             whileHover={{ scale: 1.05 }}
             onClick={onAddToCart}
             className="flex h-9 w-9 items-center justify-center rounded-xl bg-amber-400 text-black shadow-lg shadow-amber-400/20 hover:bg-amber-300"
           >
             <Plus size={18} strokeWidth={2.5}/>
-          </motion.button>
+          </motion.button> : <Link
+            to={restaurantId ? `/restaurant/${restaurantId}` : "/restaurants"}
+            aria-label={`Wè meni pou ${title}`}
+            className="flex h-9 w-9 items-center justify-center rounded-xl bg-amber-400 text-black shadow-lg shadow-amber-400/20 hover:bg-amber-300"
+          ><Plus size={18} strokeWidth={2.5}/></Link>}
         </div>
       </div>
     </motion.article>

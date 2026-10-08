@@ -1,5 +1,6 @@
-import { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
+import { createContext, useContext, useState, useEffect, useCallback, type ReactNode } from 'react';
 import api from './api/axios';
+import { useAuth } from './AuthContext';
 import type { Driver, DriverContextType } from '../types/driver.types';
 import type { CreateDriverDto } from '../types/dto/create-driver.dto';
 import toast from 'react-hot-toast';
@@ -21,21 +22,27 @@ const showApiErrors = (error: any) => {
 };
 
 export const DriverProvider = ({ children }: { children: ReactNode }) => {
+  const { user } = useAuth();
   const [drivers, setDrivers] = useState<Driver[]>([]);
   const [loading, setLoading] = useState(false);
 
   // 1. Rale tout chofè yo
-  const fetchDrivers = async () => {
+  const fetchDrivers = useCallback(async () => {
     setLoading(true);
     try {
-      const response = await api.get<Driver[]>('/drivers');
-      setDrivers(response.data);
+      if (user?.role === 'ADMIN') {
+        const response = await api.get<Driver[]>('/drivers');
+        setDrivers(response.data);
+      } else if (user?.role === 'DRIVER') {
+        const response = await api.get<Driver>('/drivers/me');
+        setDrivers([response.data]);
+      } else setDrivers([]);
     } catch (error) {
       showApiErrors(error);
     } finally {
       setLoading(false);
     }
-  };
+  }, [user?.role]);
 
   // 2. Kreye yon chofè
   const createDriver = async (data: CreateDriverDto): Promise<boolean> => {
@@ -122,8 +129,9 @@ const updateDriver = async (id: string, data: any): Promise<boolean> => {
   };
 
   useEffect(() => {
-    fetchDrivers();
-  }, []);
+    if (user?.role === 'ADMIN' || user?.role === 'DRIVER') void fetchDrivers();
+    else setDrivers([]);
+  }, [fetchDrivers, user?.id, user?.role]);
 
   return (
     <DriverContext.Provider value={{ 

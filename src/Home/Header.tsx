@@ -1,8 +1,11 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useCart } from '../Contexts/CartContext';
 
-export default function Header() {
+export default function Header({ onSearch }: { onSearch?: (query: string) => void }) {
     const [searchQuery, setSearchQuery] = useState<string>('');
+    const { items } = useCart();
+    const cartCount = items.reduce((count, item) => count + item.quantity, 0);
 
     return (
         <>
@@ -62,7 +65,7 @@ export default function Header() {
                                 group-hover:text-amber-400
                                 transition-colors
                             ">
-                                <span>Al Safa Street, Al Wasi</span>
+                                <span>Chwazi adrès livrezon an</span>
 
                                 <svg
                                     className="w-4 h-4 text-zinc-400"
@@ -86,6 +89,7 @@ export default function Header() {
                         {/* CART */}
                         <Link
                             to="/cart"
+                            aria-label="Louvri panyen an"
                             className="
                                 relative
                                 h-12 w-12
@@ -114,22 +118,8 @@ export default function Header() {
                                 />
                             </svg>
 
+                            {cartCount > 0 && <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-amber-400 px-1 text-[10px] font-black text-zinc-950">{cartCount}</span>}
 
-                            <span className="
-                                absolute
-                                -top-1
-                                -right-1
-                                h-5 w-5
-                                rounded-full
-                                bg-amber-400
-                                text-zinc-950
-                                text-[10px]
-                                font-black
-                                flex items-center justify-center
-                                shadow-md
-                            ">
-                                2
-                            </span>
 
                         </Link>
 
@@ -166,7 +156,7 @@ export default function Header() {
                             <input
                                 type="text"
                                 value={searchQuery}
-                                onChange={(e)=>setSearchQuery(e.target.value)}
+                                onChange={(e)=>{ setSearchQuery(e.target.value); onSearch?.(e.target.value); }}
                                 placeholder="Search dishes, restaurants..."
                                 className="
                                     w-full
@@ -190,6 +180,8 @@ export default function Header() {
 
                         {/* FILTER */}
                         <button
+                            type="button"
+                            onClick={() => document.getElementById('home-categories')?.scrollIntoView({ behavior: 'smooth' })}
                             className="
                                 h-12
                                 pl-4
@@ -280,7 +272,7 @@ export default function Header() {
 
 
                 <Link 
-                    to="/orders"
+                    to="/my-orders"
                     className="
                     flex flex-col items-center
                     text-zinc-500 dark:text-zinc-400
@@ -295,7 +287,7 @@ export default function Header() {
 
 
                 <Link
-                    to="/payment"
+                    to="/cart"
                     className="
                     flex flex-col items-center
                     text-zinc-500 dark:text-zinc-400
@@ -310,7 +302,7 @@ export default function Header() {
 
 
                 <Link
-                    to="/profile"
+                    to="/account"
                     className="
                     flex flex-col items-center
                     text-zinc-500 dark:text-zinc-400

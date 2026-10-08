@@ -5,6 +5,7 @@ import MenuDrawer from './MenuDrawer';
 import { useAuth } from '../../../Contexts/AuthContext';
 import { useRestaurant } from '../../../Contexts/RestaurantContext';
 import { useCategory } from '../../../Contexts/CategoryContext';
+import fallbackFoodImage from '../../../assets/food-delivery.png';
 
 interface Dish {
   id?: string;
@@ -43,7 +44,7 @@ const MenuPage = () => {
           description: item.description || '',
           price: item.price,
           category: item.categoryId || 'Main',
-          image: item.image || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&q=80&w=400',
+          image: item.image || fallbackFoodImage,
           isAvailable: item.isAvailable ?? true,
           salesCount: item.salesCount || 0,
           prepTime: item.prepTime || 20,
@@ -67,7 +68,7 @@ const MenuPage = () => {
         description: '',
         price: 0,
         category: 'Main',
-        image: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&q=80&w=400',
+        image: fallbackFoodImage,
         isAvailable: true,
         salesCount: 0,
         prepTime: 20

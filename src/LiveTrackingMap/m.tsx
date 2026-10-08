@@ -1,327 +1,125 @@
-import { useEffect, useState, useRef } from 'react';
-import { Marker, Tooltip, Polyline, useMap, MapContainer, TileLayer } from 'react-leaflet';
+import { Fragment, useEffect, useState } from 'react';
+import { MapContainer, Marker, Popup, TileLayer, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import { useDriver } from '../Contexts/DriverContext';
-import { io } from 'socket.io-client';
+import { Link } from 'react-router-dom';
 import { useAuth } from '../Contexts/AuthContext';
-import axios from 'axios';
+import { useDriver } from '../Contexts/DriverContext';
+import api from '../Contexts/api/axios';
+import { socket } from '../hook/socket';
+import type { Driver } from '../types/driver.types';
+import RoadRoute from './RoadRoute';
+import AnimatedDriverMarker from './AnimatedDriverMarker';
 
-const socket = io('https://backenddelivery-t22i.onrender.com');
+type Restaurant = { id: string; name: string; owner?: { profile?: { lat?: number | null; lng?: number | null; location?: string | null } | null } };
+type DriverPosition = Pick<Driver, 'id' | 'name' | 'status' | 'currentLat' | 'currentLng' | 'vehicleType' | 'isVerified'>;
+type ActiveDelivery = { id: string; status: string; latitude: number | null; longitude: number | null; deliveryAddress: string; customer: { email: string; profile?: { username?: string | null } | null }; driver?: { id: string; name: string; currentLat: number | null; currentLng: number | null } | null };
 
-const createCustomIcon = (color: string, emoji: string) => L.divIcon({
-    html: `<div style="background-color: ${color}; width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 3px solid white; box-shadow: 0 4px 6px rgba(0,0,0,0.3); font-size: 18px; transition: all 0.5s ease-in-out;">${emoji}</div>`,
-    className: 'custom-marker',
-    iconSize: [35, 35],
-    iconAnchor: [17, 17],
+const marker = (emoji: string, background: string) => L.divIcon({
+  html: `<div style="width:38px;height:38px;border-radius:50%;background:${background};border:3px solid white;box-shadow:0 3px 10px #0006;display:flex;align-items:center;justify-content:center;font-size:18px">${emoji}</div>`,
+  className: 'delivery-map-marker', iconSize: [38, 38], iconAnchor: [19, 19],
 });
+const restaurantMarker = marker('🍽️', '#f59e0b');
+const driverMarker = marker('🛵', '#2563eb');
+const deliveryDestinationMarker = marker('🏠', '#16a34a');
 
-// Konpozan pou swiv chofè a sèlman si li sou ON_DELIVERY
-function DriverTracker({ driverPosition, isOnDelivery }: { driverPosition: [number, number] | null, isOnDelivery: boolean }) {
-    const map = useMap();
-    
-    useEffect(() => {
-        if (driverPosition && isOnDelivery) {
-            map.panTo(driverPosition, { animate: true });
-        }
-    }, [driverPosition, isOnDelivery, map]);
-
-    return null;
+function FitDeliveryBounds({ positions }: { positions: Array<[number, number]> }) {
+  const map = useMap();
+  const boundsKey = positions.map(([lat, lng]) => `${lat},${lng}`).join('|');
+  useEffect(() => {
+    if (positions.length) map.fitBounds(L.latLngBounds(positions).pad(0.2), { maxZoom: 14, animate: false });
+  }, [boundsKey, map]);
+  return null;
 }
 
-function MapContent() {
-    const { drivers, setDrivers } = useDriver();
-    const { user } = useAuth();
-    const [myPosition, setMyPosition] = useState<[number, number] | null>(null);
-    const [restaurants, setRestaurants] = useState<any[]>([]);
-    const [routeCoords, setRouteCoords] = useState<[number, number][]>([]);
-    const [routeFetched, setRouteFetched] = useState<boolean>(false);
-    const map = useMap();
+export default function LiveTrackingMap() {
+  const { user } = useAuth();
+  const { drivers, fetchDrivers, setDrivers } = useDriver();
+  const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
+  const [deliveries, setDeliveries] = useState<ActiveDelivery[]>([]);
+  const [myDriver, setMyDriver] = useState<DriverPosition | null>(null);
+  const [locationError, setLocationError] = useState('');
 
-    const routeCoordsRef = useRef<[number, number][]>([]);
-    routeCoordsRef.current = routeCoords;
+  useEffect(() => {
+    api.get<Restaurant[]>('/restaurants').then((response) => setRestaurants(response.data)).catch(() => setRestaurants([]));
+  }, []);
 
-    const driversRef = useRef<any[]>(drivers);
-    driversRef.current = drivers;
+  useEffect(() => {
+    let active = true;
+    const loadDeliveries = async () => {
+      try {
+        const response = await api.get<ActiveDelivery[]>('/orders');
+        if (active) setDeliveries(response.data.filter((order) => order.status === 'DELIVERING' && order.latitude != null && order.longitude != null));
+      } catch { if (active) setDeliveries([]); }
+    };
+    void loadDeliveries();
+    const timer = window.setInterval(() => { void loadDeliveries(); }, 5000);
+    return () => { active = false; window.clearInterval(timer); };
+  }, [user?.id, user?.role]);
 
-    // 1. Jwenn pozisyon itilizatè a
-    useEffect(() => {
-        if (!navigator.geolocation) return;
-        navigator.geolocation.getCurrentPosition(
-            (pos) => setMyPosition([pos.coords.latitude, pos.coords.longitude]),
-            (err) => console.error(err),
-            { enableHighAccuracy: true }
-        );
-    }, []);
+  useEffect(() => {
+    if (user?.role !== 'ADMIN') return;
+    const timer = window.setInterval(() => { void fetchDrivers(); }, 5000);
+    return () => window.clearInterval(timer);
+  }, [fetchDrivers, user?.role]);
 
-    // 2. JWENN RESTORAN YO
-    useEffect(() => {
-        axios.get('https://backenddelivery-t22i.onrender.com/restaurants')
-            .then((res) => {
-                setRestaurants(res.data);
-            })
-            .catch((err) => {
-                console.error("Erè restoran:", err);
-            });
-    }, []);
+  useEffect(() => {
+    if (!navigator.geolocation) { setLocationError('Navigatè sa a pa bay sèvis pozisyon.'); return; }
+    if (user?.role === 'DRIVER' && myDriver?.isVerified) socket.connect();
+    const watchId = navigator.geolocation.watchPosition((position) => {
+      const coords: [number, number] = [position.coords.latitude, position.coords.longitude];
+      if (user?.role === 'DRIVER') setMyDriver((current) => current ? { ...current, currentLat: coords[0], currentLng: coords[1] } : current);
+      if (user?.role === 'DRIVER' && myDriver?.isVerified) socket.emit('updateLocation', { driverId: myDriver.id, lat: coords[0], lng: coords[1] });
+    }, () => setLocationError('Pèmèt aksè ak pozisyon pou GPS moto a ka mete ajou pandan livrezon.'), { enableHighAccuracy: true, maximumAge: 1000, timeout: 20000 });
+    return () => { navigator.geolocation.clearWatch(watchId); if (user?.role === 'DRIVER') socket.disconnect(); };
+  }, [myDriver?.id, myDriver?.isVerified, user?.role]);
 
-    // 3. REQUISYON OSRM
-    useEffect(() => {
-        if (!myPosition || routeFetched || restaurants.length === 0) return;
+  useEffect(() => {
+    if (user?.role !== 'DRIVER') return;
+    api.get<DriverPosition & { isVerified: boolean }>('/drivers/me').then((response) => setMyDriver(response.data)).catch(() => setMyDriver(null));
+  }, [user?.id, user?.role]);
 
-        const targetRest = restaurants[0];
-        const restLat = targetRest.owner?.profile?.lat || 19.4470;
-        const restLng = targetRest.owner?.profile?.lng || -72.6870;
+  useEffect(() => {
+    if (user?.role !== 'DRIVER' && user?.role !== 'ADMIN') return;
+    const onDriverMoved = (data: { driverId: string; lat: number; lng: number }) => {
+      if (!Number.isFinite(data.lat) || !Number.isFinite(data.lng)) return;
+      setMyDriver((current) => current?.id === data.driverId
+        ? { ...current, currentLat: data.lat, currentLng: data.lng }
+        : current);
+      if (user.role === 'ADMIN') {
+        setDrivers((current) => current.map((driver) => driver.id === data.driverId
+          ? { ...driver, currentLat: data.lat, currentLng: data.lng }
+          : driver));
+      }
+      setDeliveries((current) => current.map((order) => order.driver?.id === data.driverId
+        ? { ...order, driver: { ...order.driver, currentLat: data.lat, currentLng: data.lng } }
+        : order));
+    };
+    socket.on('driverMoved', onDriverMoved);
+    if (!socket.connected) socket.connect();
+    return () => { socket.off('driverMoved', onDriverMoved); };
+  }, [setDrivers, user?.role]);
 
-        const startLng = -72.6850;
-        const startLat = 19.4450;
-        const midLng = restLng;
-        const midLat = restLat;
-        const endLng = myPosition[1];
-        const endLat = myPosition[0];
+  const shownDrivers: DriverPosition[] = user?.role === 'ADMIN' ? drivers : (myDriver ? [myDriver] : []);
+  const deliveryBounds: Array<[number, number]> = deliveries.flatMap((order) => [
+    ...(typeof order.driver?.currentLat === 'number' && typeof order.driver?.currentLng === 'number' ? [[order.driver.currentLat, order.driver.currentLng] as [number, number]] : []),
+    [order.latitude!, order.longitude!],
+  ]);
 
-        const url = `https://router.project-osrm.org/route/v1/driving/${startLng},${startLat};${midLng},${midLat};${endLng},${endLat}?overview=full&geometries=geojson`;
-
-        axios.get(url)
-            .then((res) => {
-                if (res.data.routes && res.data.routes.length > 0) {
-                    const route = res.data.routes[0];
-                    const coords = route.geometry.coordinates.map((c: [number, number]) => [c[1], c[0]]);
-
-                    setRouteCoords(coords);
-                    setRouteFetched(true);
-
-                    const firstPoint = coords[0];
-                    const testDriverId = "62bffbc0-1639-4568-9f08-87f91d7658c9";
-
-                    setDrivers((prev: any[]) => {
-                        const exists = prev.some((d: any) => d.id === testDriverId);
-                        if (exists) {
-                            return prev.map((d: any) =>
-                                d.id === testDriverId
-                                    ? { ...d, currentLat: firstPoint[0], currentLng: firstPoint[1], status: 'ON_DELIVERY' }
-                                    : d
-                            );
-                        } else {
-                            return [...prev, {
-                                id: testDriverId,
-                                name: 'Chofè Tès',
-                                vehicleType: 'MOTORCYCLE',
-                                currentLat: firstPoint[0],
-                                currentLng: firstPoint[1],
-                                status: 'ON_DELIVERY'
-                            }];
-                        }
-                    });
-                }
-            })
-            .catch((err) => {
-                console.error("Erè nan OSRM:", err);
-                setRouteCoords([[startLat, startLng], [endLat, endLng]]);
-            });
-
-    }, [myPosition, restaurants, routeFetched, setDrivers]);
-
-    // 4. RESEVWA POZISYON CHOFÈ A SOU SOCKET AK ANIMASYON LIKID (SMOOTH)
-    useEffect(() => {
-        socket.on('driverMoved', (data: { driverId: string, lat: number, lng: number }) => {
-            setDrivers((prev: any[]) => {
-                const driverIndex = prev.findIndex((d: any) => d.id === data.driverId);
-
-                if (driverIndex !== -1) {
-                    const currentDriver = prev[driverIndex];
-                    const startLat = currentDriver.currentLat ?? data.lat;
-                    const startLng = currentDriver.currentLng ?? data.lng;
-                    const endLat = data.lat;
-                    const endLng = data.lng;
-
-                    // Animatè pou glise makè a pandan tan entèval la (pa egzanp 1800ms)
-                    const duration = 1800;
-                    const startTime = performance.now();
-
-                    const animate = (currentTime: number) => {
-                        const elapsed = currentTime - startTime;
-                        const progress = Math.min(elapsed / duration, 1);
-
-                        // Easing (an doulè nan kòmansman ak nan fen) pou l parèt pi natirèl
-                        // const easeProgress = 0.5 - Math.cos(progress * Math.PI) / 0.5; 
-
-                        const interpolatedLat = startLat + (endLat - startLat) * progress;
-                        const interpolatedLng = startLng + (endLng - startLng) * progress;
-
-                        setDrivers((latestPrev: any[]) =>
-                            latestPrev.map((d: any) =>
-                                d.id === data.driverId
-                                    ? { ...d, currentLat: interpolatedLat, currentLng: interpolatedLng, status: 'ON_DELIVERY' }
-                                    : d
-                            )
-                        );
-
-                        if (progress < 1) {
-                            requestAnimationFrame(animate);
-                        }
-                    };
-
-                    requestAnimationFrame(animate);
-                    return prev;
-                } else {
-                    // Si chofè a pa te la anvan, n ap ajoute l dirèkteman
-                    return [...prev, {
-                        id: data.driverId,
-                        name: 'Chofè Tès',
-                        vehicleType: 'MOTORCYCLE',
-                        currentLat: data.lat,
-                        currentLng: data.lng,
-                        status: 'ON_DELIVERY'
-                    }];
-                }
-            });
-        });
-
-        return () => { socket.off('driverMoved'); };
-    }, [setDrivers]);
-
-    // 5. SIMILASYON DEPLASMAN CHOFÈ A
-    useEffect(() => {
-        const testDriverId = "62bffbc0-1639-4568-9f08-87f91d7658c9";
-        let index = 0;
-
-        const interval = setInterval(() => {
-            const activeDriver = driversRef.current.find((d: any) => d.id === testDriverId);
-            const coords = routeCoordsRef.current;
-
-            if (!activeDriver || activeDriver.status !== 'ON_DELIVERY' || coords.length === 0) {
-                return;
-            }
-
-            if (index < coords.length) {
-                const point = coords[index];
-                socket.emit('updateLocation', {
-                    driverId: testDriverId,
-                    lat: point[0],
-                    lng: point[1]
-                });
-                index++;
-            } else {
-                index = 0; 
-            }
-        }, 2000);
-
-        return () => clearInterval(interval);
-    }, [routeFetched]);
-
-    const isSeller = user?.role === 'RESTAURANT_OWNER';
-    const markerColor = isSeller ? '#f59e0b' : '#3b82f6';
-    const markerEmoji = isSeller ? '🏪' : '👤';
-    const displayName = isSeller ? (user?.profile?.username || user?.email || 'Magazen Mwen') : 'Mwen';
-
-    const testDriverId = "62bffbc0-1639-4568-9f08-87f91d7658c9";
-    const activeDriver = drivers.find((d: any) => d.id === testDriverId);
-    const driverPosition: [number, number] | null = activeDriver?.currentLat && activeDriver?.currentLng
-        ? [activeDriver.currentLat, activeDriver.currentLng]
-        : null;
-    
-    const isOnDelivery = activeDriver?.status === 'ON_DELIVERY';
-
-    return (
-        <>
-            <DriverTracker driverPosition={driverPosition} isOnDelivery={isOnDelivery} />
-
-            {routeCoords.length > 0 && (
-                <Polyline
-                    positions={routeCoords}
-                    pathOptions={{ color: '#3b82f6', weight: 6, opacity: 0.7 }}
-                />
-            )}
-
-            {myPosition && (
-                <Marker position={myPosition} icon={createCustomIcon(markerColor, markerEmoji)}>
-                    <Tooltip permanent direction="top" className="custom-user-tooltip">
-                        {displayName}
-                    </Tooltip>
-                </Marker>
-            )}
-
-            {restaurants.map((rest) => {
-                const lat = rest.owner?.profile?.lat || 19.445;
-                const lng = rest.owner?.profile?.lng || -72.685;
-
-                return (
-                    <Marker
-                        key={rest.id}
-                        position={[lat, lng]}
-                        icon={createCustomIcon('#f59e0b', '🏪')}
-                    >
-                        <Tooltip permanent direction="top" className="custom-restaurant-tooltip">
-                            {rest.name || 'Restoran'}
-                        </Tooltip>
-                    </Marker>
-                );
-            })}
-
-            {drivers.filter(d => d.currentLat && d.currentLng).map(d => {
-                let distanceText = '';
-                let timeText = '';
-
-                if (myPosition && map) {
-                    const distanceMeters = map.distance(
-                        [d.currentLat!, d.currentLng!],
-                        [myPosition[0], myPosition[1]]
-                    );
-
-                    if (distanceMeters >= 1000) {
-                        distanceText = ` - ${(distanceMeters / 1000).toFixed(1)} km`;
-                    } else {
-                        distanceText = ` - ${Math.round(distanceMeters)} m`;
-                    }
-
-                    const averageSpeedMps = 8.33;
-                    const estimatedSecondsRemaining = distanceMeters / averageSpeedMps;
-                    const minutes = Math.floor(estimatedSecondsRemaining / 60);
-                    const seconds = Math.round(estimatedSecondsRemaining % 60);
-
-                    if (distanceMeters < 20) {
-                        timeText = ` ⏱️ Rive!`;
-                    } else if (minutes > 0) {
-                        timeText = ` ⏱️ ${minutes} min`;
-                    } else {
-                        timeText = ` ⏱️ ${seconds} sek`;
-                    }
-                }
-
-                return (
-                    <Marker
-                        key={d.id}
-                        position={[d.currentLat!, d.currentLng!]}
-                        icon={createCustomIcon('#16a34a', d.vehicleType === 'MOTORCYCLE' ? '🏍️' : '🚗')}
-                    >
-                        <Tooltip permanent direction="top" className="custom-driver-tooltip">
-                            {d.name} {distanceText} {timeText}
-                        </Tooltip>
-                    </Marker>
-                );
-            })}
-        </>
-    );
-}
-
-export default function SimpleMap() {
-    useEffect(() => {
-        socket.on('connect', () => {
-            console.log('✅ Konekte ak sèvè a! ID:', socket.id);
-        });
-
-        socket.on('connect_error', (err) => {
-            console.log('❌ Erè koneksyon:', err.message);
-        });
-    }, []);
-
-    return (
-        <div style={{ height: '100vh', width: '100%' }}>
-            <MapContainer center={[19.445, -72.685]} zoom={15.5} style={{ height: '100%', width: '100%' }}>
-                <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-                <MapContent />
-            </MapContainer>
-        </div>
-    );
+  return <main className="min-h-screen bg-zinc-950 p-4 text-white sm:p-6"><div className="mx-auto max-w-7xl">
+    <header className="mb-4 flex items-center justify-between"><div><h1 className="text-2xl font-black">Kat livrezon an dirèk</h1><p className="mt-1 text-sm text-zinc-400">Kliyan yo parèt kòm destinasyon; moto yo ap deplase ak dènye pozisyon GPS yo (mizajou chak 5 segonn).</p></div><Link to="/dashboard" className="text-sm font-semibold text-amber-400">Dashboard</Link></header>
+    {locationError && <p className="mb-3 rounded-xl bg-amber-500/10 p-3 text-sm text-amber-200">{locationError}</p>}
+    {user?.role === 'DRIVER' && myDriver && !myDriver.isVerified && <p className="mb-3 rounded-xl bg-amber-500/10 p-3 text-sm text-amber-200">Administratè a dwe verifye kont chofè a anvan pozisyon an parèt.</p>}
+    <div className="h-[72vh] min-h-[440px] overflow-hidden rounded-2xl border border-white/10">
+      <MapContainer center={[19.45, -72.68]} zoom={13} className="h-full w-full">
+        <FitDeliveryBounds positions={deliveryBounds}/><TileLayer attribution="&copy; OpenStreetMap contributors" url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+        {restaurants.map((restaurant) => { const lat = restaurant.owner?.profile?.lat; const lng = restaurant.owner?.profile?.lng; return typeof lat === 'number' && typeof lng === 'number' ? <Marker key={restaurant.id} position={[lat, lng]} icon={restaurantMarker}><Popup><strong>{restaurant.name}</strong><br/>{restaurant.owner?.profile?.location}</Popup></Marker> : null; })}
+        {shownDrivers.map((driver) => typeof driver.currentLat === 'number' && typeof driver.currentLng === 'number' ? <AnimatedDriverMarker key={driver.id} position={[driver.currentLat, driver.currentLng]} icon={driverMarker}><Popup><strong>{driver.name}</strong><br/>{driver.status} · {driver.vehicleType}</Popup></AnimatedDriverMarker> : null)}
+        {deliveries.map((order) => <Fragment key={`delivery-${order.id}`}>
+          <Marker position={[order.latitude!, order.longitude!]} icon={deliveryDestinationMarker}><Popup><strong>Kliyan: {order.customer.profile?.username || order.customer.email}</strong><br/>{order.deliveryAddress}<br/>Kòmand #{order.id.slice(0, 8)}</Popup></Marker>
+          {order.driver && typeof order.driver.currentLat === 'number' && typeof order.driver.currentLng === 'number' && <RoadRoute from={[order.driver.currentLat, order.driver.currentLng]} to={[order.latitude!, order.longitude!]}/>}
+        </Fragment>)}
+      </MapContainer>
+    </div>
+  </div></main>;
 }

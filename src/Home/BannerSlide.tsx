@@ -1,4 +1,7 @@
 import  { useState, useEffect } from 'react';
+import heroImage from '../assets/hero.png';
+import deliveryImage from '../assets/delivery.png';
+import foodImage from '../assets/food-delivery.png';
 
 // Ou ka chanje lyen imaj sa yo ak pwòp imaj ou yo
 const slides = [
@@ -7,25 +10,25 @@ const slides = [
         title: "Fresh & Delicious Food",
         subtitle: "Special Discount",
         discount: "Up to 50% OFF",
-        image: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?q=80&w=1000&auto=format&fit=crop",
+        image: heroImage,
     },
     {
         id: 2,
         title: "Super Fast Delivery",
         subtitle: "Hot & Spicy",
         discount: "Free Delivery Today",
-        image: "https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?q=80&w=1000&auto=format&fit=crop",
+        image: deliveryImage,
     },
     {
         id: 3,
         title: "Best Quality Burgers",
         subtitle: "Weekend Special",
         discount: "Buy 1 Get 1 Free",
-        image: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?q=80&w=1000&auto=format&fit=crop",
+        image: foodImage,
     },
 ];
 
-export default function BannerSlider() {
+export default function BannerSlider({ onOrderNow }: { onOrderNow?: () => void }) {
     const [currentSlide, setCurrentSlide] = useState(0);
 
     // Chanje slide chak 4 segonn otomatikman
@@ -67,7 +70,7 @@ export default function BannerSlider() {
                             <div className="inline-block bg-amber-400 text-zinc-950 font-bold text-xs sm:text-sm px-3 py-1.5 rounded-full w-fit shadow-md mb-4">
                                 {slide.discount}
                             </div>
-                            <button className="bg-white hover:bg-zinc-100 text-zinc-950 font-semibold text-xs sm:text-sm px-5 py-2.5 rounded-full w-fit transition-all shadow-lg active:scale-95">
+                            <button onClick={onOrderNow} className="bg-white hover:bg-zinc-100 text-zinc-950 font-semibold text-xs sm:text-sm px-5 py-2.5 rounded-full w-fit transition-all shadow-lg active:scale-95">
                                 Order Now
                             </button>
                         </div>

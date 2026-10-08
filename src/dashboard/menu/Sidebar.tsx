@@ -1,5 +1,6 @@
 import { NavLink } from 'react-router-dom';
-import { LayoutDashboard, ShoppingBag,User2, Utensils, Settings, LogOut, CarTaxiFront } from 'lucide-react';
+import { LayoutDashboard, ShoppingBag,User2, Utensils, Settings, LogOut, CarTaxiFront, MapPinned, PackageCheck } from 'lucide-react';
+import { useAuth } from '../../Contexts/AuthContext';
 
 const menuItems = [
   { name: 'Dashboard', icon: LayoutDashboard, path: '/dashboard' },
@@ -7,11 +8,21 @@ const menuItems = [
   { name: 'Restoran', icon: Utensils, path: '/restaurants' },
   { name: 'Admin', icon: User2, path: '/admin-validation' },
   { name: 'Livre', icon: CarTaxiFront, path: '/driver' },
+  { name: 'Kat an dirèk', icon: MapPinned, path: '/tracking' },
+  { name: 'Livrezon mwen', icon: PackageCheck, path: '/my-deliveries' },
   { name: 'Anviwònman', icon: Settings, path: '/settings' },
 
 ];
 
 const Sidebar = () => {
+  const { user, logout } = useAuth();
+  const visibleItems = menuItems.filter((item) => {
+    if (item.path === '/admin-validation') return user?.role === 'ADMIN';
+    if (item.path === '/driver') return user?.role === 'ADMIN' || user?.role === 'DRIVER';
+    if (item.path === '/tracking') return user?.role === 'ADMIN' || user?.role === 'DRIVER';
+    if (item.path === '/my-deliveries') return user?.role === 'ADMIN' || user?.role === 'DRIVER';
+    return user?.role === 'ADMIN' || user?.role === 'RESTAURANT_OWNER';
+  });
   return (
     <>
       {/* SIDEBAR POU DESKTOP (md ak pi gwo) */}
@@ -23,7 +34,7 @@ const Sidebar = () => {
           </div>
 
           <div className="space-y-1">
-            {menuItems.map((item) => (
+            {visibleItems.map((item) => (
               <NavLink
                 key={item.name}
                 to={item.path}
@@ -46,17 +57,17 @@ const Sidebar = () => {
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center font-bold dark:bg-amber-500/10 dark:text-amber-400">CD</div>
             <div>
-              <p className="text-sm font-bold text-gray-900 dark:text-zinc-100">Cap-deli.</p>
-              <p className="text-[10px] text-gray-500 dark:text-zinc-500">Premium</p>
+              <p className="max-w-32 truncate text-sm font-bold text-gray-900 dark:text-zinc-100">{user?.profile?.username || user?.email || 'Kont mwen'}</p>
+              <p className="text-[10px] text-gray-500 dark:text-zinc-500">{user?.role || ''}</p>
             </div>
           </div>
-          <LogOut size={16} className="text-gray-400 cursor-pointer dark:text-zinc-500" />
+          <button onClick={logout} aria-label="Dekonekte" className="text-gray-400 hover:text-rose-500 dark:text-zinc-500"><LogOut size={16} /></button>
         </div>
       </nav>
 
       {/* BOTTOM MENU POU MOBILE (telefòn) */}
       <nav className="md:hidden bottom-nav fixed bottom-0 left-0 w-full bg-white border-t border-gray-100 flex justify-around items-center p-3 z-50 dark:bg-zinc-950 dark:border-zinc-900 transition-colors duration-300">
-        {menuItems.map((item) => (
+        {visibleItems.map((item) => (
           <NavLink
             key={item.name}
             to={item.path}
