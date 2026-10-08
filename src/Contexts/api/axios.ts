@@ -1,7 +1,11 @@
 import axios from 'axios';
 
+export const apiBaseUrl = (import.meta.env.VITE_API_URL?.trim()
+  || (import.meta.env.DEV ? 'http://localhost:3000' : 'https://backenddelivery-t22i.onrender.com'))
+  .replace(/\/$/, '');
+
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:3000',
+  baseURL: apiBaseUrl,
 });
 
 
